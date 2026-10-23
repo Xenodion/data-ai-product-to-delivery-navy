@@ -1,58 +1,66 @@
 # 01 — Problem statement
 
-**Team:** … · **Agent:** P_ / own idea · **Last updated:** …
+**Team:** NAVY · **Agent:** P2 — agent-assist copilot, B2B payments fintech · **Last updated:** 23 October 2026
 
 > Every number says where it comes from: **measured**, **analogy** (a comparable, with its source) or **guess** (and how you will test it).
 
 ## 1. The problem in one sentence
-[Who] experiences [pain] when [situation], costing [quantified impact]; today they [do-nothing baseline]. Success looks like [measurable outcome].
+Support agents at Keelpay, a B2B payments fintech handling ~12,000 tickets a month, spend about 40 % of each ticket's handling time reading transaction history and past tickets before they can reply to "where is my money" and dispute questions, costing roughly 960 agent-hours a month (≈ €270k a year); today they search the back-office and old tickets by hand and write each reply from scratch. Success looks like average handling time down by at least 15 % (12 → 10.2 minutes) at a QA score no lower than today's.
 
 | Number in the sentence | Value | Measured / analogy / guess | Source or test |
 |---|---|---|---|
-| | | | |
+| Merchant customers (used in the press release) | ~800 | guess | Case figure from P2 in the project document (no ticket log exists); re-derived in S2 |
+| Tickets per month | ~12,000 | guess | Case figure from P2 in the project document (no ticket log exists); re-derived in S2 |
+| Support agents (used in the do-nothing baseline) | ~18 | analogy | P2 gives no team size. Paylio case (S2 slides, p. 37): 40,000 tickets / 60 agents ≈ 667 tickets per agent-month; 12,000 / 667 ≈ 18 |
+| Average handling time per ticket | ~12 min | guess | Cross-check on Paylio (~32 tickets per agent per day ≈ 15 min if fully busy, ≈ 12 min at ~80 % utilisation). Test: timed sample of 20–30 tickets (S5), or helpdesk timestamps in a real company |
+| Share of handling time spent reading | 40 % | guess | Case figure stated in P2. Vendor blogs repeat "agents spend 40 % of their time searching for information" (e.g. Knowmax) but cite no primary study, so we do not count it as an analogy. Applied here to all tickets, so probably an upper bound: non-payment tickets likely need less reading. Test: shadow 20 tickets and split reading / writing |
+| Reading time per month | ~960 h (12,000 × 12 min × 40 % = 57,600 min) ≈ 6 FTE at ~160 h per agent-month | guess | Derived: arithmetic on the three guesses above |
+| Cost of an agent, all-in | €45k per year | analogy | Paylio case (S2 slides, p. 37). 6 FTE × €45k ≈ €270k a year |
+| Target: handling time down | −15 % (12 → 10.2 min) | analogy | Brynjolfsson, Li & Raymond, "Generative AI at Work" (QJE 2025, arXiv:2304.11771): +15 % issues resolved per hour for 5,172 support agents, gain concentrated among less experienced agents; +15 % throughput ≈ −13 % time per issue. Microsoft reports −12 % average handling time for Copilot for Service (vendor-reported, relayed by CX Today). Our bar is set just above these benchmarks; S6 fixes the real minimum detectable effect. Gross value: 15 % × 2,400 h a month = 360 h ≈ 2.3 FTE ≈ €100k a year, before cost of error and tokens (S2) |
+| QA score | "no lower than today's" | not known yet | Baseline to be measured before anything else; no number invented |
 
 ## 2. Problem tree — from symptom to cause
-- **Symptom** (what people complain about): …
-- **Problem** (what is actually going wrong): …
-- **Root cause** (5 Whys):
-  1. Why? …
-  2. Why? …
-  3. Why? …
-  4. Why? …
-  5. Why? …
-- **What would fix the cause:** … — is that fix AI, a rule, a process change or a documentation fix?
+- **Symptom** (what people complain about): agents spend a large part of the day reading before replying, and replies on payment tickets take long.
+- **Problem** (what is actually going wrong): to answer one ticket, the agent has to rebuild the context by hand — which merchant, which payment, what status, what was said before — from several screens.
+- **Root cause** (5 Whys — each answer is a hypothesis; check it in three short interviews with support agents):
+  1. Why does a "where is my money" ticket take long? — About 40 % of the time goes into reading the transaction history and past tickets before a word is written (case figure, see section 1).
+  2. Why so much reading? — The ticket rarely names the transaction: the merchant writes "my payout is missing", and the agent must find the right payment among hundreds and check its status and dispute history.
+  3. Why can't the agent see the right payment at once? — The helpdesk and the payments back-office are separate tools; the ticket is not linked to the merchant's transactions or open disputes. *Check: ask how many screens an agent opens per ticket.*
+  4. Why are they not linked? — Past tickets are free text without a structured resolution or transaction reference, and linking helpdesk and ledger competes with product work for engineering time. *Check: ask whether a ticket-to-transaction link was ever requested.*
+  5. Why has it not been done? — Support tooling is budgeted on ticket volume, so reading time is invisible: nobody measures it. *Check: look for "time spent reading" in the helpdesk reports; if it exists, this Why is wrong.*
+- **What would fix the cause:** two layers. (a) A **rule / integration**: attach the merchant's recent transactions, open disputes and last tickets to the ticket automatically (lookup by merchant ID, date, amount) — a tooling fix, not AI. (b) What a rule cannot do: pick the transaction the merchant means from a vague free-text description, read unstructured past tickets, and write a draft that cites the evidence and flags PSD2 / KYC constraints — that is **GenAI**. Fix (a) is also the retrieval layer of the copilot, so it is built anyway.
 
 ## 3. Is AI the right tool?
 | Question | Our answer |
 |---|---|
-| Is there a rule that solves 80 % of it? | |
-| Is it a prediction / generation problem, or an organisational decision? | |
-| Do we have the data — which, how much, who owns it? | |
-| What does one error cost — and who pays it? | |
+| Is there a rule that solves 80 % of it? | No, but a rule solves part of it. Auto-attaching transactions and disputes removes the *search*, not the *interpretation*: it cannot choose which payment the merchant means, summarise past tickets or write the reply. Our guess is that it removes 30–50 % of the reading time; test by observing 20 tickets. It does not clear 80 %, so it is the baseline to beat and the first layer of the product. |
+| Is it a prediction / generation problem, or an organisational decision? | Generation (summary and draft) plus a matching prediction (which transaction). The decisions — refund, dispute outcome, what to promise the merchant — are policy and stay with the human agent; the copilot executes none of them. |
+| Do we have the data — which, how much, who owns it? | In the fictional company: transactions, merchant accounts, past tickets and the dispute / PSD2 / KYC policies, owned by the fintech. In our project: no real data, so we build a synthetic ticket set with gold-labelled transactions (`tickets_v0`, S4). Coverage of rare dispute types is the weak point. |
+| What does one error cost — and who pays it? | A wrong transaction match is the worst error: the agent sends a confident reply about the wrong payment; the merchant acts on wrong information (re-ships, disputes, waits), the fintech pays in credits, churn, complaints and possibly a PSD2 information issue. Because every draft is read by a human, the error is recoverable, but a wrong draft is worse than no draft. Cost per error: guess, priced in S2. |
 
-**Level chosen:** rule / classical ML / GenAI / agent — **and why not the level below:** …
+**Level chosen:** GenAI at L2 — retrieval-grounded drafting with a human sending every reply. Not an agent. **Why not the level below:** a rule or classical ML can retrieve and rank candidate transactions (and we use one for that), but neither reads unstructured past tickets nor writes a cited draft; the reading and writing is 40 % of the time we want to remove.
 
 ## 4. Why this agent — the four selection questions
 | Criterion | Our answer, one line |
 |---|---|
-| High frequency — is the work done every day or every hour? | |
-| Bounded decision space — can we list its tools and outcomes on one slide? | |
-| Measurable success — can we say in one sentence whether it succeeded on one ticket? | |
-| Recoverable failure — if it is wrong, is the damage limited and reversible? | |
+| High frequency — is the work done every day or every hour? | Yes: ~12,000 tickets a month, about 550 per working day, and every agent reads context on every ticket. |
+| Bounded decision space — can we list its tools and outcomes on one slide? | Yes: read-only lookups (account, transactions, past tickets, policy snippets), one output (a cited draft or a "context only" panel), no write tool and no send tool. |
+| Measurable success — can we say in one sentence whether it succeeded on one ticket? | Yes: the draft cites the right transaction and the agent sends it with only minor edits, faster than the baseline handling time. |
+| Recoverable failure — if it is wrong, is the damage limited and reversible? | Yes at L2, because a human reads every draft before it leaves; the residual risk is an agent sending a wrong match unread (automation bias), which we track as a counter-metric. |
 
 ## 5. Press release (Working Backwards)
 *One paragraph, dated launch day: who it is for, what changed for them, one number, one customer quote.*
 
-…
+**Keelpay gives its support agents a payments copilot — and no reply goes out unreviewed.** *Launch day, October 2027 (target: 12 months from now).* Keelpay, the B2B payments platform used by 800 merchants, today announced that its support team now answers payment and dispute tickets with an assistant that has already read the merchant's account, found the transaction in question and drafted the reply, with links to the evidence and the relevant PSD2 / KYC constraint flagged. The agent edits and sends; the assistant never writes to a merchant itself, and any draft it cannot tie to a real transaction is shown as context only. Average handling time on these tickets fell from 12 to about 10 minutes, with the QA score unchanged. "I asked where my payout was, and the reply named the exact transfer and the day it would land — I did not have to write back twice," said Sofia Marchetti, finance manager at an online homeware merchant. "My agents now spend their time on the cases that need judgement, not on reading histories," said Keelpay's Head of Support.
 
 ## 6. What would have to be true?
 | # | Hypothesis | Measured / analogy / guess | How we will test it | Session |
 |---|---|---|---|---|
-| 1 | | | | S4 prototype / S5 metrics / S6 A/B |
-| 2 | | | | |
-| 3 | | | | |
+| 1 | When the copilot shows a draft as a reply (groundedness above the threshold), it cites the right transaction in at least 95 % of cases, and at least 60 % of payment tickets reach that threshold. The bars are starting points: with 60 % of 12,000 tickets drafted, a 5 % error rate still puts ~360 wrong drafts a month in front of agents. | guess | Run the prototype on a 200-ticket synthetic set with gold-labelled transactions. To avoid a flattering result, gold labels are written by a teammate who does not tune the prompt, and at least a third of the tickets are hard cases (vague description, several similar payments). Count correct matches among drafts above the threshold, and the share of tickets that get a draft. | S4 prototype (`tickets_v0`) |
+| 2 | Reading really is ~40 % of handling time, and a cited draft cuts handling time by at least 15 % at constant quality. | 40 %: guess · 15 %: analogy (see section 1) | Time-study on a sample of tickets with and without the draft (split reading / writing), scored by a QA rubric; then pre-register the per-agent copilot-on vs copilot-off comparison with its MDE and sample size. | S5 metrics, S6 A/B |
+| 3 | Agents do not send a wrong match unread: at least 90 % of seeded wrong-transaction drafts are caught or corrected before sending. Together with hypothesis 1 this still lets ~36 wrong replies a month through (12,000 × 60 % × 5 % × 10 %), so the cost of error in S2 decides whether the bar is high enough. | guess | Seed at least 30 wrong-match drafts among real ones across 6–8 testers acting as agents; count how many are sent as-is. The sample is small, so the result is indicative, not significant. | S4 prototype, S5 counter-metric |
 
 ## 7. Do-nothing baseline
 What happens in 12 months if nobody builds anything? (It is not zero: the team gets faster, the documentation improves, volumes grow.)
 
-…
+The reading cost does not stay at today's ~€270k a year. Two forces pull in opposite directions: ticket volume grows (guess: +15 % a year as the merchant base grows) and agents get faster by themselves with experience and better macros (analogy: +5 % a year efficiency, as in the Paylio do-nothing line of the S2 sheet). Net: ~€270k × 1.15 × 0.95 ≈ **€295k a year** (about €270k if volume grows only 5 %, about €320k at +25 %), and the team needs about 9 % more capacity just to hold today's response times — roughly 1.7 extra agents, ≈ €75k a year at €45k each, or slower replies. Merchants keep getting replies built by hand from two tools, and a wrong transaction match stays possible with no safety net. All of this is guess-derived and is re-priced with low / base / high ranges in the S2 sizing.
