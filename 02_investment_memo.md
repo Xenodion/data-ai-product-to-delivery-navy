@@ -1,6 +1,6 @@
 # 02 — Investment memo (one page)
 
-**Recommendation:** **CONDITIONAL GO, in two stages.** Ship now the rules-only ticket-to-transaction attach with routing on structured fields (stage 1). Build the router and the drafter (stage 2) only if the S4 gold-set experiment clears these bars together: the router (the fine-tuned model if it beats the prompted one) is at least 90 % right on the first pass with at least half of the tickets routed automatically, total time saved reaches about 14 % of handling time, and incremental serious errors stay at or below 0.1 % of tickets.
+**Recommendation:** **CONDITIONAL GO, in two stages.** Ship now the rules-only ticket-to-transaction attach (stage 1). Build the router and the drafter (stage 2) only if the S4 gold-set experiment clears these bars together: the router (the fine-tuned model if it beats the prompted one) is at least 90 % right on the first pass with at least half of the tickets routed automatically, total time saved reaches about 14 % of handling time, and incremental serious errors stay at or below 0.1 % of tickets.
 
 > Line one is the decision. Everything below is evidence for that line. Same base case as `02_sizing.xlsx`; the company, scale and constraint come from the frozen brief in the README. **The margin is thin and the memo says so (section 2).**
 
@@ -9,7 +9,7 @@
 | Net annual value | −94,439 | +83,659 | +372,922 | **+88,082** |
 | Probability | 0.30 | 0.50 | 0.20 | — |
 | Do-nothing (value of the current process improving on its own) | 43,200 | 77,490 | 151,200 | 77,490 (the sheet compares with Base) |
-| Next-best project: rules-only attach and structured routing, no AI (the hurdle) | 3,880 | 78,486 | 192,728 | 78,486 |
+| Next-best project: rules-only ticket-to-transaction attach, no AI (the hurdle) | 3,880 | 78,486 | 192,728 | 78,486 |
 
 Steady state (Q4 adoption held for a full year, base): **+178,454 a year**. Year 1 carries the ramp-up.
 
@@ -64,7 +64,7 @@ Steady state (Q4 adoption held for a full year, base): **+178,454 a year**. Year
 ## 4. Compared to what?
 **Do-nothing is not zero.** Agents get about 3 % faster a year, worth **€77k** at year-1 volume and cost. Volume also grows with the merchant base, so the cost of reading, routing, looking up and writing grows with it (problem statement, §7). The template compares it as a rival; the 3 % happens in both worlds, so we also read the project against zero (Decision tab, rows 41–43).
 
-**Next-best project.** The same engineers can ship the rules-only attach: each ticket gets the merchant's recent transactions, open disputes and last tickets by merchant ID, date and amount, and structured fields route the easy tickets.
+**Next-best project.** The same engineers can ship the rules-only attach: each ticket gets the merchant's recent transactions, open disputes and last tickets by merchant ID, date and amount.
 - **Value:** about **€78k net a year** in the base case (6 % of handling time saved, 70 % adoption, €30k a year to run). It sits next to do-nothing (€77k) because both rest on a few percent of a €2.5M handling cost. To test it, observe 20 tickets.
 - **Nothing is lost:** it is also the copilot's lookup layer, so stage 2 starts from it.
 
