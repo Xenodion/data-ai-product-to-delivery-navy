@@ -41,7 +41,9 @@ We keep from the course proposal P2 only the universe: a B2B payments fintech, a
 | **The trap** | A misread message looks handled: an urgent ticket (dispute deadline, compliance hold) sits in the wrong desk, or a draft is built on the wrong payment. When unsure, the copilot must say so rather than guess. |
 | **Innovative angle** | Anything the copilot cannot determine is marked `UNDEFINED` and left to the support agent, not guessed; the support agent can open any ticket and see what the copilot read. Our A/B alternates copilot-on and copilot-off weeks for the same support agents, not for tickets, because the ticket mix changes day to day. |
 
-### Starting numbers (all assumptions, nothing measured)
+### Starting numbers (given by the scenario)
+
+These are the company's own figures in our fictional case, the way a ticket log and the finance team would give them in real life. They are the fixed starting base, not hypotheses.
 
 | Number | Value |
 |---|---|
@@ -51,7 +53,7 @@ We keep from the course proposal P2 only the universe: a B2B payments fintech, a
 | Tickets first routed to the wrong desk | ~1 in 7 (about 15 %, ~2,900 tickets a month) |
 | Languages | French, English |
 
-Every other number (handling time, team size, costs, benefits) is derived bottom-up in the S2 sizing from these five, tagged measured / analogy / assumption, and never copied from the course examples (Paylio, the sample brief).
+Every other number (handling time, team size, costs, benefits) is derived bottom-up in the S2 sizing from these five, tagged measured / analogy / guess (the course's tags), and never copied from the course examples (Paylio, the sample brief).
 
 ### Role of the fine-tuned model, and the sub-project
 
@@ -61,7 +63,7 @@ The model is a small language model fine-tuned to read the free-text ticket and 
 
 - Do not reuse numbers, names or conclusions from the course's example brief, from `docs/` examples, or from earlier versions of our files.
 - Do not add scope beyond the table above (no autonomous sending, no AI agent in v1, no extra channels) without team agreement.
-- A number without a tag (measured / analogy / assumption) and a test does not belong in the files.
+- A derived number without a tag (measured / analogy / guess) and, for a guess, a test does not belong in the files. The five starting numbers are given by the scenario and need no test.
 
 ## Repository structure
 One numbered file per session. Every member authors commits in at least four of the numbered files.
