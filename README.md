@@ -18,9 +18,10 @@
 - **Trust level per step:**
   - Pre-read the account and match the transaction: **L1** (suggests, shows its evidence)
   - Flag PSD2 / KYC constraints: **L1** (flags, never decides)
-  - Draft the reply: **L2** (a human reads and approves every reply); drafts below the groundedness threshold are shown as "context only", not as a reply
+  - Draft the reply: **L2** (a human reads and approves every reply); drafts below the groundedness threshold are shown as "context only", not as a reply. **Dispute tickets get no draft in year 1** (context only): their cost of error is too high (S2)
   - Send to the merchant: **human only** — the agent has no send tool
 - **One thing it must never do:** send anything to a merchant — it drafts, a human sends.
+- **S2 decision:** **NO-GO** on the LLM copilot at today's scale (expected value −€64k a year vs a €70k hurdle); ship the rule-only ticket-to-transaction auto-attach first — see `02_investment_memo.md`.
 
 ## Repository structure
 One numbered file per session. Every member authors commits in at least four of the numbered files.
@@ -28,10 +29,10 @@ One numbered file per session. Every member authors commits in at least four of 
 | File | Session | Status |
 |---|---|---|
 | `00_pitch.md` | before S3 — only if you bring your own idea | not needed — we start from P2 |
-| `01_problem_statement.md` | S1–S2 — Assignment 1 | draft v0 — to review |
-| `governance.md` | created for Assignment 1, one line added every session | draft v0 — Session 1 filled |
-| `02_sizing.xlsx` | S2 — Assignment 2 | to do |
-| `02_investment_memo.md` | S2 — Assignment 2 | to do |
+| `01_problem_statement.md` | S1–S2 — Assignment 1 | v1 — numbers updated after S2 research |
+| `governance.md` | created for Assignment 1, one line added every session | Sessions 1–2 filled |
+| `02_sizing.xlsx` | S2 — Assignment 2 | v1 — filled (NO-GO) |
+| `02_investment_memo.md` | S2 — Assignment 2 | v1 — NO-GO |
 | `03_product_brief.md` | S3 | to do |
 | `04_architecture.md` | S4 | to do |
 | `05_metrics.md` | S5 | to do |
