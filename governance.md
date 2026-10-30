@@ -2,7 +2,7 @@
 
 > Created for Assignment 1, one line added every session. One question at the oral is drawn from this file.
 > Answers are provisional: write what you know today, and mark what you still have to check.
-> Aligned on 30 October 2026 to the frozen brief in the README (Keelpay, 1,500 merchants, 20,000 tickets a month, two sub-cases: automatic routing by a fine-tuned model plus fixed rules, and a reviewed draft; `UNDEFINED` left to the support agent).
+> Aligned on 30 October 2026 to the frozen brief in the README (Keelpay, 1,500 merchants, 30,000 tickets a month, two sub-cases: automatic routing by a fine-tuned model plus fixed rules, and a reviewed draft; `UNDEFINED` left to the support agent).
 
 ## Session 1 — the six questions
 | # | Question | Our answer (provisional) | To check with |

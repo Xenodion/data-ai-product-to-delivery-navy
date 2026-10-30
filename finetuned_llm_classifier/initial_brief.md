@@ -3,7 +3,7 @@
 > Consistent with the frozen NAVY brief in the root `README.md` (source of truth). If they disagree, the root README wins.
 
 ## 1. Context and goal
-Keelpay is a B2B payments fintech (~1,500 merchants, ~20,000 tickets a month, French and English, mostly by email). Its support agents spend about 15 % of handling time reading and routing the free-text message, and about 1 ticket in 7 first lands in the wrong desk (scenario figures, see the README). The NAVY copilot prepares each ticket for the support agent and never sends anything.
+Keelpay is a B2B payments fintech (~1,500 merchants, ~30,000 tickets a month, French and English, mostly by email). Its support agents spend about 15 % of handling time reading and routing the free-text message, and about 1 ticket in 7 first lands in the wrong desk (scenario figures, see the README). The NAVY copilot prepares each ticket for the support agent and never sends anything.
 
 This sub-project fine-tunes a small LLM (on Vertex AI) for the first step of that copilot: reading the raw merchant message and returning a structured JSON. It is only worth keeping if it beats cheaper options (keyword and ID rules, a classical text classifier, a prompted large model) on a held-out set labelled by someone who did not tune it.
 

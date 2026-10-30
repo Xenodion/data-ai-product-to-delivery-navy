@@ -8,16 +8,16 @@
 
 ## 1. The problem in one sentence
 
-Support agents at Keelpay, a B2B payments fintech handling about 20,000 tickets a month from about 1,500 merchants, spend about 15 % of each ticket's handling time reading a free-text message and routing it, and about 45 % finding the payment and its history and writing the reply; about 1 ticket in 7 first lands in the wrong desk and loses a hand-over, and an urgent ticket in the wrong desk can miss its deadline. Today the support agent does all of this by hand. Success looks like average handling time down, end to end, at a QA score no lower than today's, with no rise in urgent tickets reaching the wrong desk.
+Support agents at Keelpay, a B2B payments fintech handling about 30,000 tickets a month from about 1,500 merchants, spend about 15 % of each ticket's handling time reading a free-text message and routing it, and about 45 % finding the payment and its history and writing the reply; about 1 ticket in 7 first lands in the wrong desk and loses a hand-over, and an urgent ticket in the wrong desk can miss its deadline. Today the support agent does all of this by hand. Success looks like average handling time down, end to end, at a QA score no lower than today's, with no rise in urgent tickets reaching the wrong desk.
 
 | Number in the sentence | Value | Given / measured / analogy / guess | Source or test |
 |---|---|---|---|
 | Merchant customers | ~1,500 | given | Scenario data |
-| Tickets per month | ~20,000 | given | Scenario data (about 13 tickets per merchant a month) |
+| Tickets per month | ~30,000 | given | Scenario data (about 20 tickets per merchant a month) |
 | Share of handling time: reading and routing (sub-case A) | ~15 % | given | Scenario data |
 | Share of handling time: finding the payment and history, and writing the reply (sub-case B) | ~45 % | given | Scenario data |
 | Rest of handling time (validating and sending, back-office actions, wrap-up) | ~40 % | given | Scenario data; the copilot does not act on it |
-| Tickets first routed to the wrong desk | ~1 in 7 (about 15 %, ~2,900 tickets a month) | given | Scenario data |
+| Tickets first routed to the wrong desk | ~1 in 7 (about 15 %, ~4,300 tickets a month) | given | Scenario data |
 | Languages | French, English | given | Scenario data |
 | Average handling time, team size, cost per support agent | not set here | — | Derived bottom-up in the S2 sizing, tagged and sourced there |
 | Target for handling time | not set here | — | Set in S2 against published benchmarks (e.g. Brynjolfsson, Li & Raymond, QJE 2025, arXiv:2304.11771: +15 % issues resolved per hour for support agents) and fixed as a minimum detectable effect in S6 |
@@ -76,7 +76,7 @@ The flow is not one AI decision. For each step we ask what the cheapest tool tha
 | C | Open-source LLM with a system prompt, in our cloud, not fine-tuned (the same hosted model the drafter uses) |
 | D | Small fine-tuned LLM, in our cloud |
 
-*Criteria.* (1) **Effectiveness:** accuracy per field (request type, payment, amount, urgency), urgent tickets sent to the wrong desk, share left `UNDEFINED` rather than wrong, share of valid JSON. (2) **Total monthly cost at 20,000 tickets:** hosting, training, maintenance, re-evaluation (`02_sizing.xlsx`, Read options tab). (3) **Latency and operability:** response time, and one model to run or two.
+*Criteria.* (1) **Effectiveness:** accuracy per field (request type, payment, amount, urgency), urgent tickets sent to the wrong desk, share left `UNDEFINED` rather than wrong, share of valid JSON. (2) **Total monthly cost at 30,000 tickets:** hosting, training, maintenance, re-evaluation (`02_sizing.xlsx`, Read options tab). (3) **Latency and operability:** response time, and one model to run or two.
 
 *Decision rule.* A is the main alternative; we assume it is not enough because the facts are in free natural language (two languages, forwarded threads, vague wording), but we measure it. C is the real competitor: the drafter's larger model is already running, so prompting it to route adds almost no hosting, and D cannot be defended on cost. D must earn its place on effectiveness: it beats A and B, and beats C by a margin fixed before the run on the fields that carry cost (first-time-right routing of urgent tickets, valid JSON, calibrated `UNDEFINED`), at equal or lower latency. If D is only as good as C, we keep C (one model, less to run) and the fine-tuning project reports that result. Why we expect D to win: a closed taxonomy, two languages and a fixed JSON are the narrow extraction setting where small fine-tuned models usually beat prompting, and routing runs on every ticket and is the highest-value lever (one point of routing accuracy is worth about EUR 14k a year in hand-overs, sizing). That expectation is hypothesis 1, not a fact.
 
@@ -86,7 +86,7 @@ The flow is not one AI decision. For each step we ask what the cheapest tool tha
 
 | Criterion | Our answer, one line |
 |---|---|
-| High frequency — is the work done every day or every hour? | Yes: ~20,000 tickets a month, about 900 per working day, and every one is read, routed and answered. |
+| High frequency — is the work done every day or every hour? | Yes: ~30,000 tickets a month, about 1,400 per working day, and every one is read, routed and answered. |
 | Bounded decision space — can we list its tools and outcomes on one slide? | Yes: read the message, return one JSON, route through a fixed table, read-only lookups and retrieval, one output (a pre-filled case and a cited draft, or an `UNDEFINED` flag), no write tool and no send tool. |
 | Measurable success — can we say in one sentence whether it succeeded on one ticket? | Yes: the ticket reaches the right desk first time, the draft cites the right payment, and the support agent sends it with only minor edits, faster than the baseline. |
 | Recoverable failure — if it is wrong, is the damage limited and reversible? | Yes with a human on every draft and a bounded reroute loop; the residual risks are an urgent ticket waiting in the wrong desk and a wrong reading validated unread (automation bias), both tracked as counter-metrics. |
