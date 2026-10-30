@@ -4,7 +4,7 @@
 
 > Every number says where it comes from: **measured**, **analogy** (a comparable, with its source) or **guess** (and how we will test it) — the course's own tags. The company, the starting numbers and the vocabulary are fixed in the README ("frozen brief"). Those numbers are the company's data in our scenario (what a ticket log would give in real life), so they carry the tag **given**, with no test. This file builds on them and does not restate them differently.
 
-> **Status:** rebuilt on the frozen brief, as one end-to-end flow with two sub-cases (routing and drafting). Costs in euros, team size, handling time and targets are not here on purpose: they are derived bottom-up in the S2 sizing (`02_sizing.xlsx`). The earlier version (800 merchants, 12,000 tickets, 40 % reading, a single drafting copilot) is superseded.
+> **Status:** v1, one end-to-end flow with two sub-cases (routing and drafting). Euro figures and targets are derived in the S2 sizing (`02_sizing.xlsx`) and the investment memo, not here.
 
 ## 1. The problem in one sentence
 

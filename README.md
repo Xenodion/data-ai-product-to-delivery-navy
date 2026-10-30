@@ -13,7 +13,7 @@
 
 ## Our agent: the frozen brief (read this first)
 
-> **Source of truth.** This section is the definitive starting brief of NAVY, frozen on 30 October 2026. Every other file must be consistent with it. If a file disagrees (numbers, company, scope), the file is wrong, not this section. Change this section only with the whole team's agreement, then update the files below in the same commit. The earlier version (800 merchants, 12,000 tickets, 40 % reading, 18 agents, "NO-GO") came from the course proposal P2 and is **superseded**.
+> **Source of truth.** This section is the definitive starting brief of NAVY, frozen on 30 October 2026. Every other file must be consistent with it. If a file disagrees (numbers, company, scope), the file is wrong, not this section. Change this section only with the whole team's agreement, then update the files below in the same commit.
 
 We keep from the course proposal P2 only the universe: a B2B payments fintech, an agent-assist copilot that drafts and never sends, a human who validates, trust level L2. The company, scale, pain, job, metric and trap are our own.
 
@@ -70,7 +70,7 @@ The sizing (`02_sizing.xlsx`, Decision tab) gives the full copilot a positive ex
 
 ### Rules for anyone (human or AI assistant) editing this repo
 
-- Do not reuse numbers, names or conclusions from the course's example brief, from `docs/` examples, or from earlier versions of our files.
+- Do not reuse numbers, names or conclusions from the course's example brief or from the course documents in `docs/`.
 - Do not add scope beyond the table above (no autonomous sending, no AI agent in v1, no extra channels) without team agreement.
 - A derived number without a tag (measured / analogy / guess) and, for a guess, a test does not belong in the files. The five starting numbers are given by the scenario and need no test.
 
@@ -80,11 +80,11 @@ One numbered file per session. Every member authors commits in at least four of 
 | File | Session | Status |
 |---|---|---|
 | `00_pitch.md` | before S3 — our redefined case | filled |
-| `01_problem_statement.md` | S1–S2 — Assignment 1 | v1 — numbers updated after S2 research |
+| `01_problem_statement.md` | S1–S2 — Assignment 1 | v1 |
 | `governance.md` | created for Assignment 1, one line added every session | Sessions 1–2 filled |
-| `02_sizing.xlsx` | S2 — Assignment 2 | v1 — filled (NO-GO) |
-| `02_investment_memo.md` | S2 — Assignment 2 | v1 — NO-GO |
-| `03_product_brief.md` | S3 | to do |
+| `02_sizing.xlsx` | S2 — Assignment 2 | v1 — filled, conditional go |
+| `02_investment_memo.md` | S2 — Assignment 2 | v1 — conditional go (staged) |
+| `03_product_brief.md` | S3 | v1 |
 | `04_architecture.md` | S4 | to do |
 | `05_metrics.md` | S5 | to do |
 | `06_ab_protocol.md` | S6 | to do |
