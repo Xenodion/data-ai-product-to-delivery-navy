@@ -1,3 +1,5 @@
+> **STALE — do not use or cite.** This memo belongs to the superseded case (800 merchants, 12,000 tickets, LLM drafting only, NO-GO). It is rewritten from the frozen brief (see README) after the sizing is rebuilt bottom-up. Kept for its structure and reusable sources.
+
 # 02 — Investment memo (one page)
 
 **Recommendation:** **NO-GO** on building the LLM reply copilot at Keelpay's current scale. Ship the rule-only ticket-to-transaction auto-attach first. Reopen the copilot only if its unsized benefits can be shown to be worth about €100k a year.
