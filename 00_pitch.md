@@ -18,7 +18,7 @@
 
 **One thing it must never do:** send anything to a merchant — it drafts, a human sends.
 
-**Why it is a product decision:** The Head of Support and the Head of Compliance must decide whether to let a model route tickets automatically, at what confidence and criticality thresholds, and whether to run the model themselves or through an external API (cost against keeping merchant and payment data in-house). They risk urgent tickets sitting in the wrong desk, a wrong reply validated unread, and regulatory exposure on dispute and compliance questions.
+**Why it is a product decision:** The Head of Support and the Head of Compliance must decide whether to let a model route tickets automatically, at what confidence and criticality thresholds, and how much of the routing to automate given that tickets stay in Keelpay's own cloud (the data constraint), which rules out an external model API. They risk urgent tickets sitting in the wrong desk, a wrong reply validated unread, and regulatory exposure on dispute and compliance questions.
 
 ## Checklist (all seven must be ticked)
 - [x] A named company type, a ticket volume and a team size

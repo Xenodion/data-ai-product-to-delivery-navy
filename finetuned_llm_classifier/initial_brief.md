@@ -5,7 +5,7 @@
 ## 1. Context and goal
 Keelpay is a B2B payments fintech (~1,500 merchants, ~30,000 tickets a month, French and English, mostly by email). Its support agents spend about 15 % of handling time reading and routing the free-text message, and about 1 ticket in 7 first lands in the wrong desk (scenario figures, see the README). The NAVY copilot prepares each ticket for the support agent and never sends anything.
 
-This sub-project fine-tunes a small LLM (on Vertex AI) for the first step of that copilot: reading the raw merchant message and returning a structured JSON. It is only worth keeping if it beats cheaper options (keyword and ID rules, a classical text classifier, a prompted large model) on a held-out set labelled by someone who did not tune it.
+This sub-project fine-tunes a small LLM (on Vertex AI, in Keelpay's own Google Cloud project: tickets never leave Keelpay's cloud) for the first step of that copilot: reading the raw merchant message and returning a structured JSON. It is only worth keeping if it beats cheaper options (keyword and ID rules, a classical text classifier, a prompted open-source model in our own cloud) on a held-out set labelled by someone who did not tune it.
 
 ## 2. Role of the fine-tuned model in the flow
 The model does not write free text. It reads one message and **always returns one strict JSON object** with a closed set of values.
@@ -15,7 +15,7 @@ The model does not write free text. It reads one message and **always returns on
 3. **Safety net:** a text field the model cannot determine is `"UNDEFINED"`; an optional field that is absent is `null`. The model never guesses.
 4. **After the model (outside this folder):** a fixed decision tree on the JSON routes the ticket to a desk (payments, disputes, technical, compliance) and triggers the transaction lookup. Any `"UNDEFINED"` goes to a support agent for manual qualification. Nothing is sent to a merchant.
 
-Closed `intent` values (aligned with the desks): `payment_status`, `dispute`, `technical_api`, `compliance`, `other`. `urgency`: `high`, `medium`, `low`. `sentiment`: `negative`, `neutral`, `positive`. `sub_intent` is a closed list per intent, to be fixed with the synthetic dataset.
+Closed `intent` values (aligned with the desks): `payment_status`, `dispute`, `technical_api`, `compliance`, `other` (no desk: goes to human triage, like `UNDEFINED`). `urgency`: `high`, `medium`, `low`. `sentiment`: `negative`, `neutral`, `positive`. `sub_intent` is a closed list per intent, to be fixed with the synthetic dataset.
 
 ## 3. Examples (training data format)
 
