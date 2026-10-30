@@ -23,7 +23,8 @@ We keep from the course proposal P2 only the universe: a B2B payments fintech, a
 |---|---|---|
 | **Support agent** | A Keelpay employee who handles tickets | an AI agent |
 | **Copilot** | The system we specify: a model plus fixed rules plus a screen. It prepares the case and a draft and never sends. It is what the course calls the "Agent's job" | a support agent; an AI agent |
-| **Model** | The small fine-tuned language model inside the copilot: it reads the free-text message and returns a structured JSON | the copilot as a whole |
+| **Model** | The small fine-tuned language model inside the copilot: it reads the free-text message and returns a structured JSON | the copilot as a whole; the drafter |
+| **Routing / Drafting** | The two sub-cases of the copilot: sending the ticket to the right desk, and preparing the reply | |
 | **AI agent** (agentic) | A system that chooses its own steps and calls tools in a loop. We do not build one in the first version: the copilot follows fixed steps | support agent |
 | **Desk** | One of the specialist teams a ticket is routed to (payments, disputes, technical, compliance) | the NAVY project team |
 | **Merchant** | A Keelpay customer; the person who writes the ticket | |
@@ -34,12 +35,13 @@ We keep from the course proposal P2 only the universe: a B2B payments fintech, a
 | | |
 |---|---|
 | **Company** | Keelpay: ~1,500 merchant customers (SMEs and mid-size, France and Belgium), ~20,000 tickets a month in French and English, mostly payment status, disputes, technical / API and compliance questions. |
-| **Pain** | Tickets arrive as free text, mostly by email. Before a support agent can answer, they must work out what the message is about, find the payment it refers to, check what was said before and pass it to the right desk: about 45 % of handling time. Roughly 1 ticket in 7 first lands in the wrong desk and loses a hand-over. |
-| **Copilot's job** | No customer-facing autonomy. Reads the message, structures the key facts (type of request, payment, amount, urgency), routes the ticket to a desk, pre-reads the matching transactions and drafts the reply. The support agent edits and sends. |
-| **Trust level** | L2 throughout: a support agent validates every ticket and every reply. |
-| **Primary metric** | Average handling time per ticket at constant quality (QA score). Counter-metric: share of urgent tickets that reach the wrong desk. |
-| **The trap** | A misread message looks handled: an urgent ticket (dispute deadline, compliance hold) sits in the wrong desk, or a draft is built on the wrong payment. When unsure, the copilot must say so rather than guess. |
-| **Innovative angle** | Anything the copilot cannot determine is marked `UNDEFINED` and left to the support agent, not guessed; the support agent can open any ticket and see what the copilot read. Our A/B alternates copilot-on and copilot-off weeks for the same support agents, not for tickets, because the ticket mix changes day to day. |
+| **Pain** | Tickets arrive as free text, mostly by email. A support agent must work out what the message is about and send it to the right desk (~15 % of handling time), then find the payment and its history and write the reply (~45 %). Roughly 1 ticket in 7 first lands in the wrong desk and loses a hand-over. |
+| **The copilot, end to end** | No customer-facing autonomy. One flow in two sub-cases that depend on each other: the draft is only worth writing if the ticket is in the right desk. A support agent reviews every draft and sends it. |
+| **Sub-case A · Routing** | A fine-tuned model reads the message and returns a structured JSON (type of request, payment, amount, urgency); fixed rules (a decision table on the JSON) send the ticket to a desk. Shorter in time but more critical: an error costs a hand-over, and an urgent ticket in the wrong desk misses its deadline. Applied automatically; anything the model cannot determine is `UNDEFINED`, and low-confidence or critical tickets go to a support agent for triage first. Trust level: L3, with sampling (to confirm in governance). |
+| **Sub-case B · Drafting** | Once the ticket is in the right desk, the copilot retrieves the matching transactions and history (read-only, limited to the merchant), reads the relevant policies, and drafts the reply with its sources cited (retrieval-augmented generation, plus read-only database queries). Longer in time but less critical: a support agent reads and edits every draft. Trust level: L2. A ticket found misrouted at this stage is rerouted by the support agent and redrafted in the right desk, once; a second reroute goes to human triage. |
+| **Primary metric** | Average handling time per ticket, end to end, at constant quality (QA score). Handling time is hands-on time and excludes queue waiting. Counter-metrics: share of urgent tickets that reach the wrong desk; drafts on the wrong payment that are validated unread. Each sub-case also has its own diagnostic metrics (first-time-right routing; draft edit rate). |
+| **The trap** | A misread message looks handled: an urgent ticket (dispute deadline, compliance hold) sits in the wrong desk, or a confident draft is built on the wrong payment. When unsure, the copilot must say so rather than guess. |
+| **Innovative angle** | Anything the copilot cannot determine is marked `UNDEFINED` and left to the support agent, not guessed; the support agent can open any ticket and see what the copilot read and which path it took. Our A/B alternates copilot-on and copilot-off weeks for the same support agents, not for tickets, because the ticket mix changes day to day. |
 
 ### Starting numbers (given by the scenario)
 
@@ -49,15 +51,17 @@ These are the company's own figures in our fictional case, the way a ticket log 
 |---|---|
 | Merchants | ~1,500 |
 | Tickets a month | ~20,000 |
-| Share of handling time spent understanding, finding the payment and routing, before the answer is written | ~45 % |
+| Share of handling time spent reading and routing (sub-case A) | ~15 % |
+| Share of handling time spent finding the payment and history, and writing the reply (sub-case B) | ~45 % |
+| Rest of handling time, not touched by the copilot: validating and sending, back-office actions, wrap-up | ~40 % |
 | Tickets first routed to the wrong desk | ~1 in 7 (about 15 %, ~2,900 tickets a month) |
 | Languages | French, English |
 
-Every other number (handling time, team size, costs, benefits) is derived bottom-up in the S2 sizing from these five, tagged measured / analogy / guess (the course's tags), and never copied from the course examples (Paylio, the sample brief).
+Every other number (handling time, team size, costs, benefits, share of tickets handled automatically, cost of a triage) is derived bottom-up in the S2 sizing from these, tagged measured / analogy / guess (the course's tags), and never copied from the course examples (Paylio, the sample brief). The copilot shrinks the time spent in A and B, it does not remove it: the gain is the reduction in each slice, and the drafting gain only materialises on tickets that were routed correctly.
 
 ### Role of the fine-tuned model, and the sub-project
 
-The model is a small language model fine-tuned to read the free-text ticket and return a strict JSON (`intent`, `sub_intent`, `transaction_id`, `amount`, `currency`, `urgency`, `sentiment`); anything ambiguous is `UNDEFINED`. It is built in `/finetuned_llm_classifier` for the Agentic LLMOps course (its own uv project, see its README). The only interface between the copilot and that folder is the JSON schema: no cross imports. Fixed rules (a decision tree on the JSON) route the ticket; `UNDEFINED` always goes to a support agent. A fine-tuned model has to be shown to beat cheaper options (rules, classical ML, a prompted large model) on a held-out set labelled by someone who did not tune it, otherwise we do not use it.
+The model is a small language model fine-tuned to read the free-text ticket and return a strict JSON (`intent`, `sub_intent`, `transaction_id`, `amount`, `currency`, `urgency`, `sentiment`); anything ambiguous is `UNDEFINED`. It serves sub-case A only; the drafter is a prompted model with retrieval, not fine-tuned. The model is built in `/finetuned_llm_classifier` for the Agentic LLMOps course (its own uv project, see its README). The only interface between the copilot and that folder is the JSON schema: no cross imports. Details of the decision table, the criticality score and the thresholds are defined later (S3, S4), not here. A fine-tuned model has to be compared with the other options (deterministic rules, classical ML, a prompted open-source model, a prompted external API) on effectiveness, cost and data control, and is kept only if it wins (see `01_problem_statement.md`).
 
 ### Rules for anyone (human or AI assistant) editing this repo
 
