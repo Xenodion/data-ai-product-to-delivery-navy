@@ -2,7 +2,7 @@
 
 > We start from proposal P2 (agent-assist copilot, B2B payments fintech) and redefine the case: company, scale, pain, job and trap are our own. The frozen brief is in the README; this page is its half-page pitch. Figures marked *given* come from the scenario; derived figures are guesses re-computed in the S2 sizing.
 
-**The company:** Keelpay, a B2B payments fintech with ~1,500 merchant customers in France and Belgium, ~30,000 support tickets a month in French and English (mostly by email) and a support team of about 38 agents (guess: 30,000 tickets × ~10 min of hands-on handling ≈ 3,300 hours a month, at ~130 productive hours per agent).
+**The company:** Keelpay, a B2B payments fintech with ~1,500 merchant customers in France and Belgium, ~30,000 support tickets a month in French and English (mostly by email) and a support team of about 38 agents (guess: 30,000 tickets × ~10 min of hands-on handling ≈ 5,000 hours a month, at ~130 productive hours per agent).
 
 **The pain, as a cost:** About 60 % of handling time goes into reading and routing a free-text message (~15 %, given) and finding the payment and writing the reply (~45 %, given): roughly 3,000 hours a month, the work of about 23 agents, or about €1.1M a year at ~€50k all-in per agent (guess; French customer-adviser job postings, to be sourced in S2). About 1 ticket in 7 (~4,300 a month, given) first lands in the wrong desk and loses a hand-over, and an urgent one (dispute deadline, compliance hold) can miss its deadline.
 
