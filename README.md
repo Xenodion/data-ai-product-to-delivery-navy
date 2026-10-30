@@ -13,7 +13,7 @@
 
 ## Our agent: the frozen brief (read this first)
 
-> **Source of truth.** This section is the definitive starting brief of NAVY, frozen on 30 October 2026. Every other file must be consistent with it. If a file disagrees (numbers, company, scope), the file is wrong, not this section. Change this section only with the whole team's agreement, then update the files below in the same commit. The earlier version (800 merchants, 12,000 tickets, 40 % reading, 18 agents, "NO-GO") came from the course example and is **superseded**.
+> **Source of truth.** This section is the definitive starting brief of NAVY, frozen on 30 October 2026. Every other file must be consistent with it. If a file disagrees (numbers, company, scope), the file is wrong, not this section. Change this section only with the whole team's agreement, then update the files below in the same commit. The earlier version (800 merchants, 12,000 tickets, 40 % reading, 18 agents, "NO-GO") came from the course proposal P2 and is **superseded**.
 
 We keep from the course proposal P2 only the universe: a B2B payments fintech, an agent-assist copilot that drafts and never sends, a human who validates, trust level L2. The company, scale, pain, job, metric and trap are our own.
 
