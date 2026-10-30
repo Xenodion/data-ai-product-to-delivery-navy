@@ -41,7 +41,7 @@ Steady state (Q4 adoption held for a full year, base): **+178,454 a year**. Year
 - It beats the next-best project and do-nothing from about **14 %**. The base case is 14.5 %, half a point above, and the only published benchmark we have (about 13 % per issue, Brynjolfsson et al.) is slightly below it. **Our base case sits a little above the literature; the S4 and S6 measurements decide.**
 
 **What else flips the label to NO-GO** (each tested on the workbook, everything else unchanged):
-- **Volume.** The expected value stops clearing the next-best project below about **27,000 tickets a month** (about 18 per merchant). At the first 20,000 tickets, it is a NO-GO (EV €33k against €42k). The 30,000 is a scenario choice, not a measurement.
+- **Volume.** The expected value stops clearing the next-best project below about **27,000 tickets a month** (about 18 per merchant). At 20,000 tickets a month it would be a NO-GO. The 30,000 is a scenario choice, not a measurement.
 - **Scenario weights.** Moving about 3 points of probability from the optimistic to the base case gives a NO-GO. The weights are our judgement and nothing tests them.
 - **Fixed costs.** About €10k a year more flips it. We already added a €25k one-off for agent training, change management and the security and data-protection review after the final review.
 
@@ -76,20 +76,6 @@ Steady state (Q4 adoption held for a full year, base): **+178,454 a year**. Year
 **We orchestrate**, because the edge is our ledger, dispute history and desk rules, and tickets must stay in our cloud (the data constraint): managed components in our own cloud (model hosting, retrieval) around our routing table and review screen. Weighted scores from the `Build or buy` tab: **Build 3.54 · Buy 3.00 · Orchestrate 3.66**. Build and Orchestrate are within the template's 0.3 margin, so the data constraint and the run burden decide.
 
 **What would change our mind:** a vendor copilot that reads our ledger, runs inside our cloud tenancy and does not train on our data. We would buy it: about €21k a year for 38 seats at ~€45 a month, roughly €25k a year less than our build-specific costs.
-
-## 6. What changed since the first NO-GO, and why
-
-The first sizing (old case, 12,000 tickets, a drafting-only copilot) was a NO-GO. The case was then redefined (README). The changes, and what each does to the label:
-
-| Change | Reason | Effect on the verdict |
-|---|---|---|
-| Case redefined: 30,000 tickets, 38 agents, two sub-cases, 15 / 45 / 40 % time slices | Our own scenario, replacing the course example | **Decisive**: NO-GO below about 27,000 tickets |
-| Fixed costs sized for an MVP (€74k, with a €25k training and security line) | A small team builds it; first guess was enterprise-sized | **Decisive**: about €10k a year more flips it |
-| Probabilities 30 / 50 / 20 | Judgement | **Decisive**: 3 points to the base case flips it |
-| Errors priced as incremental to today's human errors | Humans misroute 1 ticket in 7 already | Defensible principle; rates have no anchor |
-| Hand-over cost cut to queue delay; time saved set at 14.5 % | Avoid double counting the 15 % slice; stay near the literature | Conservative |
-| Pessimistic case = slow rollout, not a failed one | A failed rollout stops at the S4 gate | No effect on the label; the pre-gate spend is not priced |
-| Data constraint (no external API); scale-to-zero hosting | Compliance policy; Museum Guide demo | None on the go (hosting under €5k a year either way); it removes the external API from the model comparison |
 
 *Sources:*
 - `01_problem_statement.md` and `02_sizing.xlsx` (Inputs, Flow and Read options tabs).
