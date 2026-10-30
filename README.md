@@ -74,7 +74,7 @@ One numbered file per session. Every member authors commits in at least four of 
 
 | File | Session | Status |
 |---|---|---|
-| `00_pitch.md` | before S3 — only if you bring your own idea | not needed — we start from P2 |
+| `00_pitch.md` | before S3 — our redefined case | filled |
 | `01_problem_statement.md` | S1–S2 — Assignment 1 | v1 — numbers updated after S2 research |
 | `governance.md` | created for Assignment 1, one line added every session | Sessions 1–2 filled |
 | `02_sizing.xlsx` | S2 — Assignment 2 | v1 — filled (NO-GO) |
