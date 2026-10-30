@@ -40,6 +40,7 @@ One numbered file per session. Every member authors commits in at least four of 
 | `08_launch_memo.md` | S8 | to do |
 | `spec.md`, `product_brief.md` | final | to do |
 | `/prototype`, `/evals` | from S4 | to do |
+| `/finetuned_llm_classifier` | Agentic LLMOps course sub-project (own uv environment, see its README) | in progress |
 
 ## Rules
 - Commit with your own Git account: the individual question at the oral is about a commit you signed.
