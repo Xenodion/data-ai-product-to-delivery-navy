@@ -34,7 +34,7 @@ We keep from the course proposal P2 only the universe: a B2B payments fintech, a
 
 | | |
 |---|---|
-| **Company** | Keelpay: ~1,500 merchant customers (SMEs and mid-size, France and Belgium), ~30,000 tickets a month in French and English, mostly payment status, disputes, technical / API and compliance questions. |
+| **Company** | Keelpay: ~2,500 merchant customers (SMEs and mid-size, France and Belgium), ~36,000 tickets a month in French and English, mostly payment status, disputes, technical / API and compliance questions. |
 | **Pain** | Tickets arrive as free text, mostly by email. A support agent must work out what the message is about and send it to the right desk (~15 % of handling time), then find the payment and its history and write the reply (~45 %). Roughly 1 ticket in 7 first lands in the wrong desk and loses a hand-over. |
 | **The copilot, end to end** | No customer-facing autonomy. One flow in two sub-cases that depend on each other: the draft is only worth writing if the ticket is in the right desk. A support agent reviews every draft and sends it. |
 | **Sub-case A · Routing** | A fine-tuned model reads the message and returns a structured JSON (type of request, payment, amount, urgency); fixed rules (a decision table on the JSON) send the ticket to a desk. Shorter in time but more critical: an error costs a hand-over, and an urgent ticket in the wrong desk misses its deadline. Applied automatically; anything the model cannot determine is `UNDEFINED`, and low-confidence or critical tickets go to a support agent for triage first. Trust level: L3, with sampling (to confirm in governance). |
@@ -50,12 +50,12 @@ These are the company's own figures in our fictional case, the way a ticket log 
 
 | Number | Value |
 |---|---|
-| Merchants | ~1,500 |
-| Tickets a month | ~30,000 |
+| Merchants | ~2,500 |
+| Tickets a month | ~36,000 |
 | Share of handling time spent reading and routing (sub-case A) | ~15 % |
 | Share of handling time spent finding the payment and history, and writing the reply (sub-case B) | ~45 % |
 | Rest of handling time, not touched by the copilot: validating and sending, back-office actions, wrap-up | ~40 % |
-| Tickets first routed to the wrong desk | ~1 in 7 (about 15 %, ~4,300 tickets a month) |
+| Tickets first routed to the wrong desk | ~1 in 7 (about 15 %, ~5,100 tickets a month) |
 | Languages | French, English |
 
 Every other number (handling time, team size, costs, benefits, share of tickets handled automatically, cost of a triage) is derived bottom-up in the S2 sizing from these, tagged measured / analogy / guess (the course's tags), and never copied from the course examples (Paylio, the sample brief). The copilot shrinks the time spent in A and B, it does not remove it: the gain is the reduction in each slice, and the drafting gain only materialises on tickets that were routed correctly.

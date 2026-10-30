@@ -16,13 +16,13 @@
 | **Do-nothing** | Volume grows with the merchants; reading, routing and writing time grows with it and about 1 ticket in 7 keeps bouncing between desks (`01`, section 7; `02_sizing.xlsx`, do-nothing line). |
 | **Decision and owner** | Head of Support and Head of Compliance decide how much routing is automatic and at which thresholds; stage 2 is a conditional go (`02_investment_memo.md`). |
 | **Rollback trigger** | Switch routing back to proposals only if an urgent ticket is auto-routed to the wrong desk in a weekly audit sample, or incremental serious errors exceed 0.1 % of tickets; the switch is owned by the Head of Support. |
-| **Reference workload** | ~30,000 tickets a month, ~10 minutes of hands-on handling per ticket (guess), 38 support agents (guess). |
+| **Reference workload** | ~36,000 tickets a month, ~10 minutes of hands-on handling per ticket (guess), 46 support agents (guess). |
 | **Where it lives** | Inside the helpdesk the support agent already uses: a side panel on each ticket showing what the copilot read, the path it took, the sources and the draft. The S4 prototype is a Streamlit app that mimics it. |
 
 **Success criterion (one, for the S4 prototype).**
 - **Metric:** share of gold-set tickets sent to the right desk on the first pass by the router plus the decision table, while at least half of the tickets are routed automatically (a router that sends everything to triage would pass accuracy alone).
 - **Threshold:** at least 90 % first-pass correct (today 6 in 7, about 86 %; the sizing's base case is 92 %, and its flip point on routing is about 90 %) and at least 50 % routed automatically (the sizing assumes 55 %).
-- **Guardrail:** no urgent ticket routed automatically to the wrong desk; every doubtful urgent ticket ends as `UNDEFINED` or in triage.
+- **Guardrail:** no urgent ticket routed automatically to the wrong desk; every doubtful urgent ticket ends as `UNDEFINED` or in triage. Results are reported by class, and the recall on the dispute and compliance classes is read first.
 - **Data:** a gold set of at least 200 synthetic tickets, French and English, at least a third hard cases, labelled by a teammate who does not tune the model.
 - **Date:** end of S4.
 
@@ -45,10 +45,10 @@ The model ladder, one rung per part: rules for routing, lookup and logging; a pr
 ## 3. The eight candidate features
 
 1. **Router (best of options A–D):** reads the message and returns the JSON, `UNDEFINED` when unsure; the fine-tuned model is the candidate under test.
-2. **Decision table and criticality score:** fixed rules on the JSON (required fields per request type, nulls, `UNDEFINED`, amount, urgency, deadline) decide auto-route, triage or critical.
+2. **Decision table and criticality score:** fixed rules on the JSON (required fields per request type, nulls, `UNDEFINED`, amount, urgency, deadline) decide auto-route, triage or critical. The desks and examples of sub-intents (to confirm): payments status (payout delayed or missing, credit not received); disputes (chargeback, contested fee, unauthorised debit); compliance (KYC blocking, account restriction, PSD2 / strong authentication); technical / API (webhook, error code, integration); `UNDEFINED` to human triage (unclear, several requests in one message, low confidence).
 3. **Lookup and cited draft:** deterministic transaction and history lookup, then a draft with retrieved sources and read-only queries, shown in a minimal side panel.
 4. **Gold set and feedback logger:** the 200-ticket gold set, plus reroutes and edits logged as labels.
-5. **Review screen:** the richer version of the panel: what the copilot read, the path taken, sources side by side, one-click reroute.
+5. **Review screen:** the richer version of the panel, built as a case card for the support agent: the extracted fields each with the passage of the message it comes from, the lookups already run (account, transaction status, linked disputes), the path taken, sources side by side, one-click reroute.
 6. **Sentiment and tone suggestion:** flags an irritated merchant and suggests a tone.
 7. **Flawed feature 1, autonomous replies (L4):** the copilot answers simple payment-status tickets without a person.
 8. **Flawed feature 2, ledger write access:** the copilot reopens a payout or applies a refund.
@@ -59,14 +59,14 @@ RICE = Reach × Impact × Confidence ÷ Effort (person-weeks). Confidence is 50 
 
 | Rank | Feature | Reach (/mo) | Impact | Confidence | Effort (wks) | RICE | Decision |
 |---|---|---|---|---|---|---|---|
-| 1 | Decision table and criticality score | 30,000 | 2.0 | 100 % | 1.5 | **40,000** | **MUST** |
-| 2 | Gold set and feedback logger | 30,000 | 1.0 | 80 % | 1.5 | **16,000** | **MUST** |
-| 3 | Review screen | 30,000 | 1.0 | 80 % | 3.0 | **8,000** | **SHOULD** |
-| 4 | Router (best of A–D) | 30,000 | 2.0 | 50 % | 4.0 | **7,500** | **MUST** |
-| 5 | Lookup and cited draft | 24,000 | 3.0 | 50 % | 6.0 | **6,000** | **MUST** |
-| 6 | *Autonomous replies (flawed)* | 30,000 | 2.0 | 50 % | 5.0 | **6,000** | **WON'T** |
-| 7 | Sentiment and tone suggestion | 30,000 | 0.5 | 50 % | 2.0 | **3,750** | **COULD** |
-| 8 | *Ledger write access (flawed)* | 6,000 | 2.0 | 50 % | 4.0 | **1,500** | **WON'T** |
+| 1 | Decision table and criticality score | 36,000 | 2.0 | 100 % | 1.5 | **48,000** | **MUST** |
+| 2 | Gold set and feedback logger | 36,000 | 1.0 | 80 % | 1.5 | **19,200** | **MUST** |
+| 3 | Review screen | 36,000 | 1.0 | 80 % | 3.0 | **9,600** | **SHOULD** |
+| 4 | Router (best of A–D) | 36,000 | 2.0 | 50 % | 4.0 | **9,000** | **MUST** |
+| 5 | Lookup and cited draft | 28,800 | 3.0 | 50 % | 6.0 | **7,200** | **MUST** |
+| 6 | *Autonomous replies (flawed)* | 36,000 | 2.0 | 50 % | 5.0 | **7,200** | **WON'T** |
+| 7 | Sentiment and tone suggestion | 36,000 | 0.5 | 50 % | 2.0 | **4,500** | **COULD** |
+| 8 | *Ledger write access (flawed)* | 7,200 | 2.0 | 50 % | 4.0 | **1,800** | **WON'T** |
 
 ## 5. MoSCoW board
 
@@ -81,7 +81,7 @@ RICE = Reach × Impact × Confidence ÷ Effort (person-weeks). Confidence is 50 
 ## 6. The two key sentences
 
 **Flip assumption.**
-> The two MUST features that carry the flip are the router and the cited draft. The router tests routing: at least 90 % first-pass accuracy with at least half of the tickets routed automatically and no urgent ticket mis-routed, and, if the fine-tuned model is to be kept, that it beats the prompted one by a margin fixed in advance. Together with the draft, this has to bring total time saved to about 14 % of handling time, the point where the copilot beats the rules-only attach in `02_sizing.xlsx` (base case 14.5 %, published benchmark about 13 %). The router is a MUST although it ranks fourth on RICE, because its confidence is low and the whole stage-2 decision depends on it.
+> The two MUST features that carry the flip are the router and the cited draft. The router tests routing: at least 90 % first-pass accuracy with at least half of the tickets routed automatically and no urgent ticket mis-routed, and, if the fine-tuned model is to be kept, that it beats the prompted one by a margin fixed in advance. Together with the draft, this has to bring total time saved to about 13.5 % of handling time, the point where the copilot beats the rules-only attach in `02_sizing.xlsx` (base case 14.5 %, published benchmark about 13 %). The router is a MUST although it ranks fourth on RICE, because its confidence is low and the whole stage-2 decision depends on it.
 
 **The cut that hurt the most.**
 > Autonomous replies to simple "where is my money" tickets: they are the most attractive saving, since a payment-status ticket needs little judgement, but cutting them was necessary because a wrong transaction match sent without a person is the trap of this product, and our routing is already automatic.
