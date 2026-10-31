@@ -46,9 +46,7 @@ We keep from the course proposal P2 only the universe: a B2B payments fintech, a
 
 ### The flow
 
-One copilot, two sub-cases: steps 1–2 are routing (sub-case A), steps 3–5 are drafting (sub-case B). Nothing is ever sent by the copilot.
-
-![The Keelpay copilot flow: before and after minutes, the system and support-agent lanes, trust level per step](assets/copilot_flow.png)
+![The Keelpay copilot flow](assets/copilot_flow.png)
 
 ### Starting numbers (given by the scenario)
 
