@@ -48,27 +48,7 @@ We keep from the course proposal P2 only the universe: a B2B payments fintech, a
 
 One copilot, two sub-cases: steps 1–2 are routing (sub-case A), steps 3–5 are drafting (sub-case B). Nothing is ever sent by the copilot.
 
-```mermaid
-flowchart LR
-    A["Ticket<br/>free text, FR / EN"] --> B["1. Read<br/>router returns a JSON"]
-    B --> C{"2. Decision table<br/>+ criticality"}
-    C -->|"clear"| D["Auto-route<br/>L3, sampled"]
-    C -->|"UNDEFINED or<br/>low confidence"| T["Human triage"]
-    C -->|"critical"| K["Human confirms<br/>the desk"]
-    D --> E["3. Look up<br/>transactions"]
-    T --> E
-    K --> E
-    E --> F["4. Draft<br/>sources cited, L2"]
-    F --> G["5. Agent reviews,<br/>edits, sends"]
-    G --> H["6. Log<br/>reroutes and edits<br/>become labels"]
-    G -.->|"wrong desk"| R["Reroute once,<br/>then human triage"]
-    classDef machine fill:#dbeafe,stroke:#1d4ed8,color:#1f2937
-    classDef human fill:#fde68a,stroke:#b45309,color:#1f2937
-    class A,B,D,E,F,H machine
-    class T,K,G,R human
-```
-
-Blue: done by the system. Amber: a support agent. The decision table (2) is deterministic rules on the JSON.
+![The Keelpay copilot flow: before and after minutes, the system and support-agent lanes, trust level per step](assets/copilot_flow.png)
 
 ### Starting numbers (given by the scenario)
 
