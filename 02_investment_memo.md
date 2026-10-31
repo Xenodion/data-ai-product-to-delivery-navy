@@ -6,18 +6,18 @@
 
 | €/year, year 1 | Pessimistic | Base | Optimistic | Expected value |
 |---|---|---|---|---|
-| Net annual value | −92,927 | +115,257 | +458,239 | **+121,398** |
+| Net annual value | −79,051 | +193,794 | +703,149 | **+213,811** |
 | Probability | 0.30 | 0.50 | 0.20 | — |
 | Do-nothing (value of the current process improving on its own) | 51,840 | 92,988 | 181,440 | 92,988 (the sheet compares with Base) |
 | Next-best project: rules-only ticket-to-transaction attach, no AI (the hurdle) | 11,656 | 100,183 | 236,274 | 100,183 |
 
-Steady state (Q4 adoption held for a full year, base): **+229,011 a year**. Year 1 carries the ramp-up.
+Steady state (Q4 adoption held for a full year, base): **+354,670 a year**. Year 1 carries the ramp-up.
 
 ## 1. How much?
 **Bottom-up, base case, year 1.**
-- **Volume and time saved:** 36,900 tickets a month on average over the year. The copilot saves 14.5 % of handling time at full adoption: 5.4 % from routing (15 % of time × 55 % of tickets routed automatically × 65 % cut) and 9.1 % from drafting (45 % of time × 22 % cut × 92 % of tickets correctly routed). Adoption averages 44 % over the year (15 % in Q1 to 70 % in Q4).
-- **Value:** that is 28,033 ticket-equivalents at €7 of agent time each, **€196.2k gross**. Hand-overs avoided add **€36.5k** (misrouted tickets fall from 1 in 7 to 8 % on handled tickets, at €3 of queue delay each).
-- **Costs:** wrong replies **−€41.4k** (incremental, priced against today's human error rate), tokens and retries −€1.8k, fixed costs **−€74k** (integration, training and security review €28k amortised, evaluation €10k, quality owner €18k, monitoring €12k, re-evaluation €6k). Net **+€115k**.
+- **Volume and time saved:** 36,900 tickets a month on average over the year. The copilot saves about 20 % of handling time at full adoption: 6.6 % from routing (15 % of time × 55 % of tickets routed automatically × 80 % cut) and 13.7 % from drafting (45 % of time × 33 % cut × 92 % of tickets correctly routed). The machine steps are near instant; what remains is the support agent reading, checking and editing. Adoption averages 44 % over the year (15 % in Q1 to 70 % in Q4).
+- **Value:** that is 39,253 ticket-equivalents at €7 of agent time each, **€274.8k gross**. Hand-overs avoided add **€36.5k** (misrouted tickets fall from 1 in 7 to 8 % on handled tickets, at €3 of queue delay each).
+- **Costs:** wrong replies **−€41.4k** (incremental, priced against today's human error rate), tokens and retries −€1.8k, fixed costs **−€74k** (integration, training and security review €28k amortised, evaluation €10k, quality owner €18k, monitoring €12k, re-evaluation €6k). Net **+€194k**.
 
 **Where the numbers come from.**
 - **Given by the scenario** (treated as the company's logs, as the course template says): 2,500 merchants, ~36,000 tickets, the 15 % and 45 % time slices, 1 ticket in 7 misrouted, the data constraint.
@@ -29,7 +29,7 @@ Steady state (Q4 adoption held for a full year, base): **+229,011 a year**. Year
 - **Guesses to test:** everything else, each with its test in the sizing. The one that matters: **total time saved**, tested in S4 and measured in the S6 A/B.
 
 ## 2. How sure? — the verdict hangs on a few numbers
-**Scenarios.** Weighted 30 / 50 / 20, the expected value is **+€121k**. The pessimistic case is a slow rollout with higher error rates and loses **€93k**; the optimistic case gains **€458k** and supplies most of the expected value.
+**Scenarios.** Weighted 30 / 50 / 20, the expected value is **+€214k**. The pessimistic case is a slow rollout with higher error rates and loses **€79k**; the optimistic case gains **€703k** and supplies most of the expected value.
 
 **Flip points (base case, varying total time saved).**
 
@@ -38,12 +38,12 @@ Steady state (Q4 adoption held for a full year, base): **+229,011 a year**. Year
 | Net value, year 1 | +€55k | +€122k | +€190k | +€258k | +€326k |
 
 - The base case breaks even at about **7 % time saved**.
-- It beats the next-best project and do-nothing from about **13.5 %**. The base case is 14.5 %, one point above, and the only published benchmark we have (about 13 % per issue, Brynjolfsson et al.) is slightly below it. **Our base case sits a little above the literature; the S4 and S6 measurements decide.**
+- It beats the next-best project and do-nothing from about **13.5 %**. The base case is about 20 %, nearly seven points above. The only published benchmark we have (about 13 % per issue, Brynjolfsson et al., a generic copilot in chat) is lower than our base: we argue that a purpose-built pipeline with deterministic lookup and near-instant machine steps does better, but it is not proven. **The S4 and S6 measurements decide; the pessimistic case (9 %) sits below the flip point.**
 
 **What else flips the label to NO-GO** (each tested on the workbook, everything else unchanged):
-- **Volume.** The expected value stops clearing do-nothing and the next-best project below about **26,500 tickets a month** (about 11 per merchant). The 36,000 is a scenario choice, not a measurement.
-- **Scenario weights.** Moving about 6 points of probability from the optimistic to the base case gives a NO-GO. The weights are our judgement and nothing tests them.
-- **Fixed costs.** About €20k a year more flips it. We already added a €25k one-off for agent training, change management and the security and data-protection review after the final review.
+- **Volume.** The expected value stops clearing do-nothing and the next-best project below about **14,000 tickets a month** (about 6 per merchant). The 36,000 is a scenario choice, not a measurement.
+- **Scenario weights.** Moving about 22 points of probability from the optimistic to the base case gives a NO-GO. The weights are our judgement and nothing tests them.
+- **Fixed costs.** About €110k a year more flips it. We already added a €25k one-off for agent training, change management and the security and data-protection review after the final review.
 
 **What the S4 prototype tests.**
 - **Router:** the fine-tuned model against rules, classical ML and the prompted model, on first-pass accuracy, share routed automatically and urgent tickets sent to the wrong desk.
@@ -68,9 +68,9 @@ Steady state (Q4 adoption held for a full year, base): **+229,011 a year**. Year
 - **Value:** about **€100k net a year** in the base case (6 % of handling time saved, 70 % adoption, €30k a year to run). It sits next to do-nothing (€93k) because both rest on a few percent of a €3.1M handling cost. To test it, observe 20 tickets.
 - **Nothing is lost:** it is also the copilot's lookup layer, so stage 2 starts from it.
 
-**Stage 2 as an increment on stage 1.** Stage 2 is worth the copilot minus the attach: **+€15k in the base case, +€21k in expected value, −€105k in the pessimistic case.** Part of the integration is shared with stage 1, so stage 2's own fixed cost is below the €74k shown; the sizing does not split it. Stage 2 is therefore not a safe bet on the sizing alone, which is why it is conditional on measurement.
+**Stage 2 as an increment on stage 1.** Stage 2 is worth the copilot minus the attach: **+€94k in the base case, +€114k in expected value, −€91k in the pessimistic case.** Part of the integration is shared with stage 1, so stage 2's own fixed cost is below the €74k shown; the sizing does not split it. Stage 2 is therefore not a safe bet on the sizing alone, which is why it is conditional on measurement.
 
-**Does the pessimistic case clear the hurdle?** No: it loses €93k, against €12k earned by the next-best project in its own pessimistic case. That is why the decision is conditional.
+**Does the pessimistic case clear the hurdle?** No: it loses €79k, against €12k earned by the next-best project in its own pessimistic case. That is why the decision is conditional.
 
 ## 5. Build, buy or orchestrate?
 **We orchestrate**, because the edge is our ledger, dispute history and desk rules, and tickets must stay in our cloud (the data constraint): managed components in our own cloud (model hosting, retrieval) around our routing table and review screen. Weighted scores from the `Build or buy` tab: **Build 3.54 · Buy 3.00 · Orchestrate 3.66**. Build and Orchestrate are within the template's 0.3 margin, so the data constraint and the run burden decide.

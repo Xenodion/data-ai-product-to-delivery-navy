@@ -44,6 +44,10 @@ We keep from the course proposal P2 only the universe: a B2B payments fintech, a
 | **The trap** | A misread message looks handled: an urgent ticket (dispute deadline, compliance hold) sits in the wrong desk, or a confident draft is built on the wrong payment. When unsure, the copilot must say so rather than guess. |
 | **Innovative angle** | Anything the copilot cannot determine is marked `UNDEFINED` and left to the support agent, not guessed; the support agent can open any ticket and see what the copilot read and which path it took. Our A/B alternates copilot-on and copilot-off weeks for the same support agents, not for tickets, because the ticket mix changes day to day. |
 
+### The flow
+
+![The Keelpay copilot flow](assets/copilot_flow.png)
+
 ### Starting numbers (given by the scenario)
 
 These are the company's own figures in our fictional case, the way a ticket log and the finance team would give them in real life. They are the fixed starting base, not hypotheses.
