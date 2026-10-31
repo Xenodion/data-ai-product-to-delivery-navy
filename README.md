@@ -44,6 +44,29 @@ We keep from the course proposal P2 only the universe: a B2B payments fintech, a
 | **The trap** | A misread message looks handled: an urgent ticket (dispute deadline, compliance hold) sits in the wrong desk, or a confident draft is built on the wrong payment. When unsure, the copilot must say so rather than guess. |
 | **Innovative angle** | Anything the copilot cannot determine is marked `UNDEFINED` and left to the support agent, not guessed; the support agent can open any ticket and see what the copilot read and which path it took. Our A/B alternates copilot-on and copilot-off weeks for the same support agents, not for tickets, because the ticket mix changes day to day. |
 
+### The flow
+
+One copilot, two sub-cases: steps 1–2 are routing (sub-case A), steps 3–5 are drafting (sub-case B). Nothing is ever sent by the copilot.
+
+```mermaid
+flowchart TD
+    A["Merchant ticket<br/>free text, FR / EN"] --> B["1. Read<br/>the router returns a JSON<br/>UNDEFINED when unsure"]
+    B --> C{"2. Decision table<br/>+ criticality score"}
+    C -->|"clear, not critical"| D["Routed automatically to a desk<br/>L3, audited by sampling"]
+    C -->|"UNDEFINED or low confidence"| T["Human triage<br/>a support agent qualifies"]
+    C -->|"critical"| K["A human confirms the desk<br/>before any draft"]
+    T --> D
+    K --> D
+    D --> E["3. Look up<br/>transactions and history<br/>read-only, this merchant only"]
+    E --> F["4. Draft<br/>retrieval, sources cited<br/>L2"]
+    F --> G["5. Support agent reviews,<br/>edits and sends"]
+    G -->|"wrong desk"| R{"Already rerouted<br/>once?"}
+    R -->|"no"| E
+    R -->|"yes"| T
+    G --> H["6. Log<br/>reroutes and edits<br/>become labels"]
+    H -.->|"re-evaluate the router"| B
+```
+
 ### Starting numbers (given by the scenario)
 
 These are the company's own figures in our fictional case, the way a ticket log and the finance team would give them in real life. They are the fixed starting base, not hypotheses.
