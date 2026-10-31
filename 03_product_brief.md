@@ -2,7 +2,7 @@
 
 **Team:** NAVY · **Agent:** Keelpay agent-assist copilot (routing + drafting) · **Last updated:** 31 October 2026
 
-> Built on the frozen brief (README), the problem statement (`01`) and the sizing (`02_sizing.xlsx`, `02_investment_memo.md`). Minutes below use the sizing's base case; the ~10 minutes of handling time per ticket is a guess (`00_pitch.md`).
+> Built on the frozen brief (README), the problem statement (`01`) and the sizing (`02_sizing.xlsx`, `02_investment_memo.md`).
 
 ## 1. Framing and success criterion
 
@@ -28,17 +28,16 @@
 
 ## 2. To-be process and trust level per step
 
-Minutes are the base case of the sizing at full adoption: handling time 10 → 8.55 minutes (−14.5 %).
+Shares of handling time are the scenario's given figures (README); the time the copilot saves on each slice is a guess, derived in `02_sizing.xlsx` (Flow tab) and measured in S4–S6.
 
-| Step | As-is (human) | To-be step | Tool / ladder rung | Trust level | Human time after |
-|---|---|---|---|---|---|
-| **1. Read** | 1.5 min (with step 2) | The router reads the message and returns a JSON (`UNDEFINED` when unsure) | Rung 3: a small fine-tuned model if it beats the prompted one, otherwise the prompted model | **L1**: suggests, the rules in step 2 check it | 0.96 min (with step 2) |
-| **2. Route** | (in step 1) | Decision table on the JSON plus a criticality score; clear tickets routed automatically, `UNDEFINED` / low-confidence / critical tickets to human triage | Rung 1: rules | **L3** with sampling | (in step 1) |
-| **3. Look up** | 4.5 min (with step 4) | Matching transactions and history, read-only, limited to the merchant | Rung 1: exact query | **L1**: shows the evidence, decides nothing | 3.59 min (with step 4) |
-| **4. Draft** | (in step 3) | Cited draft from retrieval over the desk's policies and read-only queries | Rung 3: prompted model with retrieval | **L2** | (in step 3) |
-| **5. Review and send** | 4.0 min (with back-office and wrap-up) | A support agent reads, edits, reroutes if the desk is wrong (redrafted once), and sends | Human in the loop | **Human** | 4.0 min |
-| **6. Log and feedback** | (in step 5) | Every reading, path, edit and reroute is logged and becomes a label | Rung 1: telemetry | **L4** | 0 min |
-| **TOTAL** | **10 min** | | | | **8.55 min (−14.5 %)** |
+| Step | Share of today's handling time | To-be step | Tool / ladder rung | Trust level |
+|---|---|---|---|---|
+| **1. Read** | 15 % (steps 1–2) | The router reads the message and returns a JSON (`UNDEFINED` when unsure) | Rung 3: a small fine-tuned model if it beats the prompted one, otherwise the prompted model | **L1**: suggests, the rules in step 2 check it |
+| **2. Route** | (in step 1) | Decision table on the JSON plus a criticality score; clear tickets routed automatically, `UNDEFINED` / low-confidence / critical tickets to human triage | Rung 1: rules | **L3** with sampling |
+| **3. Look up** | 45 % (steps 3–4) | Matching transactions and history, read-only, limited to the merchant | Rung 1: exact query | **L1**: shows the evidence, decides nothing |
+| **4. Draft** | (in step 3) | Cited draft from retrieval over the desk's policies and read-only queries | Rung 3: prompted model with retrieval | **L2** |
+| **5. Review and send** | 40 % (with back-office and wrap-up, not touched) | A support agent reads, edits, reroutes if the desk is wrong (redrafted once), and sends | Human in the loop | **Human** |
+| **6. Log and feedback** | (in step 5) | Every reading, path, edit and reroute is logged and becomes a label | Rung 1: telemetry | **L4** |
 
 The model ladder, one rung per part: rules for routing, lookup and logging; a pretrained model for reading and drafting; the router climbs from rules and classical ML to a fine-tuned small model only if the rungs below fail the criterion on the gold set, and only against the prompted open-source model in our own cloud (no external API: tickets never leave Keelpay's cloud).
 
@@ -81,7 +80,7 @@ RICE = Reach × Impact × Confidence ÷ Effort (person-weeks). Confidence is 50 
 ## 6. The two key sentences
 
 **Flip assumption.**
-> The two MUST features that carry the flip are the router and the cited draft. The router tests routing: at least 90 % first-pass accuracy with at least half of the tickets routed automatically and no urgent ticket mis-routed, and, if the fine-tuned model is to be kept, that it beats the prompted one by a margin fixed in advance. Together with the draft, this has to bring total time saved to about 13.5 % of handling time, the point where the copilot beats the rules-only attach in `02_sizing.xlsx` (base case 14.5 %, published benchmark about 13 %). The router is a MUST although it ranks fourth on RICE, because its confidence is low and the whole stage-2 decision depends on it.
+> The two MUST features that carry the flip are the router and the cited draft. The router tests routing: at least 90 % first-pass accuracy with at least half of the tickets routed automatically and no urgent ticket mis-routed, and, if the fine-tuned model is to be kept, that it beats the prompted one by a margin fixed in advance. Together with the draft, this has to bring total time saved to about 13.5 % of handling time, the point where the copilot beats the rules-only attach in `02_sizing.xlsx` (base case about 20 %, published benchmark about 13 %). The router is a MUST although it ranks fourth on RICE, because its confidence is low and the whole stage-2 decision depends on it.
 
 **The cut that hurt the most.**
 > Autonomous replies to simple "where is my money" tickets: they are the most attractive saving, since a payment-status ticket needs little judgement, but cutting them was necessary because a wrong transaction match sent without a person is the trap of this product, and our routing is already automatic.
