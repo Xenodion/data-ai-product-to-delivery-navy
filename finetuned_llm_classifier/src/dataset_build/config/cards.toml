@@ -1,0 +1,313 @@
+# Weights and values of the scenario-card sampler (dataset_build/cards.py). Weights need not sum to 1.
+# Profiles: trap_boost multiplies the weight of every trap case; quota forces at least N cards carrying a tag.
+# train = natural distribution (the pool is drawn with it); seeds = the hand-validated seed set.
+# [splits] sizes the pool and its split; sizes are provisional until the price calculation.
+
+problem_sub_intents = ["delayed_credit", "missing_payment", "unauthorised_fee", "chargeback", "duplicate_charge", "amount_mismatch", "webhook_down", "api_error", "auth_failure", "account_hold"]
+always_high_sub_intents = ["account_hold"]  # a restricted or frozen account is high by definition
+amount_min = 8.0  # EUR-scale bounds of the drawn amounts, log-uniform
+amount_max = 250000.0
+
+[splits]
+pool = 9000
+train = 2000
+val = 300
+test_natural = 500
+min_per_trap = 20
+
+[profiles.train]
+trap_boost = 1.0
+
+[profiles.seeds]
+trap_boost = 1.5
+
+[profiles.seeds.quota]
+"trap:id_spaced" = 1
+"trap:id_nohyphen" = 1
+"trap:id_lowercase" = 1
+"trap:id_split_lines" = 1
+"trap:id_subject_only" = 1
+"trap:id_quoted_only" = 1
+"trap:id_bare_with_intro" = 1
+"trap:id_two_main" = 1
+"trap:id_two_equal" = 1
+"trap:id_lookalike" = 2
+"trap:id_bare_no_intro" = 1
+"trap:id_malformed" = 1
+"trap:amount_k_suffix" = 1
+"trap:amount_approx" = 1
+"trap:amount_two_main" = 1
+"trap:amount_two_equal" = 1
+"trap:currency_lone_dollar" = 1
+"trap:currency_missing" = 1
+"trap:thanks_hiding_problem" = 1
+"trap:furious_not_urgent" = 1
+"trap:polite_but_urgent" = 1
+"trap:prompt_injection" = 1
+"trap:other_language" = 1
+"sentinel:two_equal_requests" = 1
+"sentinel:too_vague" = 1
+"sentinel:truncated" = 1
+"sentinel:unintelligible" = 1
+"sentinel:pricing" = 1
+"sentinel:thanks_only" = 1
+"intent:payment_status" = 2
+"intent:dispute" = 2
+"intent:technical_api" = 2
+"intent:compliance" = 2
+"lang:en" = 10
+
+# --- label-determining variables ---------------------------------------------------------------------------
+[intent]
+payment_status = 0.20
+dispute = 0.20
+technical_api = 0.20
+compliance = 0.20
+OTHER = 0.08
+UNDEFINED = 0.12
+
+[sub_case]  # for the four real intents: the intent is clear but the sub-intent is not listed / not decidable
+normal = 0.92
+sub_other = 0.04
+sub_undefined = 0.04
+
+[other_kind]
+pricing = 3
+feature_request = 3
+thanks_only = 2
+off_topic = 2
+spam = 1
+
+[undefined_kind]
+two_equal_requests = 4
+too_vague = 3
+truncated = 2
+unintelligible = 1
+
+# A real problem for the merchant is at least medium; low is reserved for informational requests.
+[urgency_problem]
+high = 0.35
+medium = 0.65
+low = 0.0
+UNDEFINED = 0.0  # only the too_vague / unintelligible kinds are unreadable
+
+[urgency_info]
+high = 0.10
+medium = 0.25
+low = 0.65
+UNDEFINED = 0.0
+
+[urgency_other]
+high = 0.03
+medium = 0.20
+low = 0.72
+UNDEFINED = 0.0  # only the too_vague / unintelligible kinds are unreadable
+
+[sentiment]
+negative = 0.40
+neutral = 0.40
+positive = 0.15
+UNDEFINED = 0.0  # only the too_vague / unintelligible kinds are unreadable
+
+[cues.urgency]
+high = ["states a deadline within 48 hours", "says their business activity is blocked", "says funds or the account are frozen", "mentions a regulatory deadline"]
+medium = ["describes a real, ongoing problem but says operations continue (a workaround exists), with no deadline and nothing blocked"]
+low = ["purely informational, no time pressure, no impact"]
+UNDEFINED = ["gives too little information to judge how urgent it is"]
+
+[cues.sentiment]
+negative = ["openly frustrated or angry", "complains firmly", "threatens to leave or escalate"]
+neutral = ["factual and polite, with no emotion and none of these words: frustrated, unacceptable, disappointed, again"]
+positive = ["gives a clear compliment about the service or the team, not just a routine thank-you"]
+UNDEFINED = ["unintelligible text from which no tone can be read"]
+
+# --- presence of a reference / amount, by sub-intent ----------------------------------------------------------
+[presence.default]
+id = 0.60
+amount = 0.50
+currency_only = 0.05
+
+[presence.webhook_down]
+id = 0.03
+amount = 0.0
+
+[presence.api_error]
+id = 0.10
+amount = 0.0
+
+[presence.auth_failure]
+id = 0.02
+amount = 0.0
+
+[presence.integration_question]
+id = 0.02
+amount = 0.0
+
+[presence.kyc_update]
+id = 0.05
+amount = 0.02
+
+[presence.regulatory_question]
+id = 0.05
+amount = 0.02
+
+[presence.account_hold]
+id = 0.20
+amount = 0.15
+
+[presence.chargeback]
+id = 0.75
+amount = 0.95
+
+[presence.duplicate_charge]
+id = 0.65
+amount = 0.95
+
+[presence.amount_mismatch]
+id = 0.60
+amount = 0.95
+
+[presence.unauthorised_fee]
+id = 0.35
+amount = 0.90
+
+# --- transaction reference cases (non-canonical, non-none cases are traps) -----------------------------------------
+[id_present]
+canonical = 0.56
+spaced = 0.07
+nohyphen = 0.06
+lowercase = 0.05
+split_lines = 0.03
+subject_only = 0.07
+quoted_only = 0.04
+bare_with_intro = 0.05
+two_main = 0.04
+two_equal = 0.03
+
+[id_absent]
+none = 0.84
+lookalike = 0.09
+bare_no_intro = 0.03
+malformed = 0.04
+
+[id_templates]  # '#' is replaced by a random digit
+lookalike = ["INV-######", "INV-2026-####", "ORD-#####", "ORD-######", "+33 6 ## ## ## ##", "+32 4## ## ## ##", "FR76 #### #### ####", "BE68 #### #### ####", "HTTP 502", "error 504", "ticket #####", "SIREN ### ### ###"]
+malformed = ["TX-#####", "TX-#######", "TX-####", "TX-##-####"]
+bare = "######"
+
+# --- amount and currency ----------------------------------------------------------------------------------------
+[amount_case]
+plain = 0.70
+k_suffix = 0.08
+approx = 0.08
+two_main = 0.08
+two_equal = 0.06
+
+[amount_format]  # local = the ticket language's own style; other = the other style; plain = no separator
+local = 0.60
+other = 0.15
+plain = 0.25
+
+[currency]
+EUR = 0.80
+GBP = 0.07
+USD = 0.05
+CHF = 0.04
+CAD = 0.01
+SEK = 0.01
+DKK = 0.01
+NOK = 0.005
+PLN = 0.005
+
+[currency_case]
+symbol = 0.35
+code = 0.30
+name = 0.15
+lone_dollar = 0.04
+none = 0.08
+
+[currency_names.fr]
+EUR = "euros"
+GBP = "livres sterling"
+USD = "dollars américains"
+CHF = "francs suisses"
+CAD = "dollars canadiens"
+SEK = "couronnes suédoises"
+DKK = "couronnes danoises"
+NOK = "couronnes norvégiennes"
+PLN = "zlotys"
+
+[currency_names.en]
+EUR = "euros"
+GBP = "pounds sterling"
+USD = "US dollars"
+CHF = "Swiss francs"
+CAD = "Canadian dollars"
+SEK = "Swedish kronor"
+DKK = "Danish kroner"
+NOK = "Norwegian kroner"
+PLN = "zlotys"
+
+# --- semantic traps and style (style goes to meta only) -----------------------------------------------------------
+[semantic]
+none = 0.90
+thanks_hiding_problem = 0.025
+furious_not_urgent = 0.025
+polite_but_urgent = 0.025
+prompt_injection = 0.015
+other_language = 0.02
+
+[language]
+fr = 0.55
+en = 0.45
+
+[other_language]
+de = 0.4
+es = 0.4
+it = 0.2
+
+[channel]
+formal_email = 0.40
+short_email = 0.25
+chat_message = 0.15
+forwarded_thread = 0.20
+
+[length]
+short = 0.35
+medium = 0.45
+long = 0.20
+
+[persona]
+accountant = 0.2
+developer = 0.2
+small_shop_owner = 0.25
+compliance_officer = 0.1
+operations_manager = 0.15
+founder = 0.1
+
+[sector]
+retail = 0.25
+travel = 0.1
+saas = 0.2
+marketplace = 0.15
+hospitality = 0.1
+logistics = 0.1
+education = 0.1
+
+[subject_mode]
+present = 0.60
+absent = 0.25
+misleading = 0.15
+
+[noise_count]
+"0" = 0.45
+"1" = 0.40
+"2" = 0.15
+
+[noise]
+typos = 0.30
+no_accents = 0.12
+fr_en_mix = 0.12
+signature = 0.25
+disclaimer = 0.12
+quoted_thread = 0.19

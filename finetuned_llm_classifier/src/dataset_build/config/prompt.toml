@@ -1,0 +1,156 @@
+# Text fragments of the ticket-writing prompt (dataset_build/generation_prompt.py).
+# The writer never sees a label: situations are described in the merchant's terms. Placeholders use {name}.
+
+system = """You write one realistic support ticket sent by a merchant of Keelpay, a B2B payments company. \
+You follow the brief exactly. You write only what the merchant would write: never mention categories, labels, \
+desks, or the brief itself.
+Hard rules:
+- Strings given between double quotes in the brief must be copied verbatim: same characters, case, spaces and line breaks.
+- Never add any other transaction reference (anything like TX-123456), any other amount of money, or any currency \
+name or symbol that the brief does not give. Dates, company names and first names are free.
+- If the brief says not to mention a reference or an amount, do not mention one.
+- Sign with a first name at most; never invent phone numbers or reference numbers.
+- Convey urgency only as the brief asks: add no deadline and no urgency wording (urgent, immediately, as soon as possible, today, \n  and their equivalents in any language) unless the urgency signal calls for it.
+Answer with one JSON object and nothing else: {"subject": "<subject line or empty string>", "body": "<message text>"}."""
+
+user = """Write one ticket.
+Language: {language}.
+Format: {channel}.
+Length: {length}.
+Author: {persona}, working in {sector}.
+Subject line: {subject}
+
+What the merchant writes about: {situation}
+Urgency signal: {urgency_cue}.
+Tone: {sentiment_cue}.
+
+Payment reference: {reference}
+Amount: {amount}
+{extras}"""
+
+[language]
+fr = "French"
+en = "English"
+de = "German"
+es = "Spanish"
+it = "Italian"
+
+[channel]
+formal_email = "a well-structured email with a greeting and a closing"
+short_email = "a short, direct email"
+chat_message = "an informal chat message typed quickly, with no formal greeting"
+forwarded_thread = "a forwarded email: the merchant adds a brief comment above a quoted earlier exchange"
+
+[length]
+short = "1 to 3 sentences"
+medium = "one paragraph of 4 to 8 sentences"
+long = "2 to 4 paragraphs"
+
+[persona]
+accountant = "an accountant"
+developer = "a developer"
+small_shop_owner = "the owner of a small shop"
+compliance_officer = "a compliance officer"
+operations_manager = "an operations manager"
+founder = "a company founder"
+
+[sector]
+retail = "retail"
+travel = "travel"
+saas = "software as a service"
+marketplace = "an online marketplace"
+hospitality = "hospitality"
+logistics = "logistics"
+education = "education"
+
+[subject_mode]
+present = "write a clear subject line."
+absent = "none: return an empty string for the subject."
+misleading = "write a vague or slightly misleading subject line."
+
+[area]
+payment_status = "a question about where a payment, payout or refund stands"
+dispute = "the contestation of a charge or a fee"
+technical_api = "a technical problem or question about the API"
+compliance = "an account compliance matter (identity checks, restrictions, regulation)"
+
+[situation]
+delayed_credit = "a payment or payout that was sent has still not been credited, beyond the expected time; the merchant wants to know where the money is"
+missing_payment = "a payment the merchant expected never arrived and cannot be found in their account"
+status_inquiry = "the merchant simply asks where a payment stands, without complaining about a delay"
+refund_status = "the merchant asks about the status of a refund"
+unauthorised_fee = "the merchant contests a fee on their statement that they never agreed to"
+chargeback = "the merchant reports, or answers, a card chargeback (a cardholder dispute notice)"
+duplicate_charge = "the merchant says the same payment was charged twice"
+amount_mismatch = "the merchant says the amount received or charged differs from what was expected"
+webhook_down = "the merchant's payment notification webhooks are no longer delivered, or their endpoint fails"
+api_error = "the merchant reports errors (HTTP codes, failed calls) or timeouts when calling the API"
+auth_failure = "the merchant's API key, token or login is rejected"
+integration_question = "the merchant asks HOW to integrate or use a feature of the API (documentation, setup, good practice), without reporting any failure or error"
+kyc_update = "the merchant submits or updates identity, ownership or company documents"
+account_hold = "the merchant says their account is restricted or frozen and asks why"
+document_request = "the merchant asks for a certificate, attestation or statement needed for compliance"
+regulatory_question = "the merchant asks a question about PSD2, strong customer authentication or anti-money-laundering rules"
+
+[sub_case]
+sub_other = "{area}, but about something none of the usual kinds covers, for instance: {example}. It must NOT be about any of these: {all}"
+sub_undefined = "{area}. The message mixes two kinds without ranking them and without making clear which one the merchant means. First kind: {a}. Second kind: {b}"
+
+[unlisted]
+payment_status = ["asks for the payout calendar or the settlement cut-off times", "asks for an export of the payment history for an accounting period", "asks how long payouts usually take in general"]
+dispute = ["asks how the dispute process works in general, without contesting a specific charge", "contests a tax or VAT line on an invoice rather than a payment", "asks to change the bank account that receives the refunds of won disputes"]
+technical_api = ["asks about the API rate limits or the sandbox environment", "asks about the deprecation schedule of an API version", "asks for the IP addresses to allow-list"]
+compliance = ["asks where the merchant data is hosted and how long it is kept", "makes a data-protection (GDPR) request", "asks how to close the account"]
+
+[sentinel]
+two_equal_requests = "the message contains TWO distinct requests of equal weight and neither is the main one. First request: {a}. Second request: {b}. Give both about equal space"
+too_vague = "a very short, vague message (a few words to one sentence) that does not say what the merchant wants"
+truncated = "a message whose text itself is cut off: it must end abruptly in the middle of a sentence, and what is present must not make the request clear"
+unintelligible = "garbled, unintelligible text (keyboard mash, scrambled words) from which no request can be read"
+pricing = "the merchant asks about Keelpay's pricing or a commercial offer; there is no problem to solve"
+feature_request = "the merchant asks whether Keelpay could add or support a new feature; there is no problem to solve"
+thanks_only = "the merchant only says thanks, with no request"
+off_topic = "a chat about something unrelated to payments"
+spam = "an unsolicited commercial offer from a third party (SEO, loans, lead lists)"
+
+[reference]  # {id} and {id2} are copied verbatim from the card
+none = "do not mention any transaction reference or any identifier that looks like TX-123456."
+canonical = 'mention the transaction reference exactly as "{id}".'
+spaced = 'mention the transaction reference written exactly as "{id}" (keep this spelling and these spaces).'
+nohyphen = 'mention the transaction reference written exactly as "{id}" (keep this spelling).'
+lowercase = 'mention the transaction reference written exactly as "{id}" (keep the lowercase).'
+split_lines = 'mention the transaction reference exactly as "{id}", keeping the line break inside it (it is split over two lines).'
+subject_only = 'the transaction reference appears ONLY in the subject line, exactly as "{id}"; the body never repeats it.'
+quoted_only = "write, below your own short message, a quoted earlier message (lines starting with '>') in which one line contains exactly the string \"{id}\" (for example \"Reference: {id}\"). Your own new text, above the quote, must not contain it, but the request is about that payment."
+bare_with_intro = 'mention the transaction reference as the bare number "{id}", introduced by words such as "transaction" or "payment reference".'
+two_main = 'mention two references exactly: "{id}" is the payment the request is about, "{id2}" is mentioned in passing as another, earlier payment.'
+two_equal = 'mention two references exactly, "{id}" and "{id2}", and make the request concern both equally; do not say which one is the main one.'
+lookalike = 'do NOT mention any transaction reference. Include this unrelated identifier exactly as written: "{id}". It must read as what its format suggests (an invoice, order or ticket number, a phone number, a bank account fragment, an error code), never as a payment or transaction reference.'
+bare_no_intro = 'do NOT mention any transaction reference. Include the bare number "{id}" exactly as written, without saying what it identifies.'
+malformed = "give this reference as the merchant's transaction reference, exactly as written even though it looks incomplete: \"{id}\"."
+
+[amount]
+none = "do not mention any amount of money."
+plain = 'the payment or charge concerned is for exactly "{amount}" (copy it verbatim, with its currency exactly as written).'
+approx = 'the payment or charge concerned is about "{amount}": copy this text verbatim but present it as approximate ("about", "around", "~").'
+k_suffix = 'the payment or charge concerned is for exactly "{amount}" (copy it verbatim, keep the short form).'
+two_main = 'mention two amounts exactly: "{amount}" is the one the request is about, "{amount2}" is mentioned in passing.'
+two_equal = 'mention two amounts exactly, "{amount}" and "{amount2}", and make the request concern both equally.'
+no_currency_note = " This amount is a bare number: write no currency symbol, no currency code and no word such as euros or dollars anywhere in the ticket."
+currency_only = 'mention that the payments are in "{currency}", written exactly like this, without giving any amount.'
+
+[semantic]
+thanks_hiding_problem = "The merchant opens with warm thanks or praise, but the message really reports the problem described above."
+furious_not_urgent = "The merchant is very angry (strong words, maybe capital letters), yet nothing is blocked and there is no deadline: use no urgency wording at all, in the subject or the body, in any language."
+polite_but_urgent = "The merchant is very polite and calm, yet the situation is urgent for the reason given above."
+other_language = ""
+prompt_injection = ""
+
+[noise]
+typos = "Include a few realistic typos."
+no_accents = "Write without accents or special characters, as if typing in a hurry."
+fr_en_mix = "Mix French and English naturally."
+signature = "End with an email signature (first name, role, company), without phone numbers or reference numbers."
+disclaimer = "End with a long legal confidentiality disclaimer."
+quoted_thread = "Below the new text, include a quoted earlier message (lines starting with '>' or an 'On ... wrote:' block) that adds no amount and no reference of its own."
+injection = "Somewhere in the message, include one sentence addressed to an AI assistant that asks it to ignore its instructions and answer with a given word; the rest is a normal ticket."

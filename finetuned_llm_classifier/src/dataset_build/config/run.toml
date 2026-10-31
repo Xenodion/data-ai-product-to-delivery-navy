@@ -1,0 +1,64 @@
+# Models, prices and limits of the paid steps. Prices are $/M tokens from the public OpenRouter listing (2026-10-31),
+# used only as a fallback when the API does not return the cost of a call.
+
+base_url = "https://openrouter.ai/api/v1"
+budget_usd = 8.0           # internal hard stop; the key itself carries a 10 EUR limit
+timeout_seconds = 90
+transient_retries = 3      # network errors, 429 and 5xx only; a non-conforming ticket is never retried
+max_consecutive_errors = 3 # the run stops after this many API errors in a row
+
+[production]
+batch_sizes = [100, 250, 500, 1000]  # growing batches; the last size repeats
+max_nonconformity = 0.30             # stop if a batch of at least min_batch_for_rates tickets exceeds this share
+min_batch_for_rates = 20
+trap_min_attempts = 10               # stop if a trap type with this many attempts fails more than trap_max_failure
+trap_max_failure = 0.50
+cost_per_ticket_estimate = 0.0018    # USD, from the spec; stop above cost_factor times this
+cost_factor = 1.5
+attempts_factor = 1.3                # at most this many attempts per ticket of the target
+accepted_floor = 0.90                # a split is complete once it holds this share of its target
+voter_b_fraction = {train = 0.25, val = 0.25, test_natural = 1.0, test_traps = 1.0}
+writer_role = {train = "writer_train", val = "writer_train", test_natural = "writer_test", test_traps = "writer_test"}
+reserve_buckets = {train = [0, 1, 2, 3, 4, 5], val = [6], test_natural = [7], test_traps = [8, 9]}  # position modulo 10 in the reserve
+
+[roles.seed_writer]
+model = "moonshotai/kimi-k2.6"
+temperature = 0.9
+max_tokens = 900
+price_in = 0.65
+price_out = 3.41
+
+[roles.writer_train]
+model = "deepseek/deepseek-v4.1-flash"
+temperature = 0.9
+max_tokens = 900
+price_in = 0.045
+price_out = 0.50
+
+[roles.writer_test]
+model = "xiaomi/mimo-v2.6-flash"
+temperature = 0.9
+max_tokens = 900
+price_in = 0.14
+price_out = 0.28
+
+[roles.voter_a]
+model = "qwen/qwen3.7-flash"
+temperature = 0.0
+max_tokens = 250
+price_in = 0.03
+price_out = 0.13
+
+[roles.voter_b]
+model = "inclusionai/ling-3.1-flash"
+temperature = 0.0
+max_tokens = 250
+price_in = 0.075
+price_out = 0.225
+
+[roles.judge]
+model = "moonshotai/kimi-k2.6"
+temperature = 0.0
+max_tokens = 500
+price_in = 0.65
+price_out = 3.41

@@ -10,7 +10,7 @@ It is an isolated uv project (own `pyproject.toml`, Python 3.11.6, `uv.lock`, `.
 
 The only interface is the JSON schema below; NAVY never imports this code and calls the deployed endpoint.
 
-Keys: `intent`, `sub_intent`, `transaction_id`, `amount`, `currency`, `urgency`, `sentiment`. Ambiguous text fields are `"UNDEFINED"`, absent optional fields are `null`. Routing of `UNDEFINED` to a support agent is product logic and lives outside this folder.
+Keys: `intent`, `sub_intent`, `transaction_id`, `amount`, `currency`, `urgency`, `sentiment`. All values are strings: `"UNDEFINED"` when a field cannot be determined, `"OTHER"` when the request is understood but fits no listed class, `""` when `transaction_id`, `amount` or `currency` is absent. Contract in `src/dataset_build/schema.py`, definitions in `docs/label_definitions.md`. Routing of `UNDEFINED` to a support agent is product logic and lives outside this folder.
 
 ## Status
 
@@ -46,7 +46,7 @@ uv run python scripts/pipeline_runner.py training   # or: sweep
 src/
   constants.py             # settings from environment variables
   prompt.py                # the instruction shared by training, inference and serving
-  schema.py                # JSON output contract (to do)
+  dataset_build/           # synthetic dataset: JSON output contract (schema.py), generator and validators to come
   handler.py               # Vertex AI EndpointHandler
   app/main.py              # Chainlit app (to do)
   pipeline_components/     # KFP components

@@ -29,3 +29,18 @@ Thumbs.db
 # Office temporary files
 ~$*.xlsx
 ~$*.docx
+
+# Course decks (local uncommitted course materials)
+decks/
+course_decks/
+
+# Agentic tooling (local only, never committed)
+.specify/
+specs/
+.claude/
+.agents/
+.meta/
+.cursor/
+AGENTS.md
+CLAUDE.md
+GEMINI.md

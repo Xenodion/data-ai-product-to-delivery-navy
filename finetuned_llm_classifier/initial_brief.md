@@ -12,10 +12,10 @@ The model does not write free text. It reads one message and **always returns on
 
 1. **Input:** a raw merchant message (payment status question, dispute, technical / API issue, compliance request, or something unclear or out of scope).
 2. **Model:** returns the JSON with fixed keys `intent`, `sub_intent`, `transaction_id`, `amount`, `currency`, `urgency`, `sentiment`.
-3. **Safety net:** a text field the model cannot determine is `"UNDEFINED"`; an optional field that is absent is `null`. The model never guesses.
-4. **After the model (outside this folder):** a fixed decision tree on the JSON routes the ticket to a desk (payments, disputes, technical, compliance) and triggers the transaction lookup. Any `"UNDEFINED"` goes to a support agent for manual qualification. Nothing is sent to a merchant.
+3. **Safety net:** a field the model cannot determine is `"UNDEFINED"`; a request it understands but that fits no desk is `"OTHER"`; `transaction_id`, `amount` or `currency` absent from the ticket is `""`. All values are strings. The model never guesses.
+4. **After the model (outside this folder):** a fixed decision tree on the JSON routes the ticket to a desk (payments, disputes, technical, compliance) and triggers the transaction lookup. Any `"UNDEFINED"` or `"OTHER"` goes to a support agent for manual qualification. Nothing is sent to a merchant.
 
-Closed `intent` values (aligned with the desks): `payment_status`, `dispute`, `technical_api`, `compliance`, `other` (no desk: goes to human triage, like `UNDEFINED`). `urgency`: `high`, `medium`, `low`. `sentiment`: `negative`, `neutral`, `positive`. `sub_intent` is a closed list per intent, to be fixed with the synthetic dataset.
+Closed values (aligned with the desks): `intent` is `payment_status`, `dispute`, `technical_api` or `compliance`, plus the sentinels `OTHER` and `UNDEFINED`; `urgency` is `high`, `medium`, `low`; `sentiment` is `negative`, `neutral`, `positive`; `sub_intent` is a closed list of four per intent. The full contract is `src/dataset_build/schema.py` and the definitions are `docs/label_definitions.md` (they win over the examples below).
 
 ## 3. Examples (training data format)
 
@@ -43,9 +43,9 @@ Closed `intent` values (aligned with the desks): `payment_status`, `dispute`, `t
 {
   "intent": "technical_api",
   "sub_intent": "webhook_down",
-  "transaction_id": null,
-  "amount": null,
-  "currency": null,
+  "transaction_id": "",
+  "amount": "",
+  "currency": "",
   "urgency": "high",
   "sentiment": "neutral"
 }
@@ -59,7 +59,7 @@ Closed `intent` values (aligned with the desks): `payment_status`, `dispute`, `t
 {
   "intent": "dispute",
   "sub_intent": "unauthorised_fee",
-  "transaction_id": null,
+  "transaction_id": "",
   "amount": "45.00",
   "currency": "EUR",
   "urgency": "medium",
@@ -67,18 +67,18 @@ Closed `intent` values (aligned with the desks): `payment_status`, `dispute`, `t
 }
 ```
 
-### Example 4: unclear or out of scope (fallback)
+### Example 4: out of scope (fallback)
 * **Input:**
   > « Coucou, c'est pour savoir si vous gérez les cryptos ou si on peut changer la couleur de l'interface. »
 * **Output:**
 ```json
 {
-  "intent": "UNDEFINED",
-  "sub_intent": "UNDEFINED",
-  "transaction_id": null,
-  "amount": null,
-  "currency": null,
+  "intent": "OTHER",
+  "sub_intent": "OTHER",
+  "transaction_id": "",
+  "amount": "",
+  "currency": "",
   "urgency": "low",
-  "sentiment": "UNDEFINED"
+  "sentiment": "neutral"
 }
 ```
