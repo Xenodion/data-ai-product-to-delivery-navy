@@ -55,16 +55,13 @@ flowchart TD
     C -->|"clear, not critical"| D["Routed automatically to a desk<br/>L3, audited by sampling"]
     C -->|"UNDEFINED or low confidence"| T["Human triage<br/>a support agent qualifies"]
     C -->|"critical"| K["A human confirms the desk<br/>before any draft"]
-    T --> D
-    K --> D
     D --> E["3. Look up<br/>transactions and history<br/>read-only, this merchant only"]
+    T --> E
+    K --> E
     E --> F["4. Draft<br/>retrieval, sources cited<br/>L2"]
     F --> G["5. Support agent reviews,<br/>edits and sends"]
-    G -->|"wrong desk"| R{"Already rerouted<br/>once?"}
-    R -->|"no"| E
-    R -->|"yes"| T
-    G --> H["6. Log<br/>reroutes and edits<br/>become labels"]
-    H -.->|"re-evaluate the router"| B
+    G --> H["6. Log<br/>reroutes and edits become labels<br/>to re-evaluate the router"]
+    G -.->|"wrong desk"| R["Reroute once and redraft<br/>a second reroute goes to human triage"]
 ```
 
 ### Starting numbers (given by the scenario)
