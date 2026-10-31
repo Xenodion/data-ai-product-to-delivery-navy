@@ -16,6 +16,24 @@ ALLOWED_PARAMETERS = {
 }
 DEFAULT_MAX_NEW_TOKENS = 160
 MAX_NEW_TOKENS_LIMIT = 256  # caps GPU time per request
+MAX_INSTANCES = 8  # caps the batch size of one request
+MAX_INPUT_TOKENS = 3840  # Phi-3-mini-4k context (4096) minus MAX_NEW_TOKENS_LIMIT
+
+
+def _clean_parameters(raw: dict) -> dict:
+    """Keep the allowed generation parameters, cast them, and reject values outside a safe range."""
+    parameters = {key: ALLOWED_PARAMETERS[key](value) for key, value in raw.items() if key in ALLOWED_PARAMETERS}
+    max_new_tokens = parameters.get("max_new_tokens", DEFAULT_MAX_NEW_TOKENS)
+    if max_new_tokens < 1:
+        raise ValueError("max_new_tokens must be at least 1")
+    parameters["max_new_tokens"] = min(max_new_tokens, MAX_NEW_TOKENS_LIMIT)
+    if "temperature" in parameters and not 0 < parameters["temperature"] <= 2:
+        raise ValueError("temperature must be in (0, 2]")
+    if "top_p" in parameters and not 0 < parameters["top_p"] <= 1:
+        raise ValueError("top_p must be in (0, 1]")
+    if "top_k" in parameters and parameters["top_k"] < 1:
+        raise ValueError("top_k must be at least 1")
+    return parameters
 
 
 class EndpointHandler:
@@ -50,18 +68,17 @@ class EndpointHandler:
             one prediction per instance, in the same order. The text holds the JSON object; the caller
             validates it against the schema and routes `UNDEFINED` or invalid output to a human.
         """
-        prompts = [instance["prompt"] for instance in data["instances"]]
-        parameters = {
-            key: ALLOWED_PARAMETERS[key](value)
-            for key, value in data.get("parameters", {}).items()
-            if key in ALLOWED_PARAMETERS
-        }
-        parameters["max_new_tokens"] = min(
-            parameters.get("max_new_tokens", DEFAULT_MAX_NEW_TOKENS), MAX_NEW_TOKENS_LIMIT
-        )
+        instances = data["instances"]
+        if not 1 <= len(instances) <= MAX_INSTANCES:
+            raise ValueError(f"a request must hold between 1 and {MAX_INSTANCES} instances")
+        prompts = [instance["prompt"] for instance in instances]
+        parameters = _clean_parameters(data.get("parameters", {}))
 
         # Padding is on the left (tokenizer_config), so generation continues each prompt.
-        inputs = self.tokenizer(prompts, return_tensors="pt", padding=True).to(DEVICE_MAP)
+        inputs = self.tokenizer(prompts, return_tensors="pt", padding=True)
+        if inputs["input_ids"].shape[1] > MAX_INPUT_TOKENS:
+            raise ValueError(f"a prompt is longer than {MAX_INPUT_TOKENS} tokens")
+        inputs = inputs.to(DEVICE_MAP)
 
         with torch.no_grad():
             outputs = self.model.generate(
