@@ -7,8 +7,9 @@ from src.prompt import INSTRUCTION
 
 
 @pipeline(name="keelpay-router-training-pipeline")
-def model_training_pipeline(input_path: str) -> None:
-    data_transformation_task = data_transformation(input_path=input_path)
+def model_training_pipeline(dataset_uri: str, test_file: str = "val.csv") -> None:
+    # Development runs are evaluated on val; the final run passes test_natural.csv, then test_traps.csv
+    data_transformation_task = data_transformation(dataset_uri=dataset_uri, test_file=test_file)
 
     fine_tuning_task = fine_tuning_component(
         train_dataset=data_transformation_task.outputs["train_output"],

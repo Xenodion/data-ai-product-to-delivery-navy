@@ -10,7 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from google.cloud import aiplatform
 from kfp import compiler
 
-from src.constants import GCP_PROJECT_ID, GCP_REGION, PIPELINE_ROOT, RAW_DATASET_URI
+from src.constants import GCP_PROJECT_ID, GCP_REGION, DATASET_URI, PIPELINE_ROOT
 from src.pipelines.hyperparameter_sweep_pipeline import hyperparameter_sweep_pipeline
 from src.pipelines.model_training_pipeline import model_training_pipeline
 
@@ -21,6 +21,7 @@ PIPELINES = {
 
 parser = argparse.ArgumentParser()
 parser.add_argument("pipeline", nargs="?", choices=PIPELINES, default="training")
+parser.add_argument("--test-file", default="val.csv", help="split the training pipeline predicts on")
 args = parser.parse_args()
 
 template_path = f"{args.pipeline}_pipeline.yaml"
@@ -31,6 +32,6 @@ aiplatform.PipelineJob(
     display_name=f"router-{args.pipeline}-pipeline",
     template_path=template_path,
     pipeline_root=PIPELINE_ROOT,
-    parameter_values={"input_path": RAW_DATASET_URI},
+    parameter_values={"dataset_uri": DATASET_URI} | ({"test_file": args.test_file} if args.pipeline == "training" else {}),
     # enable_caching=False
 ).submit()

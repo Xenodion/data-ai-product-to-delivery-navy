@@ -17,7 +17,7 @@ def inference_component(
     test_dataset: Input[Dataset],
     predictions: Output[Dataset],
     instruction: str,
-    model_id: str = "microsoft/Phi-3-mini-4k-instruct",
+    model_id: str = "Qwen/Qwen2.5-3B-Instruct",
     max_new_tokens: int = 160,
 ) -> None:
     import json
@@ -63,16 +63,13 @@ def inference_component(
     logging.info("Test dataset contains %d samples", len(test_df))
 
     def build_prompt(tok, ticket: str) -> str:
-        """Apply the Phi-3 chat template to the instruction + ticket for inference."""
+        """Apply the model's chat template to the instruction + ticket for inference."""
         messages = [{"role": "user", "content": f"{instruction}\n\nTicket:\n{ticket}"}]
         return tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
 
     def extract_response(text: str) -> str:
-        """Extract assistant reply stripping chat tokens and prompt."""
-        match = re.search(r"<\|assistant\|>\s*([\s\S]*?)(?:<\|end(?:oftext)?\|>|$)", text)
-        if match:
-            return match.group(1).strip()
-        return text.strip()
+        """Cut the generated reply at the first end-of-turn token."""
+        return re.split(r"<\|im_end\|>|<\|endoftext\|>", text)[0].strip()
 
     def parse_json(text: str) -> str:
         """Return the reply as compact JSON if it is a JSON object, else an empty string."""

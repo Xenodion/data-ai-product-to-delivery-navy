@@ -19,7 +19,7 @@ def fine_tuning_component(
     model: Output[Model],
     metrics: Output[Metrics],
     instruction: str,
-    model_id: str = "microsoft/Phi-3-mini-4k-instruct",
+    model_id: str = "Qwen/Qwen2.5-3B-Instruct",
     lora_r: int = 8,
     lora_alpha: int = 16,
     lora_dropout: float = 0.05,
@@ -54,7 +54,7 @@ def fine_tuning_component(
     split = dataset.train_test_split(test_size=val_size, seed=seed)
     logging.info("Train: %d rows, validation: %d rows", len(split["train"]), len(split["test"]))
 
-    # Model: Phi-3 quantized to 4 bits, then LoRA adapters on top
+    # Model: Qwen2.5 quantized to 4 bits, then LoRA adapters on top
     bnb_config = BitsAndBytesConfig(
         load_in_4bit=True,
         bnb_4bit_quant_type="nf4",
@@ -67,7 +67,7 @@ def fine_tuning_component(
         r=lora_r,
         lora_alpha=lora_alpha,
         lora_dropout=lora_dropout,
-        target_modules=["o_proj", "qkv_proj", "gate_up_proj", "down_proj"],
+        target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
         bias="none",
         task_type="CAUSAL_LM",
     ))
@@ -75,8 +75,9 @@ def fine_tuning_component(
     logging.info("Trainable params: %d / %d", trainable, total)
 
     tokenizer = AutoTokenizer.from_pretrained(model_id)
-    tokenizer.pad_token = tokenizer.unk_token
-    tokenizer.pad_token_id = tokenizer.unk_token_id
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.unk_token
+        tokenizer.pad_token_id = tokenizer.unk_token_id
 
     sft_config = SFTConfig(
         output_dir="/tmp/checkpoints",

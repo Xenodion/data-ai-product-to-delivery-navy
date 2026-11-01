@@ -34,10 +34,13 @@ cp .env.example .env   # fill in GCP_PROJECT_ID, GCP_REGION, GCP_BUCKET_NAME (ne
 uv run python scripts/validate_gcp_setup.py
 ```
 
-The raw dataset is expected at `gs://<bucket>/tickets_synthetic.csv` with two columns: `ticket` (the message) and `target` (the expected JSON as a string).
+The four splits of the dataset build (`data/dataset/{train,val,test_natural,test_traps}.csv`, committed for the exercise) are expected at `gs://<bucket>/dataset/`; each has a `ticket` column and a `target` column (the expected JSON as a string).
 
 ```bash
-uv run python scripts/pipeline_runner.py training   # or: sweep
+uv run python scripts/upload_dataset.py
+uv run python scripts/pipeline_runner.py training                          # predicts on val
+uv run python scripts/pipeline_runner.py training --test-file test_natural.csv   # final run, once
+uv run python scripts/pipeline_runner.py sweep
 ```
 
 ## Layout
