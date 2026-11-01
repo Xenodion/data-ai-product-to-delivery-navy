@@ -6,7 +6,7 @@ from src.prompt import INSTRUCTION
 
 
 @pipeline(name="keelpay-router-base-model-pipeline")
-def base_model_pipeline(dataset_uri: str, test_file: str = "val.csv") -> None:
+def base_model_pipeline(dataset_uri: str, test_file: str = "val.csv", max_rows: int = 0) -> None:
     """System B3 of the scoring protocol: the same prompt and the same tickets, without the LoRA adapter."""
     data_transformation_task = data_transformation(
         dataset_uri=dataset_uri, test_file=test_file
@@ -14,6 +14,7 @@ def base_model_pipeline(dataset_uri: str, test_file: str = "val.csv") -> None:
     inference_task = inference_component(
         test_dataset=data_transformation_task.outputs["test_output"],
         instruction=INSTRUCTION,
+        max_rows=max_rows,
     )
     inference_task.set_accelerator_type("NVIDIA_TESLA_T4")
     inference_task.set_cpu_limit("16")

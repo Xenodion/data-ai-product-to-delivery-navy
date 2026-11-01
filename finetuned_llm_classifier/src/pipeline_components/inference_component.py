@@ -19,6 +19,7 @@ def inference_component(
     model: Input[Model] = None,  # LoRA adapter; left out, the base model alone answers (system B3)
     model_id: str = "Qwen/Qwen2.5-3B-Instruct",
     max_new_tokens: int = 160,
+    max_rows: int = 0,  # smoke test: predict only the first rows (0 = all)
 ) -> None:
     import json
     import logging
@@ -62,7 +63,9 @@ def inference_component(
 
     # Load test dataset
     logging.info("Reading test dataset from %s", test_dataset.path)
-    test_df = pd.read_csv(test_dataset.path)
+    test_df = pd.read_csv(test_dataset.path, keep_default_na=False)
+    if max_rows > 0:
+        test_df = test_df.head(max_rows)
     logging.info("Test dataset contains %d samples", len(test_df))
 
     def build_prompt(tok, ticket: str) -> str:

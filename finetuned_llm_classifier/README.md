@@ -40,10 +40,15 @@ The four splits of the dataset build (`data/dataset/{train,val,test_natural,test
 
 ```bash
 uv run python scripts/upload_dataset.py
+uv run python scripts/pipeline_runner.py training --smoke                  # calibration: 200 tickets, 40 steps, 20 predictions
 uv run python scripts/pipeline_runner.py training                          # predicts on val
 uv run python scripts/pipeline_runner.py training --test-file test_natural.csv   # final run, once
 uv run python scripts/pipeline_runner.py sweep
 ```
+
+## Training settings
+
+Starting point of the course (3 epochs, LoRA r=8 alpha=16 dropout 0.05, learning rate 3e-4, 4-bit base model), with three changes for our data: sequences of 1024 tokens (our chats have a median of 495 and a p99 of 813, so 512 cut the JSON answer off 41 % of the tickets), no packing, and a loss on the assistant answer only. The best checkpoint on validation loss is kept; `log_history.json` in the model artifact holds the loss curve. Run the `--smoke` pipeline first (time and memory per step, loss going down, valid JSON), then one full run, then read the curve before any sweep.
 
 ## Cost and teardown: be vigilant
 
