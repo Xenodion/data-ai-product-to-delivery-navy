@@ -4,7 +4,10 @@ Run: uv run --with scikit-learn python scripts/run_baselines.py [--final]
 """
 
 import argparse
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.baselines import fit_tfidf, predict_majority, predict_rules, predict_tfidf
 from src.scoring import by_trap, costs, load_split, paired_bootstrap, score

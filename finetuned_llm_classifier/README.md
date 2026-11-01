@@ -20,7 +20,9 @@ Keys: `intent`, `sub_intent`, `transaction_id`, `amount`, `currency`, `urgency`,
 | Data transformation, fine-tuning, inference components | adapted to the ticket task (JSON target, 512-token sequences, JSON validity check) |
 | Training and hyperparameter-sweep pipelines | adapted; both compile |
 | Handler (Vertex AI custom endpoint) | adapted |
-| Synthetic dataset and gold test set | to do |
+| Synthetic dataset (`data/dataset/`), scoring (`src/scoring.py`) and baselines B0-B2 | done, see `docs/scoring_protocol.md` |
+| Base model (B3) pipeline and prediction scoring (`scripts/score_predictions.py`) | written, not run on Vertex yet |
+| Training on Vertex with Qwen2.5-3B-Instruct | not run yet |
 | Evaluation component (field-level metrics) | to do |
 | Model registration, endpoint, Chainlit app, notebooks | to do |
 | Requirements specific to the shared project (automated evaluation harness in CI, monitoring, model routing, semantic caching, production-readiness checklist) | to define |
@@ -43,18 +45,28 @@ uv run python scripts/pipeline_runner.py training --test-file test_natural.csv  
 uv run python scripts/pipeline_runner.py sweep
 ```
 
+## Cost and teardown: be vigilant
+
+Vertex AI is billed to the school's credits. Two very different cases:
+
+- **Pipeline jobs (training, sweep, base model, inference)** are ephemeral: the GPU machine exists for the task and is released when it ends, whether it succeeds or fails. Still, after every run, check in the Vertex AI console (Pipelines, then Training jobs) that nothing stays `RUNNING` or `PENDING`, and stop a task that looks stuck. The sweep chains 7 trainings: do not start it before a single run has been checked.
+- **An endpoint is never ephemeral.** It bills per node and per hour, there is **no scale to zero**, and it keeps billing while idle. As soon as the tests are done: undeploy the model, then delete the endpoint (console, Online prediction, Endpoints), and check that the list is empty. Keep `min_replica_count=1` and `max_replica_count=1`. Never leave an endpoint over a night or a weekend.
+
+Before any billed command: say whether it is local (free) or on GCP (billed) and what will stop it.
+
 ## Layout
 
 ```
 src/
   constants.py             # settings from environment variables
   prompt.py                # the instruction shared by training, inference and serving
-  dataset_build/           # synthetic dataset: JSON output contract (schema.py), generator and validators to come
+  dataset_build/           # synthetic dataset: JSON output contract (schema.py), cards, generation, review, export
+  scoring.py, baselines.py # metrics and baselines B0-B2 of docs/scoring_protocol.md
   handler.py               # Vertex AI EndpointHandler
   app/main.py              # Chainlit app (to do)
   pipeline_components/     # KFP components
   pipelines/               # training and sweep pipelines
-scripts/                   # GCP check, pipeline runner
+scripts/                   # GCP check, dataset upload, pipeline runner, baselines, scoring of predictions, dataset build
 notebooks/                 # local experiments
-data/                      # datasets (gitignored)
+data/dataset/              # the four splits and their quarantine (committed on purpose); other data is gitignored
 ```
