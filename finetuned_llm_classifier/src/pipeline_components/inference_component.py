@@ -13,10 +13,10 @@ from kfp.dsl import Dataset, Input, Model, Output, component
     ],
 )
 def inference_component(
-    model: Input[Model],
     test_dataset: Input[Dataset],
     predictions: Output[Dataset],
     instruction: str,
+    model: Input[Model] = None,  # LoRA adapter; left out, the base model alone answers (system B3)
     model_id: str = "Qwen/Qwen2.5-3B-Instruct",
     max_new_tokens: int = 160,
 ) -> None:
@@ -46,13 +46,16 @@ def inference_component(
         quantization_config=bnb_config,
     )
 
-    # Load fine-tuned LoRA adapters and tokenizer
-    logging.info("Loading PEFT model from %s", model.path)
-    peft_model = PeftModel.from_pretrained(base_model, model.path)
+    # Load fine-tuned LoRA adapters and tokenizer (or the base model and its tokenizer alone)
+    if model is not None:
+        logging.info("Loading PEFT model from %s", model.path)
+        peft_model = PeftModel.from_pretrained(base_model, model.path)
+    else:
+        logging.info("No adapter: scoring the base model %s", model_id)
+        peft_model = base_model
     peft_model.eval()
 
-    logging.info("Loading tokenizer from %s", model.path)
-    tokenizer = AutoTokenizer.from_pretrained(model.path)
+    tokenizer = AutoTokenizer.from_pretrained(model.path if model is not None else model_id)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.unk_token
         tokenizer.pad_token_id = tokenizer.unk_token_id
