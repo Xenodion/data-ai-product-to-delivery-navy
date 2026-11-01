@@ -72,7 +72,7 @@ Baselines are tuned on `val` only.
 
 **2026-11-01, valid-JSON threshold of the decision rule (section 4).** The rule asked for valid JSON of at least 99 percent. It now asks for at least 98.5 percent (99 percent with a tolerance of 0.5 point at most). Reason: on val, the first full run of D gave 290 valid outputs of 293 (98.98 percent), one ticket under the line, and the three invalid outputs are a malformed transaction id copied from the ticket, which the contract refuses and routes to a human, not broken JSON. **This change was decided after seeing that val result**, and not before; results are therefore reported under both thresholds (99 and 98.5 percent) for every system. The other criteria of the rule are unchanged.
 
-## 7. Systems and efficiency metric for the final reading (DRAFT: to be confirmed by the project lead before any test set is read)
+## 7. Systems and efficiency metric for the final reading (CONFIRMED by the project lead on 2026-11-01, before any test set is read)
 
 Written before the test sets are read, so that nothing is added after seeing their results. The list can only shrink (a system that could not be built is reported as "not run"), never grow.
 

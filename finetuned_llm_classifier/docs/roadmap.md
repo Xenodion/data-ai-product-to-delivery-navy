@@ -12,13 +12,13 @@ Short and kept up to date: one line per gate, a gate is passed only when its che
 | G4 Full run D | Qwen2.5-3B + LoRA, float16, 3 epochs; the loss curve is read before anything else | passed (2 h 06 of T4; validation loss lowest at the last evaluation, step 1250, no overfitting) |
 | G5 D on val | valid JSON at least 99 percent and expected cost per ticket not worse than B2 on val; otherwise diagnose (epochs, learning rate, errors by field) before touching the tests | cost passed (0.027 against 1.478 for B2); valid JSON 290 of 293 (0.9898), one ticket under the line: 3 malformed ids copied from the ticket (`id_malformed`); decision taken: threshold amended to 98.5 percent (protocol section 6, dated, reported under both); so G5 passed on val |
 | G6 Light variants | merged model then GGUF 4 bits on CPU, then a smaller fine-tuned model with a lighter compression; time per ticket measured on the same tickets and the same machine | not run: the merge needs more RAM than the project lead's machine has; procedure in `docs/compact_variants.md` |
-| G7 Test | the added systems and the efficiency metric are written in `docs/scoring_protocol.md` first (section 7, draft); then every system is scored once on test_natural and test_traps | draft written, to confirm; tests not read |
+| G7 Test | the added systems and the efficiency metric are written in `docs/scoring_protocol.md` first (section 7, confirmed 2026-11-01); then every system is scored once on test_natural and test_traps | section 7 confirmed; tests not read |
 | G8 Registry and deployment (conditional) | only after G7 and once one model is chosen; if the chosen model runs well locally, we stop there and ask the teacher whether a deployed endpoint is required; if it is, register the adapter in the Vertex AI Model Registry and deploy only for the demo, with the teardown checked in the console | to decide after G7 |
 | G9 Memo | cost per ticket of each system and the efficiency/cost front fed to the investment memo | to do |
 
 ## Open items on 2026-11-01
 
-- Confirm section 7 of the protocol, then run what can be run (G6) before the single reading of the tests (G7).
+- Run what can be run (G6) before the single reading of the tests (G7). The merge to GGUF needs 16 GB of free RAM, so it goes to a cloud machine (billed: say which, state the teardown, get the go).
 - GitHub issues: the existing LLMOps-1..8 and A3-1..7 cover most of this; two new issues (router run and light variants; copilot drafter) and comments on #13, #14, #15, #8 and #9 were proposed and wait for the project lead's go.
 - The copilot drafter (second node) is planned outside this folder (`.agents/drafts/plan-2026-11-01-dual-node-copilot-drafter-v2.md`, not committed): it is a separate piece of work.
 

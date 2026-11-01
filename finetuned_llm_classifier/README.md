@@ -23,7 +23,7 @@ The plan, with its gates, is `docs/roadmap.md`; the day-by-day account is in `no
 | Pipelines on Vertex (training, base model, sweep) with Qwen2.5-3B-Instruct, float16 | training run done (2 h 06 of T4); base-model and sweep pipelines compile, not run |
 | Model D (Qwen2.5-3B + LoRA) on val | cost 0.027 per ticket against 1.478 for B2; valid JSON 290 of 293; test sets not read yet (`docs/results/`) |
 | Compact variants (merged GGUF, smaller models) | not run, see `docs/compact_variants.md` |
-| Final reading of the test sets | to do, after `docs/scoring_protocol.md` section 7 is confirmed |
+| Final reading of the test sets | to do, after the systems of `docs/scoring_protocol.md` section 7 (confirmed) have their val score |
 | Handler, model registration, endpoint, Chainlit app | handler adapted; the rest conditional on the tests (no endpoint before then) |
 | Requirements of the shared project (evaluation harness in CI, monitoring, routing, caching, production-readiness checklist) | to define |
 
@@ -32,7 +32,7 @@ The plan, with its gates, is `docs/roadmap.md`; the day-by-day account is in `no
 | File | What it is |
 |---|---|
 | `docs/roadmap.md` | gates G1-G9 and the rules that stay fixed |
-| `docs/scoring_protocol.md` | frozen metrics, cost matrix, decision rule, dated amendments, systems and efficiency metric (draft) |
+| `docs/scoring_protocol.md` | frozen metrics, cost matrix, decision rule, dated amendments, systems and efficiency metric (confirmed) |
 | `docs/methodology.md` | how we test, control cost and choose |
 | `docs/label_definitions.md` | definition of each label |
 | `docs/baseline_results.md` | B0-B2 on val and the test sets |
