@@ -1,4 +1,4 @@
-"""Score the predictions CSV of the inference step against a split: python scripts/score_predictions.py <predictions.csv> <split>.
+"""Score the predictions CSV of the inference step against a split: uv run --with scikit-learn python scripts/score_predictions.py <predictions.csv> <split>.
 
 The predictions file comes from the pipeline (columns user_input, extracted_response); <split> is val, test_natural or test_traps.
 """
@@ -22,6 +22,8 @@ def main() -> None:
     args = parser.parse_args()
     tickets, truths, traps = load_split(DATASET / f"{args.split}.csv")
     preds = pd.read_csv(args.predictions, keep_default_na=False)
+    # a smoke run predicts only the first rows of the split
+    tickets, truths, traps = tickets[: len(preds)], truths[: len(preds)], traps[: len(preds)]
     if list(preds["user_input"]) != tickets:
         raise ValueError(
             f"{args.predictions} does not hold the tickets of {args.split}, in the same order"
