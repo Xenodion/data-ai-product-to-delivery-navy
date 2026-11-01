@@ -33,6 +33,7 @@ def fine_tuning_component(
     val_size: float = 0.1,
     max_train_rows: int = 0,  # smoke test: keep only the first rows (0 = all)
     max_steps: int = -1,  # smoke test: stop after this many optimizer steps (-1 = follow the epochs)
+    compute_dtype: str = "float32",  # "float16" is much faster on a T4 (no bfloat16), at the risk of unstable losses
     seed: int = 42,
 ) -> None:
     import json
@@ -82,7 +83,7 @@ def fine_tuning_component(
         load_in_4bit=True,
         bnb_4bit_quant_type="nf4",
         bnb_4bit_use_double_quant=True,
-        bnb_4bit_compute_dtype=torch.float32,
+        bnb_4bit_compute_dtype=getattr(torch, compute_dtype),
     )
     base_model = AutoModelForCausalLM.from_pretrained(model_id, device_map="cuda:0", quantization_config=bnb_config)
     base_model = prepare_model_for_kbit_training(base_model)
@@ -108,6 +109,7 @@ def fine_tuning_component(
         dataset_text_field="text",
         max_seq_length=max_seq_length,
         packing=False,
+        fp16=compute_dtype == "float16",
         gradient_checkpointing=True,
         gradient_checkpointing_kwargs={"use_reentrant": False},
         optim="paged_adamw_8bit",

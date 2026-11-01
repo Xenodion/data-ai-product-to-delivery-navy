@@ -29,6 +29,11 @@ parser.add_argument(
     help="very short run: 200 tickets, 40 steps, 20 predictions",
 )
 parser.add_argument(
+    "--fp16",
+    action="store_true",
+    help="compute in float16 (faster on a T4, to check on a smoke run first)",
+)
+parser.add_argument(
     "--test-file", default="val.csv", help="split the training pipeline predicts on"
 )
 args = parser.parse_args()
@@ -39,6 +44,8 @@ compiler.Compiler().compile(PIPELINES[args.pipeline], template_path)
 extra = {} if args.pipeline == "sweep" else {"test_file": args.test_file}
 if args.smoke and args.pipeline == "sweep":
     parser.error("--smoke applies to the training and base pipelines, not the sweep")
+if args.fp16 and args.pipeline == "training":
+    extra |= {"compute_dtype": "float16"}
 if args.smoke:
     # Calibration run: checks that everything loads, measures time and memory per step, and shows the first loss values
     extra |= {"max_rows": 20}
@@ -46,7 +53,9 @@ if args.smoke:
         extra |= {"max_train_rows": 200, "max_steps": 40, "eval_steps": 20}
 aiplatform.init(project=GCP_PROJECT_ID, location=GCP_REGION)
 aiplatform.PipelineJob(
-    display_name=f"router-{args.pipeline}-pipeline" + ("-smoke" if args.smoke else ""),
+    display_name=f"router-{args.pipeline}-pipeline"
+    + ("-smoke" if args.smoke else "")
+    + ("-fp16" if args.fp16 else ""),
     template_path=template_path,
     pipeline_root=PIPELINE_ROOT,
     parameter_values={"dataset_uri": DATASET_URI} | extra,
