@@ -4,7 +4,7 @@
 base_url = "https://openrouter.ai/api/v1"
 budget_usd = 8.0           # internal hard stop; the key itself carries a 10 EUR limit
 timeout_seconds = 90
-transient_retries = 3      # network errors, 429 and 5xx only; a non-conforming ticket is never retried
+transient_retries = 8      # network errors, 429 and 5xx only; a non-conforming ticket is never retried
 max_consecutive_errors = 3 # the run stops after this many API errors in a row
 
 [production]

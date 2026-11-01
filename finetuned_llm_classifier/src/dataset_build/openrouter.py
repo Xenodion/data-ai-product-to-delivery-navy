@@ -136,7 +136,7 @@ def complete(
     @retry(
         retry=retry_if_exception_type(_TransientError),
         stop=stop_after_attempt(config.transient_retries),
-        wait=wait_exponential(multiplier=1, max=10),
+        wait=wait_exponential(multiplier=2, max=60),
         reraise=True,
     )
     def post() -> dict:

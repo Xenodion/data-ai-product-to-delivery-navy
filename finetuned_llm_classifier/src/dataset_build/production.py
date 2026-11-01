@@ -119,6 +119,16 @@ def run_split(
     target, by_id = len(own), {card.card_id: card for card in [*own, *reserve]}
     batch_no = 0
     while True:
+        # Tickets written before an interrupted run still need their review (already reviewed ones are skipped).
+        review_tickets(
+            [(by_id[t.card_id], t) for t in read_log(tickets_log) if t.status == "ok"],
+            settings.voter_b_fraction[split],
+            config,
+            reviews_log,
+            budget,
+            complete,
+            definitions,
+        )
         tickets, reviews = read_log(tickets_log), read_reviews(reviews_log)
         done = accepted_ids(tickets, reviews)
         attempted = {t.card_id for t in tickets}
