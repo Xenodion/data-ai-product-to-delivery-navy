@@ -15,9 +15,12 @@ def model_training_pipeline(
     eval_steps: int = 50,
     max_rows: int = 0,
     compute_dtype: str = "float32",
+    model_id: str = "Qwen/Qwen2.5-3B-Instruct",  # a smaller Qwen2.5 for the compact variants
 ) -> None:
     # Development runs are evaluated on val; the final run passes test_natural.csv, then test_traps.csv
-    data_transformation_task = data_transformation(dataset_uri=dataset_uri, test_file=test_file)
+    data_transformation_task = data_transformation(
+        dataset_uri=dataset_uri, test_file=test_file
+    )
 
     fine_tuning_task = fine_tuning_component(
         train_dataset=data_transformation_task.outputs["train_output"],
@@ -29,6 +32,7 @@ def model_training_pipeline(
         max_train_rows=max_train_rows,  # smoke test only
         max_steps=max_steps,
         compute_dtype=compute_dtype,
+        model_id=model_id,
     )
     fine_tuning_task.set_accelerator_type("NVIDIA_TESLA_T4")
     fine_tuning_task.set_cpu_limit("16")
@@ -39,6 +43,7 @@ def model_training_pipeline(
         test_dataset=data_transformation_task.outputs["test_output"],
         instruction=INSTRUCTION,
         max_rows=max_rows,
+        model_id=model_id,
     )
     inference_task.set_accelerator_type("NVIDIA_TESLA_T4")
     inference_task.set_cpu_limit("16")

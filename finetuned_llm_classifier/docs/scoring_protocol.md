@@ -71,3 +71,24 @@ Baselines are tuned on `val` only.
 ## 6. Amendments
 
 **2026-11-01, valid-JSON threshold of the decision rule (section 4).** The rule asked for valid JSON of at least 99 percent. It now asks for at least 98.5 percent (99 percent with a tolerance of 0.5 point at most). Reason: on val, the first full run of D gave 290 valid outputs of 293 (98.98 percent), one ticket under the line, and the three invalid outputs are a malformed transaction id copied from the ticket, which the contract refuses and routes to a human, not broken JSON. **This change was decided after seeing that val result**, and not before; results are therefore reported under both thresholds (99 and 98.5 percent) for every system. The other criteria of the rule are unchanged.
+
+## 7. Systems and efficiency metric for the final reading (DRAFT: to be confirmed by the project lead before any test set is read)
+
+Written before the test sets are read, so that nothing is added after seeing their results. The list can only shrink (a system that could not be built is reported as "not run"), never grow.
+
+**Systems** (all scored first on val, with settings chosen on val only; the valid-JSON threshold of section 6 applies to all):
+
+| Id | System | Where it runs | State on 2026-11-01 |
+|---|---|---|---|
+| B0, B1, B2 | majority, rules, TF-IDF + logistic regression | CPU | scored (`docs/baseline_results.md`) |
+| B3 | base Qwen2.5-3B prompted, no fine-tuning | T4 (Vertex) | not run: needs a billed inference job |
+| D | Qwen2.5-3B + LoRA, float16 | T4 (Vertex) | scored on val: cost 0.027 per ticket, valid JSON 290 of 293 |
+| D-q4, D-q8 | D merged, then GGUF 4 and 8 bits | CPU | not run: needs a machine with at least 16 GB of free RAM (`docs/compact_variants.md`) |
+| S-1.5B, S-0.5B | the same recipe on Qwen2.5-1.5B and 0.5B, with a lighter compression (8 or 5 bits) | CPU after GGUF | not run: two billed Vertex trainings, then GGUF |
+
+**Efficiency metric**, reported next to the expected cost per ticket of section 2:
+
+- **Seconds per ticket**: measured on the same 293 val tickets, on one named machine, one ticket at a time, with the model already loaded (load time reported separately). Measured so far on the project lead's CPU: B1 0.07 ms, B2 0.9 ms per ticket.
+- **Infrastructure cost per 1000 tickets** = seconds per ticket x 1000 x price per second of the machine used (the price and its date written next to the number).
+- **Training cost** once, as GPU hours x price, not spread over tickets.
+- The result is a front, not a ranking: each system is a point (infrastructure cost per 1000 tickets, expected error cost per ticket); a system is dominated when another is at least as good on both. The decision rule of section 4 is unchanged and applies to D against the best of B1 to B3; the other systems are reported as points of the front, with their intervals against B2 (paired bootstrap), and carry no separate decision rule.

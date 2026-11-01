@@ -12,20 +12,33 @@ The only interface is the JSON schema below; NAVY never imports this code and ca
 
 Keys: `intent`, `sub_intent`, `transaction_id`, `amount`, `currency`, `urgency`, `sentiment`. All values are strings: `"UNDEFINED"` when a field cannot be determined, `"OTHER"` when the request is understood but fits no listed class, `""` when `transaction_id`, `amount` or `currency` is absent. Contract in `src/dataset_build/schema.py`, definitions in `docs/label_definitions.md`. Routing of `UNDEFINED` to a support agent is product logic and lives outside this folder.
 
-## Status
+## Status (2026-11-01)
+
+The plan, with its gates, is `docs/roadmap.md`; the day-by-day account is in `notebooks/`.
 
 | Part | State |
 |---|---|
-| GCP check, pipeline runner, constants | copied from the reference solution |
-| Data transformation, fine-tuning, inference components | adapted to the ticket task (JSON target, 512-token sequences, JSON validity check) |
-| Training and hyperparameter-sweep pipelines | adapted; both compile |
-| Handler (Vertex AI custom endpoint) | adapted |
-| Synthetic dataset (`data/dataset/`), scoring (`src/scoring.py`) and baselines B0-B2 | done, see `docs/scoring_protocol.md` |
-| Base model (B3) pipeline and prediction scoring (`scripts/score_predictions.py`) | written, not run on Vertex yet |
-| Training on Vertex with Qwen2.5-3B-Instruct | not run yet |
-| Evaluation component (field-level metrics) | to do |
-| Model registration, endpoint, Chainlit app, notebooks | to do |
-| Requirements specific to the shared project (automated evaluation harness in CI, monitoring, model routing, semantic caching, production-readiness checklist) | to define |
+| Dataset (`data/dataset/`: train 1922, val 293, test_natural 610, test_traps 380, plus quarantines) | done and frozen |
+| Scoring (`src/scoring.py`) and baselines B0-B2 | done; test sets read once, results in `docs/baseline_results.md` |
+| Pipelines on Vertex (training, base model, sweep) with Qwen2.5-3B-Instruct, float16 | training run done (2 h 06 of T4); base-model and sweep pipelines compile, not run |
+| Model D (Qwen2.5-3B + LoRA) on val | cost 0.027 per ticket against 1.478 for B2; valid JSON 290 of 293; test sets not read yet (`docs/results/`) |
+| Compact variants (merged GGUF, smaller models) | not run, see `docs/compact_variants.md` |
+| Final reading of the test sets | to do, after `docs/scoring_protocol.md` section 7 is confirmed |
+| Handler, model registration, endpoint, Chainlit app | handler adapted; the rest conditional on the tests (no endpoint before then) |
+| Requirements of the shared project (evaluation harness in CI, monitoring, routing, caching, production-readiness checklist) | to define |
+
+## Documents
+
+| File | What it is |
+|---|---|
+| `docs/roadmap.md` | gates G1-G9 and the rules that stay fixed |
+| `docs/scoring_protocol.md` | frozen metrics, cost matrix, decision rule, dated amendments, systems and efficiency metric (draft) |
+| `docs/methodology.md` | how we test, control cost and choose |
+| `docs/label_definitions.md` | definition of each label |
+| `docs/baseline_results.md` | B0-B2 on val and the test sets |
+| `docs/compact_variants.md` | procedure for the merged GGUF model and the smaller models (not run) |
+| `docs/results/` | predictions and loss history of the full run of D |
+| `notebooks/01_dataset_build.ipynb`, `02_scoring_and_baselines.ipynb`, `03_finetuning_vertex.ipynb` | the logbook, in the order of discovery |
 
 ## Setup
 
@@ -40,10 +53,14 @@ The four splits of the dataset build (`data/dataset/{train,val,test_natural,test
 
 ```bash
 uv run python scripts/upload_dataset.py
-uv run python scripts/pipeline_runner.py training --smoke                  # calibration: 200 tickets, 40 steps, 20 predictions
-uv run python scripts/pipeline_runner.py training                          # predicts on val
-uv run python scripts/pipeline_runner.py training --test-file test_natural.csv   # final run, once
-uv run python scripts/pipeline_runner.py sweep
+uv run python scripts/pipeline_runner.py training --fp16 --smoke           # calibration: 200 tickets, 40 steps, 20 predictions
+uv run python scripts/pipeline_runner.py training --fp16                   # full run, predicts on val (about 2 h 06 of T4 for the 3B model)
+uv run python scripts/pipeline_runner.py base                              # the base model alone (system B3)
+uv run python scripts/pipeline_runner.py training --fp16 --model-id Qwen/Qwen2.5-1.5B-Instruct   # smaller model
+uv run python scripts/pipeline_runner.py sweep                             # 7 chained trainings: only after a single run was checked
+
+# then, locally: download the predictions CSV of the inference step and score it
+uv run --with scikit-learn python scripts/score_predictions.py <predictions.csv> val
 ```
 
 ## Training settings
@@ -68,10 +85,11 @@ src/
   dataset_build/           # synthetic dataset: JSON output contract (schema.py), cards, generation, review, export
   scoring.py, baselines.py # metrics and baselines B0-B2 of docs/scoring_protocol.md
   handler.py               # Vertex AI EndpointHandler
-  app/main.py              # Chainlit app (to do)
+  app/main.py              # Chainlit app (to do, conditional)
   pipeline_components/     # KFP components
   pipelines/               # training and sweep pipelines
 scripts/                   # GCP check, dataset upload, pipeline runner, baselines, scoring of predictions, dataset build
-notebooks/                 # local experiments
+notebooks/                 # the logbook (3 notebooks)
+docs/                      # protocol, roadmap, methodology, results (see the table above)
 data/dataset/              # the four splits and their quarantine (committed on purpose); other data is gitignored
 ```

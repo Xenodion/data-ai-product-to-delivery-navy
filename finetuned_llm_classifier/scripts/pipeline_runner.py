@@ -34,6 +34,10 @@ parser.add_argument(
     help="compute in float16 (faster on a T4, to check on a smoke run first)",
 )
 parser.add_argument(
+    "--model-id",
+    help="base model for the training and base pipelines (default: Qwen/Qwen2.5-3B-Instruct)",
+)
+parser.add_argument(
     "--test-file", default="val.csv", help="split the training pipeline predicts on"
 )
 args = parser.parse_args()
@@ -44,6 +48,8 @@ compiler.Compiler().compile(PIPELINES[args.pipeline], template_path)
 extra = {} if args.pipeline == "sweep" else {"test_file": args.test_file}
 if args.smoke and args.pipeline == "sweep":
     parser.error("--smoke applies to the training and base pipelines, not the sweep")
+if args.model_id and args.pipeline != "sweep":
+    extra |= {"model_id": args.model_id}
 if args.fp16 and args.pipeline == "training":
     extra |= {"compute_dtype": "float16"}
 if args.smoke:
@@ -55,7 +61,8 @@ aiplatform.init(project=GCP_PROJECT_ID, location=GCP_REGION)
 aiplatform.PipelineJob(
     display_name=f"router-{args.pipeline}-pipeline"
     + ("-smoke" if args.smoke else "")
-    + ("-fp16" if args.fp16 else ""),
+    + ("-fp16" if args.fp16 else "")
+    + (f"-{args.model_id.split('/')[-1]}" if args.model_id else ""),
     template_path=template_path,
     pipeline_root=PIPELINE_ROOT,
     parameter_values={"dataset_uri": DATASET_URI} | extra,
