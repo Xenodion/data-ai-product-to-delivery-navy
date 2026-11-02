@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keelpay Copilot Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Layout: helpdesk in three columns — queue · ticket · copilot side panel. Blue = what the system did, amber = what a person does (same code as assets/copilot_flow.png). */
+  --bg: #f3f5f8;
+  --surface: #ffffff;
+  --ink: #1b2330;
+  --muted: #5d6878;
+  --line: #dde2ea;
+  --system: #1f5fd1;
+  --system-soft: #e6eefc;
+  --human: #b45a09;
+  --human-soft: #fdf1dc;
+  --ok: #1d7a4a;
+  --ok-soft: #e2f4ea;
+  --crit: #b4232a;
+  --crit-soft: #fbe5e6;
+  --mark: #ffe7a3;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11151c; --surface: #19202a; --ink: #e6ebf2; --muted: #9aa6b6; --line: #2c3644;
+    --system: #7fa8f5; --system-soft: #1c2b46; --human: #f0ac5a; --human-soft: #3a2a14;
+    --ok: #6fd19c; --ok-soft: #173326; --crit: #f08a8f; --crit-soft: #3d1c1f; --mark: #5c4a12;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11151c; --surface: #19202a; --ink: #e6ebf2; --muted: #9aa6b6; --line: #2c3644;
+  --system: #7fa8f5; --system-soft: #1c2b46; --human: #f0ac5a; --human-soft: #3a2a14;
+  --ok: #6fd19c; --ok-soft: #173326; --crit: #f08a8f; --crit-soft: #3d1c1f; --mark: #5c4a12;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 14px/1.5 var(--font-body); display: flex; flex-direction: column; }
+button, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--system); outline-offset: 2px; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+
+.topbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 16px; background: var(--surface); border-bottom: 1px solid var(--line); }
+.topbar h1 { font-size: 15px; font-weight: 600; }
+.topbar .tag { font-size: 12px; color: var(--muted); }
+.topbar .spacer { flex: 1; }
+.pill { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+.pill.sys { background: var(--system-soft); color: var(--system); }
+.pill.hum { background: var(--human-soft); color: var(--human); }
+.pill.ok { background: var(--ok-soft); color: var(--ok); }
+.pill.crit { background: var(--crit-soft); color: var(--crit); }
+.pill.mute { background: var(--bg); color: var(--muted); border: 1px solid var(--line); }
+
+.app { flex: 1; min-height: 0; display: grid; grid-template-columns: 250px minmax(0, 1fr) 430px; }
+.col { min-height: 0; overflow-y: auto; }
+.queue { border-right: 1px solid var(--line); background: var(--surface); }
+.queue h2, .panel-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 12px 14px 6px; }
+.qitem { display: grid; gap: 4px; width: 100%; text-align: left; padding: 10px 14px; background: none; border: 0; border-left: 3px solid transparent; border-bottom: 1px solid var(--line); }
+.qitem[aria-current="true"] { background: var(--bg); border-left-color: var(--system); }
+.qitem .subj { font-weight: 500; }
+.qitem .meta { display: flex; gap: 6px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+
+.ticket { padding: 16px 20px; display: grid; gap: 14px; align-content: start; }
+.ticket header { display: grid; gap: 6px; }
+.ticket h2 { font-size: 18px; font-weight: 600; }
+.ticket .meta { display: flex; gap: 8px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+.message { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; white-space: pre-wrap; max-width: 72ch; }
+.message .src { border-bottom: 2px dotted var(--system); }
+.message .src.on { background: var(--mark); border-bottom-style: solid; }
+.hint { font-size: 12px; color: var(--muted); max-width: 72ch; }
+
+.panel { border-left: 1px solid var(--line); background: var(--surface); display: flex; flex-direction: column; }
+.panel-head { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.panel-head strong { font-size: 14px; }
+.panel-body { padding: 4px 14px 16px; display: grid; gap: 14px; }
+.section { display: grid; gap: 8px; }
+.section h3 { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.banner { border-radius: 8px; padding: 10px 12px; display: grid; gap: 8px; font-size: 13px; }
+.banner.crit { background: var(--crit-soft); color: var(--ink); border-left: 4px solid var(--crit); }
+.banner.hum { background: var(--human-soft); border-left: 4px solid var(--human); }
+.banner.ok { background: var(--ok-soft); border-left: 4px solid var(--ok); }
+.banner .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+.fields { width: 100%; border-collapse: collapse; font-size: 13px; }
+.fields td { padding: 4px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.fields td:first-child { color: var(--muted); width: 38%; }
+.fields td.val { font-family: var(--font-mono); font-size: 12.5px; }
+.fields tr[data-src] { cursor: help; }
+.fields tr[data-src]:hover td, .fields tr[data-src]:focus-within td, .fields tr.on td { background: var(--mark); }
+.undef { color: var(--human); font-weight: 500; }
+
+.path { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 13px; }
+.path li { display: grid; grid-template-columns: 22px 1fr; gap: 6px; align-items: start; }
+.path .dot { width: 14px; height: 14px; border-radius: 50%; margin-top: 3px; border: 2px solid var(--system); background: var(--system-soft); }
+.path .dot.hum { border-color: var(--human); background: var(--human-soft); }
+.path .dot.skip { border-color: var(--line); background: var(--bg); }
+.path .skipped { color: var(--muted); }
+
+.card { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; display: grid; gap: 2px; font-size: 13px; }
+.card .k { color: var(--muted); font-size: 12px; }
+.card .mono { font-family: var(--font-mono); font-size: 12.5px; }
+.cards { display: grid; gap: 6px; }
+.cand { display: flex; gap: 8px; align-items: flex-start; }
+.cand input { margin-top: 4px; }
+
+.draft { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; white-space: pre-wrap; font-size: 13.5px; }
+.draft textarea { width: 100%; min-height: 190px; border: 0; padding: 0; resize: vertical; background: transparent; line-height: 1.5; }
+.cite { font-family: var(--font-mono); font-size: 11.5px; color: var(--system); font-weight: 500; }
+.sources { margin: 0; padding-left: 18px; font-size: 12.5px; color: var(--muted); display: grid; gap: 2px; }
+
+.actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 6px 12px; }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--human); border-color: var(--human); color: #fff; font-weight: 500; }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.sys { color: var(--system); border-color: var(--system); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+select.btn { padding: 5px 8px; }
+
+.log { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; font-size: 12px; font-family: var(--font-mono); color: var(--muted); }
+.log li span { color: var(--ink); }
+.off { padding: 24px 14px; color: var(--muted); }
+.toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: 8px; font-size: 13px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+.toast.show { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+
+@media (max-width: 1100px) {
+  .app { grid-template-columns: 220px minmax(0, 1fr); }
+  .panel { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--line); }
+  html, body { height: auto; }
+  .col { overflow: visible; }
+}
+@media (max-width: 640px) {
+  .app { grid-template-columns: 1fr; }
+  .queue { border-right: 0; }
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>Keelpay Helpdesk</h1>
+  <span class="tag">Prototype v0.1 · synthetic tickets, fictional merchants · NAVY</span>
+  <span class="spacer"></span>
+  <span class="pill sys">System: read, route, look up, draft</span>
+  <span class="pill hum">You: confirm, edit, send</span>
+</div>
+
+<div class="app">
+  <nav class="col queue" aria-label="Ticket queue">
+    <h2>Inbox · 4 tickets</h2>
+    <div id="queue"></div>
+  </nav>
+  <main class="col ticket" id="ticket"></main>
+  <aside class="col panel" aria-label="Copilot panel">
+    <div class="panel-head">
+      <strong>Copilot</strong>
+      <span id="trust" class="pill mute"></span>
+      <span class="spacer" style="flex:1"></span>
+      <label class="actions" for="copilotToggle" style="font-size:12px;color:var(--muted)">
+        <input type="checkbox" id="copilotToggle" checked> On for this ticket
+      </label>
+    </div>
+    <div class="panel-body" id="panel"></div>
+  </aside>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const DESKS = { payments: "Payments", disputes: "Disputes", technical: "Technical / API", compliance: "Compliance", triage: "Human triage" };
+
+const TICKETS = [
+  {
+    id: "K-24118", subject: "Payout of 28 Oct not received", from: "finance@nordwind-bikes.example", merchant: "Nordwind Bikes", channel: "Email", lang: "EN", received: "Mon 2 Nov, 09:12",
+    body: [
+      "Hi,\n\nour payout from Tuesday 28 October hasn't arrived on our account yet. It should be ",
+      { src: "amount", t: "€4,812.60" }, " (ref ", { src: "tx", t: "TX-551208" },
+      "). Can you check what's going on?\n\nThanks,\nLena — Nordwind Bikes"
+    ],
+    fields: { intent: "payment_status", sub_intent: "payout_delayed", transaction_id: "TX-551208", amount: "4812.60", currency: "EUR", urgency: "normal", sentiment: "neutral" },
+    src: { transaction_id: "tx", amount: "amount", currency: "amount" },
+    confidence: 0.97, route: "auto", desk: "payments",
+    lookup: {
+      merchant: "Nordwind Bikes · account active · KYC verified",
+      tx: [{ id: "TX-551208", line: "SEPA payout · €4,812.60 · created 28 Oct", status: "Returned by the receiving bank: account closed (30 Oct)" }],
+      disputes: "None open",
+      history: "#K-20931 (12 Oct): asked to change bank details — change not completed"
+    },
+    draft: "Hello Lena,\n\nThank you for your message. Your payout TX-551208 of €4,812.60, sent on 28 October, was returned by the receiving bank on 30 October because the account it was sent to is closed [1]. On 12 October you asked to change your bank details, but the change was not completed [2].\n\nOnce you confirm the new IBAN in your dashboard (Settings → Payouts), we will send the payout again. A returned payout is re-sent on the next working day after the new details are verified [3].\n\nBest regards,",
+    sources: ["Ledger · TX-551208 · status history", "Ticket #K-20931 · 12 Oct", "Policy · Payouts · returned transfers §2"]
+  },
+  {
+    id: "K-24121", subject: "Virement pas reçu", from: "m.dubreuil@brasserie-du-port.example", merchant: "Brasserie du Port", channel: "Email", lang: "FR", received: "Mon 2 Nov, 09:40",
+    body: [
+      "Bonjour,\n\nje n'ai toujours pas reçu le virement de ",
+      { src: "amount", t: "mille deux cent cinquante euros" },
+      " de la semaine dernière. Mes fournisseurs attendent, pouvez-vous regarder ?\n\nCordialement,\nMarc Dubreuil — Brasserie du Port"
+    ],
+    fields: { intent: "payment_status", sub_intent: "payout_missing", transaction_id: "UNDEFINED", amount: "1250.00", currency: "EUR", urgency: "medium", sentiment: "negative" },
+    src: { amount: "amount", currency: "amount" },
+    confidence: 0.91, route: "auto", desk: "payments",
+    lookup: {
+      merchant: "Brasserie du Port · account active · KYC: identity document expired 25 Oct",
+      tx: [
+        { id: "TX-548730", line: "SEPA payout · €1,250.00 · created 23 Oct", status: "Paid · credited 24 Oct" },
+        { id: "TX-549102", line: "SEPA payout · €1,250.00 · created 27 Oct", status: "On hold · KYC document expired" }
+      ],
+      disputes: "None open",
+      history: "No ticket in the last 90 days"
+    },
+    pick: true,
+    drafts: {
+      "TX-548730": "Bonjour Monsieur Dubreuil,\n\nLe virement TX-548730 de 1 250,00 € créé le 23 octobre a été crédité sur votre compte le 24 octobre [1]. Si vous ne le retrouvez pas, pouvez-vous nous indiquer le compte sur lequel vous l'attendiez ?\n\nBien cordialement,",
+      "TX-549102": "Bonjour Monsieur Dubreuil,\n\nLe virement TX-549102 de 1 250,00 € créé le 27 octobre est en attente : la pièce d'identité enregistrée sur votre compte a expiré le 25 octobre [1][2]. Dès qu'une pièce valide est déposée dans votre espace (Paramètres → Vérification), le virement est libéré après contrôle [3].\n\nBien cordialement,"
+    },
+    sourcesBy: {
+      "TX-548730": ["Ledger · TX-548730 · status history"],
+      "TX-549102": ["Ledger · TX-549102 · status history", "Merchant account · KYC status", "Policy · Payouts on hold · KYC §1"]
+    }
+  },
+  {
+    id: "K-24125", subject: "Fwd: Chargeback notification — what do we send?", from: "ops@atelier-lumen.example", merchant: "Atelier Lumen", channel: "Email (forwarded)", lang: "EN", received: "Mon 2 Nov, 10:05",
+    body: [
+      "FYI see below, we got this from our acquirer. We have until 6 November to respond?? What do we need to send you?\n\n---------- Forwarded message ----------\nChargeback notification\nTransaction: ",
+      { src: "tx", t: "TX-547761" }, "\nAmount: ", { src: "amount", t: "EUR 389.00" },
+      "\nReason code: 13.1 (merchandise / services not received)\n", { src: "deadline", t: "Response due: 06/11/2026" }
+    ],
+    fields: { intent: "dispute", sub_intent: "chargeback", transaction_id: "TX-547761", amount: "389.00", currency: "EUR", urgency: "high", sentiment: "negative" },
+    src: { transaction_id: "tx", amount: "amount", currency: "amount", urgency: "deadline" },
+    confidence: 0.94, route: "critical", desk: "disputes",
+    criticalWhy: ["Dispute", "Stated deadline: 6 Nov (4 days)", "Urgency high"],
+    lookup: {
+      merchant: "Atelier Lumen · account active · KYC verified",
+      tx: [{ id: "TX-547761", line: "Card payment · €389.00 · 14 Oct", status: "Chargeback CB-7714 open · response due 6 Nov" }],
+      disputes: "CB-7714 · reason 13.1 · due 6 Nov",
+      history: "No dispute in the last 12 months"
+    },
+    draft: "Hello,\n\nThank you for forwarding the notification. The chargeback on TX-547761 (€389.00, 14 October) is open as CB-7714, with a response due on 6 November [1]. For reason 13.1 (goods not received), please upload in your dashboard (Disputes → CB-7714) the proof of delivery: the carrier's tracking number and delivery confirmation, and the order confirmation sent to the customer [2].\n\nWe will submit your evidence to the card scheme once it is uploaded. We cannot predict the outcome, which is decided by the cardholder's bank.\n\nBest regards,",
+    sources: ["Ledger · TX-547761 · chargeback CB-7714", "Policy · Disputes · evidence by reason code 13.1"]
+  },
+  {
+    id: "K-24127", subject: "several issues", from: "dev@pixelmint.example", merchant: "Pixelmint Studio", channel: "Dashboard form", lang: "EN", received: "Mon 2 Nov, 10:31",
+    body: [
+      "Two things: ", { src: "a", t: "since yesterday our payout webhook stopped firing" },
+      ", and also ", { src: "b", t: "why is there a \"compliance review\" fee on my invoice??" },
+      " Also my login is weird."
+    ],
+    fields: { intent: "UNDEFINED", sub_intent: "UNDEFINED", transaction_id: "", amount: "UNDEFINED", currency: "UNDEFINED", urgency: "medium", sentiment: "negative" },
+    src: { intent: "a", sub_intent: "b" },
+    confidence: 0.42, route: "triage", desk: "triage",
+    lookup: { merchant: "Pixelmint Studio · account active · KYC verified", tx: [], disputes: "None open", history: "#K-23360 (20 Oct): webhook timeout, closed" }
+  }
+];
+
+const state = {};
+TICKETS.forEach(t => state[t.id] = { confirmed: false, reroutes: 0, desk: t.desk, picked: null, sent: false, copilot: true, log: [] });
+let current = TICKETS[0].id;
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+function now() { const d = new Date(); return d.toTimeString().slice(0, 5); }
+function log(t, who, msg) { state[t.id].log.push({ time: now(), who, msg }); }
+function toast(msg) { const el = $("#toast"); el.textContent = msg; el.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("show"), 2200); }
+
+TICKETS.forEach(t => {
+  const pathLog = { auto: "decision table: clear, not critical → routed automatically to " + DESKS[t.desk],
+                    critical: "decision table: critical → held for a person to confirm the desk",
+                    triage: "decision table: UNDEFINED → sent to human triage, nothing guessed" };
+  state[t.id].log.push({ time: "on arrival", who: "copilot", msg: "read the ticket → JSON (confidence " + t.confidence.toFixed(2) + ")" });
+  state[t.id].log.push({ time: "on arrival", who: "copilot", msg: pathLog[t.route] });
+});
+
+function routeBadge(t) {
+  const s = state[t.id];
+  if (s.sent) return '<span class="pill ok">Sent by you</span>';
+  if (s.desk === "triage") return '<span class="pill hum">Human triage</span>';
+  if (t.route === "critical" && !s.confirmed) return '<span class="pill crit">Critical · confirm desk</span>';
+  return '<span class="pill sys">' + esc(DESKS[s.desk]) + '</span>';
+}
+
+function renderQueue() {
+  $("#queue").innerHTML = TICKETS.map(t => `
+    <button class="qitem" data-id="${t.id}" aria-current="${t.id === current}">
+      <span class="subj">${esc(t.subject)}</span>
+      <span class="meta"><span>${esc(t.merchant)}</span><span>· ${t.lang}</span></span>
+      <span class="meta">${routeBadge(t)}</span>
+    </button>`).join("");
+  document.querySelectorAll(".qitem").forEach(b => b.addEventListener("click", () => { current = b.dataset.id; render(); }));
+}
+
+function renderTicket(t) {
+  const body = t.body.map(p => typeof p === "string" ? esc(p) : `<span class="src" data-src="${p.src}">${esc(p.t)}</span>`).join("");
+  $("#ticket").innerHTML = `
+    <header>
+      <div class="meta"><span>#${t.id}</span><span>· ${esc(t.channel)}</span><span>· ${t.lang}</span><span>· received ${esc(t.received)}</span></div>
+      <h2>${esc(t.subject)}</h2>
+      <div class="meta"><span>From ${esc(t.from)}</span><span>· merchant: ${esc(t.merchant)}</span></div>
+    </header>
+    <div class="message">${body}</div>
+    <p class="hint">Dotted passages are what the copilot used. Hover or focus a field in the panel to see where it comes from.</p>`;
+}
+
+function fieldsTable(t) {
+  const rows = Object.entries(t.fields).map(([k, v]) => {
+    const src = t.src[k];
+    const shown = v === "" ? '<span style="color:var(--muted)">— none in the message</span>' : v === "UNDEFINED" ? '<span class="undef">UNDEFINED</span>' : esc(v);
+    return `<tr ${src ? `data-src="${src}" tabindex="0"` : ""}><td>${k}</td><td class="val">${shown}</td></tr>`;
+  }).join("");
+  return `<table class="fields">${rows}</table>`;
+}
+
+function pathList(t) {
+  const s = state[t.id];
+  const steps = [
+    ["sys", "1 · Read: JSON returned, confidence " + t.confidence.toFixed(2)],
+    t.route === "auto" ? ["sys", "2 · Decision table: clear, not critical → routed automatically"]
+      : t.route === "critical" ? ["hum", "2 · Decision table: critical → " + (s.confirmed ? "desk confirmed by you" : "waiting for you to confirm the desk")]
+      : ["hum", "2 · Decision table: UNDEFINED → human triage"],
+    s.desk === "triage" && t.route === "triage" ? ["skip", "3 · Look up: waits for a desk"] : ["sys", "3 · Look up: transactions and history, read-only, this merchant only"],
+    canDraft(t) ? ["sys", "4 · Draft: sources cited (L2)"] : ["skip", "4 · Draft: " + (t.pick && !s.picked ? "waits for you to pick the payment" : "not written yet")],
+    ["hum", "5 · You review, edit and send"]
+  ];
+  return `<ol class="path">${steps.map(([k, txt]) => `<li><span class="dot ${k === "sys" ? "" : k}"></span><span class="${k === "skip" ? "skipped" : ""}">${esc(txt)}</span></li>`).join("")}</ol>`;
+}
+
+function canDraft(t) {
+  const s = state[t.id];
+  if (s.desk === "triage") return false;
+  if (t.route === "critical" && !s.confirmed) return false;
+  if (t.pick && !s.picked) return false;
+  if (!t.pick && !t.draft) return false;
+  return true;
+}
+
+function lookupCards(t) {
+  const s = state[t.id];
+  const L = t.lookup;
+  let tx = "";
+  if (t.pick) {
+    tx = `<div class="card"><span class="k">Matching payments · the copilot could not tell which one (no reference in the message)</span>
+      ${L.tx.map(x => `<label class="cand" for="pick-${x.id}"><input type="radio" name="pick" id="pick-${x.id}" value="${x.id}" ${s.picked === x.id ? "checked" : ""}>
+        <span><span class="mono">${x.id}</span> · ${esc(x.line)}<br><span class="k">${esc(x.status)}</span></span></label>`).join("")}
+      <span class="k">Pick the payment the merchant means; the draft is written after you choose.</span></div>`;
+  } else if (L.tx.length) {
+    tx = L.tx.map(x => `<div class="card"><span class="k">Transaction</span><span class="mono">${x.id}</span><span>${esc(x.line)}</span><span>${esc(x.status)}</span></div>`).join("");
+  }
+  return `<div class="cards">
+    <div class="card"><span class="k">Merchant</span><span>${esc(L.merchant)}</span></div>
+    ${tx}
+    <div class="card"><span class="k">Linked disputes</span><span>${esc(L.disputes)}</span></div>
+    <div class="card"><span class="k">Last tickets</span><span>${esc(L.history)}</span></div>
+  </div>`;
+}
+
+function draftBlock(t) {
+  const s = state[t.id];
+  const text = t.pick ? t.drafts[s.picked] : t.draft;
+  const src = t.pick ? t.sourcesBy[s.picked] : t.sources;
+  const ta = s.edited ?? text;
+  return `<div class="section">
+    <h3>Draft <span class="pill sys">L2 · you approve every reply</span>${t.route === "critical" ? '<span class="pill crit">Detailed review before sending</span>' : ""}</h3>
+    <div class="draft"><label for="draftText" class="hint" style="display:block;margin-bottom:4px">Edit freely. Citations [n] point to the sources below.</label><textarea id="draftText">${esc(ta)}</textarea></div>
+    <ol class="sources">${src.map(x => `<li>${esc(x)}</li>`).join("")}</ol>
+    <div class="actions">
+      <button class="btn primary" id="send" ${s.sent ? "disabled" : ""}>${s.sent ? "Sent" : "Send reply"}</button>
+      <span class="hint">You send it. The copilot has no send button.</span>
+    </div>
+  </div>`;
+}
+
+function rerouteBlock(t) {
+  const s = state[t.id];
+  if (s.desk === "triage" || s.sent) return "";
+  const opts = Object.entries(DESKS).filter(([k]) => k !== "triage" && k !== s.desk).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join("");
+  return `<div class="actions"><label for="reroute" class="hint">Wrong desk?</label>
+    <select class="btn" id="reroute"><option value="">Reroute to…</option>${opts}</select>
+    <span class="hint">${s.reroutes === 0 ? "Rerouted tickets are read and drafted again, once." : "A second reroute sends the ticket to human triage."}</span></div>`;
+}
+
+function renderPanel(t) {
+  const s = state[t.id];
+  $("#copilotToggle").checked = s.copilot;
+  $("#trust").textContent = t.route === "auto" ? "Routing L3 · sampled audit" : t.route === "critical" ? "Critical · a person decides" : "UNDEFINED · a person decides";
+  $("#trust").className = "pill " + (t.route === "auto" ? "sys" : t.route === "critical" ? "crit" : "hum");
+  if (!s.copilot) {
+    $("#panel").innerHTML = `<p class="off">The copilot is off for this ticket. Work it as today: read the message, find the payment, write the reply.</p>`;
+    return;
+  }
+  let banner = "";
+  if (t.route === "critical" && !s.confirmed) {
+    banner = `<div class="banner crit"><strong>Critical ticket: confirm the desk before any draft</strong>
+      <span>Why: ${t.criticalWhy.map(esc).join(" · ")}</span>
+      <div class="row"><button class="btn primary" id="confirm">Confirm: ${esc(DESKS[t.desk])}</button>
+      <select class="btn" id="confirmOther" aria-label="Send to another desk"><option value="">Another desk…</option>${Object.entries(DESKS).filter(([k]) => k !== "triage" && k !== t.desk).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join("")}</select></div></div>`;
+  } else if (s.desk === "triage") {
+    banner = `<div class="banner hum"><strong>The copilot could not tell what this ticket is, so it did not guess</strong>
+      <span>${t.route === "triage" ? "Several requests in one message (confidence " + t.confidence.toFixed(2) + ")." : "Sent here after a second reroute."} Choose the desk, or split the ticket.</span>
+      <div class="row"><select class="btn" id="triageDesk" aria-label="Choose the desk"><option value="">Send to desk…</option>${Object.entries(DESKS).filter(([k]) => k !== "triage").map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join("")}</select>
+      <button class="btn" id="split">Split into separate tickets</button></div></div>`;
+  } else if (t.route === "triage") {
+    banner = `<div class="banner hum"><strong>Triaged by you to ${esc(DESKS[s.desk])}</strong><span>The copilot reads it again in that desk. Prototype v0.1 stops here for this ticket.</span></div>`;
+  } else if (t.route === "auto" && s.reroutes === 0) {
+    banner = `<div class="banner ok"><strong>Routed automatically to ${esc(DESKS[s.desk])}</strong><span>Clear and not critical. A sample of these is audited every week.</span></div>`;
+  } else if (s.reroutes > 0) {
+    banner = `<div class="banner hum"><strong>Rerouted by you to ${esc(DESKS[s.desk])}</strong><span>Read and drafted again for this desk.</span></div>`;
+  }
+
+  $("#panel").innerHTML = `
+    ${banner}
+    <div class="section"><h3>What the copilot read <span class="pill mute">JSON</span></h3>${fieldsTable(t)}</div>
+    <div class="section"><h3>Path taken</h3>${pathList(t)}</div>
+    ${s.desk === "triage" && t.route === "triage" ? "" : `<div class="section"><h3>Case card <span class="pill sys">L1 · read-only</span></h3>${lookupCards(t)}</div>`}
+    ${canDraft(t) ? draftBlock(t) : ""}
+    ${rerouteBlock(t)}
+    <div class="section"><h3>Log</h3><ul class="log">${s.log.map(l => `<li>${esc(l.time)} · ${esc(l.who)} · <span>${esc(l.msg)}</span></li>`).join("")}</ul></div>`;
+  wirePanel(t);
+}
+
+function wirePanel(t) {
+  const s = state[t.id];
+  document.querySelectorAll(".fields tr[data-src]").forEach(tr => {
+    const on = v => document.querySelectorAll(`.message .src[data-src="${tr.dataset.src}"]`).forEach(x => x.classList.toggle("on", v));
+    tr.addEventListener("mouseenter", () => on(true)); tr.addEventListener("mouseleave", () => on(false));
+    tr.addEventListener("focus", () => on(true)); tr.addEventListener("blur", () => on(false));
+  });
+  const c = $("#confirm"); if (c) c.addEventListener("click", () => { s.confirmed = true; log(t, "you", "confirmed the desk: " + DESKS[s.desk]); log(t, "copilot", "looked up and drafted"); render(); });
+  const co = $("#confirmOther"); if (co) co.addEventListener("change", () => { if (!co.value) return; s.desk = co.value; s.confirmed = true; log(t, "you", "sent the critical ticket to " + DESKS[s.desk]); log(t, "copilot", "read and drafted again for this desk"); render(); });
+  const td = $("#triageDesk"); if (td) td.addEventListener("change", () => { if (!td.value) return; s.desk = td.value; log(t, "you", "triaged to " + DESKS[s.desk]); toast("Sent to " + DESKS[s.desk] + ". The copilot reads it again there."); render(); });
+  const sp = $("#split"); if (sp) sp.addEventListener("click", () => { log(t, "you", "asked to split the ticket"); toast("Prototype: splitting is not built yet."); render(); });
+  document.querySelectorAll('input[name="pick"]').forEach(r => r.addEventListener("change", () => { s.picked = r.value; s.edited = undefined; log(t, "you", "picked payment " + r.value); log(t, "copilot", "drafted on " + r.value); render(); }));
+  const ta = $("#draftText"); if (ta) ta.addEventListener("input", () => { if (s.edited === undefined) log(t, "you", "edited the draft"); s.edited = ta.value; });
+  const send = $("#send"); if (send) send.addEventListener("click", () => { s.sent = true; log(t, "you", "sent the reply" + (s.edited !== undefined ? " (edited)" : " (as drafted)")); toast("Reply sent by you."); render(); });
+  const rr = $("#reroute"); if (rr) rr.addEventListener("change", () => {
+    if (!rr.value) return;
+    s.reroutes += 1;
+    if (s.reroutes >= 2) { s.desk = "triage"; log(t, "you", "rerouted a second time"); log(t, "copilot", "second reroute → human triage"); toast("Second reroute: the ticket goes to human triage."); }
+    else { s.desk = rr.value; s.edited = undefined; log(t, "you", "rerouted to " + DESKS[s.desk]); log(t, "copilot", "read and drafted again for " + DESKS[s.desk]); toast("Rerouted to " + DESKS[s.desk] + "."); }
+    render();
+  });
+}
+
+$("#copilotToggle").addEventListener("change", e => { const t = TICKETS.find(x => x.id === current); state[t.id].copilot = e.target.checked; log(t, "you", "turned the copilot " + (e.target.checked ? "on" : "off") + " for this ticket"); render(); });
+
+function render() {
+  const t = TICKETS.find(x => x.id === current);
+  renderQueue(); renderTicket(t); renderPanel(t);
+}
+render();
+</script>
+</body>
+</html>
