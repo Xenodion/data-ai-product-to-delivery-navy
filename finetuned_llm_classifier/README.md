@@ -23,8 +23,8 @@ The plan, with its gates, is `docs/roadmap.md`; the day-by-day account is in `no
 | Pipelines on Vertex (training, base model, sweep) with Qwen2.5-3B-Instruct, float16 | training run done (2 h 06 of T4); base-model and sweep pipelines compile, not run |
 | Model D (Qwen2.5-3B + LoRA) on val | cost 0.027 per ticket against 1.478 for B2; valid JSON 290 of 293; test sets not read yet (`docs/results/`) |
 | Compact variants (merged GGUF, smaller models) | D-q4 locked on val (cost 0.020, 6.4 s CPU, 0 % urgent wrong desk, < 18 €/mo); S-1.5B/S-0.5B cancelled under explicit decision rule (`docs/compact_variants.md`) |
-| Final reading of the test sets | to do, after the systems of `docs/scoring_protocol.md` section 7 (confirmed) have their val score |
-| Handler, model registration, endpoint, Chainlit app | handler adapted; the rest conditional on the tests (no endpoint before then) |
+| Final reading of the test sets (Gate G7) | PASSED in `notebooks/05_final_evaluation.ipynb`. Champion D-q4 achieves 0.054 € error cost (-1.61 € vs B2, p < 0.0001) |
+| Model registration in Vertex AI (Gate G8) | PASSED. Model registered: `keelpay-router-json` (ID: 7308774847222382592, alias: `qwen3b-lora-q4`, region europe-west2) |
 | Requirements of the shared project (evaluation harness in CI, monitoring, routing, caching, production-readiness checklist) | to define |
 
 ## Documents
@@ -38,7 +38,7 @@ The plan, with its gates, is `docs/roadmap.md`; the day-by-day account is in `no
 | `docs/baseline_results.md` | B0-B2 on val and the test sets |
 | `docs/compact_variants.md` | procedure and val results for merged GGUF models (D-q8, D-q4) and smaller models |
 | `docs/results/` | predictions and loss history of full run D, D-q8, D-q4 and timings |
-| `notebooks/01_dataset_build.ipynb`, `02_scoring_and_baselines.ipynb`, `03_finetuning_vertex.ipynb`, `04_compact_variants.ipynb` | the logbook, in the order of discovery |
+| `notebooks/01_dataset_build.ipynb`, `02_scoring_and_baselines.ipynb`, `03_finetuning_vertex.ipynb`, `04_compact_variants.ipynb`, `05_final_evaluation.ipynb` | the logbook, in the order of discovery (G1 to G8 complete) |
 
 ## Setup
 
@@ -89,7 +89,7 @@ src/
   pipeline_components/     # KFP components
   pipelines/               # training and sweep pipelines
 scripts/                   # GCP check, dataset upload, pipeline runner, baselines, scoring of predictions, dataset build
-notebooks/                 # the logbook (3 notebooks)
+notebooks/                 # the logbook (5 notebooks: G1 to G8 complete)
 docs/                      # protocol, roadmap, methodology, results (see the table above)
 data/dataset/              # the four splits and their quarantine (committed on purpose); other data is gitignored
 ```

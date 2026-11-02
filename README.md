@@ -48,7 +48,7 @@ We keep from the course proposal P2 only the universe: a B2B payments fintech, a
 
 ![The Keelpay copilot flow](assets/copilot_flow.png)
 
-The copilot follows a strict two-stage pipeline. The two LLM nodes have separated responsibilities, distinct trust levels, and different model architectures:
+The copilot follows a continuous two-stage pipeline designed for maximum human efficiency. Clear tickets flow directly from Node 1 into DB Lookup and Node 2 Drafter (Trust L3) without requiring an intermediate human routing checkpoint. The support agent performs a single unified review (Trust L2) of both the routing and the cited draft in their workspace. On the ~2% misrouted tickets, the agent triggers a 1-click reroute with automatic re-drafting:
 
 ```mermaid
 flowchart TD
@@ -59,44 +59,41 @@ flowchart TD
 
     Start(["📥 Incoming Merchant Ticket<br/>(Email / Free-text in FR or EN)"]) --> N1
 
-    subgraph SUB_A ["NODE 1: ROUTER & EXTRACTION (Sub-case A · Trust L3)"]
-        N1["🤖 Node 1: Fine-Tuned SLM<br/>(Qwen2.5-3B-LoRA / GGUF CPU)"]:::llm
-        N1 --> D1{"Valid JSON &<br/>Confident Fields?"}
+    subgraph SUB_A ["NODE 1: ROUTER & DECISION TABLE (Sub-case A · Trust L3)"]
+        N1["🤖 Node 1: Router SLM (System 1)<br/>(Qwen2.5-3B-LoRA / GGUF CPU)"]:::llm
+        N1 --> D1{"Valid JSON &<br/>Recognized Intent?"}
         
-        D1 -- "Invalid or UNDEFINED" --> Triage["👤 Human Triage Queue<br/>(Support Agent L1)"]:::human
+        D1 -- "Invalid, OTHER or UNDEFINED" --> Triage["👤 Human Triage Queue<br/>(Support Agent L1)"]:::human
         
-        D1 -- "Valid JSON Schema" --> D2{"Decision Table:<br/>Target Desk"}
+        D1 -- "Valid JSON Schema" --> D2{"Decision Table:<br/>Criticality & Target Desk"}
         
-        D2 --> DeskPay["Payments Desk"]:::system
-        D2 --> DeskDisp["Disputes Desk"]:::system
-        D2 --> DeskTech["Technical Desk"]:::system
-        D2 --> DeskComp["Compliance Desk"]:::system
+        D2 -- "Dispute / Compliance & HIGH urgency" --> QueueCritical["🚨 Critical Queue<br/>(Held for confirmation)"]:::alert
+        D2 -- "Clear & Standard" --> AutoRoute["⚡ Automated Routing (Trust L3)<br/>(Payments, Disputes, Tech, Compliance)"]:::system
         
-        DeskPay & DeskDisp & DeskTech & DeskComp --> D3{"urgency == HIGH ?"}
-        D3 -- "Yes" --> QueueUrgent["🚨 Priority Queue (Strict SLA)"]:::alert
-        D3 -- "No" --> QueueStd["Standard Desk Queue"]:::system
+        Triage -- "Manually routed" --> D2
     end
 
-    QueueUrgent & QueueStd --> HumanCheck{"Desk Support Agent:<br/>Routing accurate?"}:::human
-    HumanCheck -- "Misrouted" --> Reroute["🔁 Manual Reroute<br/>(1x allowed, 2nd to triage)"]:::human
-    Reroute --> D2
-
     subgraph SUB_B ["NODE 2: COPILOT DRAFTER & RAG (Sub-case B · Trust L2)"]
-        HumanCheck -- "Correct Desk" --> FetchData["🔍 1. Read-Only DB Lookup<br/>(Transactions, merchant history)"]:::system
+        AutoRoute & QueueCritical --> FetchData["🔍 1. Read-Only DB Lookup<br/>(Candidate transactions & merchant card)"]:::system
         FetchData --> FetchKB["📚 2. Knowledge Retrieval (RAG)<br/>Desk policy chunks [KB-xxx]"]:::system
         
-        FetchKB --> N2["🤖 Node 2: Drafter LLM<br/>(Prompted model + citations)"]:::llm
+        FetchKB --> N2["🤖 Node 2: Drafter LLM (System 2)<br/>(Prompted model + citations)"]:::llm
         
         N2 --> Guardrails{"3. Automated Guardrails:<br/>- Citations valid?<br/>- No illegal commitments?"}:::system
         
-        Guardrails -- "Missing facts / doubt" --> FlagDraft["⚠️ Draft with Warning<br/>'[VERIFICATION NEEDED]'"]:::alert
         Guardrails -- "Pass" --> DraftReady["📝 Cited Draft Ready"]:::system
+        Guardrails -- "Missing facts / doubt" --> FlagDraft["⚠️ Draft with Warning<br/>'[VERIFICATION NEEDED]'"]:::alert
     end
 
-    subgraph HUMAN_LOOP ["FINAL HUMAN-IN-THE-LOOP (Never sends autonomously)"]
-        FlagDraft & DraftReady --> UI["🖥️ Support Agent Workspace (Chainlit)<br/>(Ticket + Extracted JSON + DB facts + Cited Draft)"]:::human
-        UI --> HumanAction["👤 Support Agent edits,<br/>approves & sends"]:::human
-        HumanAction --> Sent(["📤 Sent to Merchant"])
+    subgraph HUMAN_LOOP ["UNIFIED HUMAN-IN-THE-LOOP (Trust L2 · Never sends autonomously)"]
+        DraftReady & FlagDraft --> UI["🖥️ Desk Support Agent Workspace (Chainlit)<br/>(Ticket + Extracted JSON + DB facts + Cited Draft)"]:::human
+        UI --> AgentReview{"Single Unified Review:<br/>Routing & Draft accurate?"}:::human
+        
+        AgentReview -- "Accurate (98%)" --> AgentAction["👤 Support Agent edits if needed<br/>& clicks Send"]:::human
+        AgentAction --> Sent(["📤 Sent to Merchant"])
+        
+        AgentReview -- "Misrouted (~2%)" --> Reroute["🔁 1-Click Reroute<br/>(Redrafted once, 2nd to triage)"]:::human
+        Reroute --> D2
     end
 ```
 
@@ -112,6 +109,20 @@ flowchart TD
 | **Abstention rule** | Fills `"UNDEFINED"` when uncertain → Human triage | Inserts `[VERIFICATION NEEDED]` → Agent check |
 | **Trust level** | **L3** (automatic routing, with QA sampling) | **L2** (human reviews and edits every draft) |
 | **Data locality** | Runs inside private infrastructure (CPU/GCS) | Runs inside private infrastructure / hosted mock |
+
+#### Cognitive architecture: Kahneman's System 1 vs System 2 & TypeSafe AI's "Jev"
+
+The dual-node division reflects the cognitive dichotomy formalized by Daniel Kahneman (*Thinking, Fast and Slow*):
+
+* **System 1 (Fast, instinctive, structured, low-cost): Node 1 Router SLM**
+  * Operates like the emerging industry category of *"System One models"* (formalized by TypeSafe AI with its proprietary model *Jev*, launched in September 2026).
+  * System 1 models do not author free-text narrative; they take raw communication states and emit deterministic, typed schemas (Pydantic objects) with confidence indices.
+  * *Why build an in-house fine-tuned SLM instead of commercial System 1 APIs like Jev?*
+    1. **European Banking Secrecy & DORA/GDPR:** Keelpay's financial emails (IBANs, chargebacks, dispute amounts) cannot be streamed to third-party US proprietary APIs. The model runs within Keelpay's private cloud.
+    2. **Dynamic Entity Extraction:** While pure System 1 classifiers only select from predefined categorical answers, our Router SLM also extracts unstructured entity variables (`transaction_id`, `amount`, `currency`).
+    3. **Unit Economics & Zero Lock-in:** The quantized model (D-q4) operates on an 8 vCPU instance for < 18 €/month on 36,000 tickets, eliminating variable per-ticket API tolls and vendor lock-in.
+* **System 2 (Deliberative, analytical, narrative, verified): Node 2 Drafter LLM**
+  * Handles contextual synthesis: cross-referencing merchant history, retrieving policy articles (RAG), and drafting human-readable prose verified by explicit policy guardrails.
 
 #### The four decision trees & guardrails
 

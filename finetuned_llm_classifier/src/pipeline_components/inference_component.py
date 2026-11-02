@@ -17,6 +17,7 @@ def inference_component(
     predictions: Output[Dataset],
     instruction: str,
     model: Input[Model] = None,  # LoRA adapter; left out, the base model alone answers (system B3)
+    adapter_uri: str = "",  # gs:// folder of the LoRA adapter (used when run as standalone inference)
     model_id: str = "Qwen/Qwen2.5-3B-Instruct",
     max_new_tokens: int = 160,
     max_rows: int = 0,  # smoke test: predict only the first rows (0 = all)
@@ -25,6 +26,8 @@ def inference_component(
     import logging
     import os
     import re
+    import time
+    from pathlib import Path
 
     import pandas as pd
     import torch
@@ -48,15 +51,22 @@ def inference_component(
     )
 
     # Load fine-tuned LoRA adapters and tokenizer (or the base model and its tokenizer alone)
+    adapter_path = None
     if model is not None:
-        logging.info("Loading PEFT model from %s", model.path)
-        peft_model = PeftModel.from_pretrained(base_model, model.path)
+        adapter_path = Path(model.path)
+    elif adapter_uri:
+        adapter_path = Path(adapter_uri.replace("gs://", "/gcs/", 1))
+
+    if adapter_path is not None:
+        logging.info("Loading PEFT model from %s", adapter_path)
+        peft_model = PeftModel.from_pretrained(base_model, str(adapter_path))
     else:
         logging.info("No adapter: scoring the base model %s", model_id)
         peft_model = base_model
     peft_model.eval()
 
-    tokenizer = AutoTokenizer.from_pretrained(model.path if model is not None else model_id)
+    tok_path = str(adapter_path) if adapter_path is not None else model_id
+    tokenizer = AutoTokenizer.from_pretrained(tok_path)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.unk_token
         tokenizer.pad_token_id = tokenizer.unk_token_id
@@ -86,11 +96,13 @@ def inference_component(
         return json.dumps(parsed, ensure_ascii=False, sort_keys=True) if isinstance(parsed, dict) else ""
 
     results = []
+    durations = []
     for _, row in test_df.iterrows():
         ticket = row["ticket"]
         prompt = build_prompt(tokenizer, ticket)
         inputs = tokenizer(prompt, return_tensors="pt").to("cuda:0")
 
+        t0 = time.perf_counter()
         with torch.no_grad():
             outputs = peft_model.generate(
                 **inputs,
@@ -98,6 +110,7 @@ def inference_component(
                 do_sample=False,
                 pad_token_id=tokenizer.pad_token_id,
             )
+        durations.append(time.perf_counter() - t0)
 
         # Decode only the new tokens, so the prompt cannot leak into the reply
         raw_output = tokenizer.decode(outputs[0][inputs["input_ids"].shape[1]:], skip_special_tokens=False)
@@ -109,6 +122,16 @@ def inference_component(
             "extracted_response": valid or extracted,
             "valid_json": bool(valid),
         })
+
+    if durations:
+        ordered = sorted(durations)
+        logging.info(
+            "Latency: mean=%.3fs, median=%.3fs, p95=%.3fs over %d tickets",
+            sum(durations) / len(durations),
+            ordered[len(ordered) // 2],
+            ordered[int(0.95 * (len(durations) - 1))],
+            len(durations),
+        )
 
     pred_df = pd.DataFrame(results)
     os.makedirs(os.path.dirname(predictions.path), exist_ok=True)

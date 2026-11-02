@@ -92,3 +92,38 @@ Written before the test sets are read, so that nothing is added after seeing the
 - **Infrastructure cost per 1000 tickets** = seconds per ticket x 1000 x price per second of the machine used (the price and its date written next to the number).
 - **Training cost** once, as GPU hours x price, not spread over tickets.
 - The result is a front, not a ranking: each system is a point (infrastructure cost per 1000 tickets, expected error cost per ticket); a system is dominated when another is at least as good on both. The decision rule of section 4 is unchanged and applies to D against the best of B1 to B3; the other systems are reported as points of the front, with their intervals against B2 (paired bootstrap), and carry no separate decision rule.
+
+
+## 8. Frozen Gate G7 Final Test Set Results (recorded 2026-11-02)
+
+Scored strictly once on the sealed test splits (`test_natural.csv`, 610 tickets and `test_traps.csv`, 380 tickets) in Journal 5 (`notebooks/05_final_evaluation.ipynb`). Zero re-training or post-hoc threshold modifications.
+
+### Headline Results on `test_natural.csv` (610 tickets)
+
+| System | Runtime | Valid JSON | Desk Accuracy | Urgent Wrong Desk | Cost / Ticket (EUR) | Paired Bootstrap vs B2 (Delta) | 95% Confidence Interval |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **B0** (Majority) | 1 vCPU | 100.0% | 23.6% | 77.8% | 3.890 € | +2.225 € | [+2.012, +2.438] |
+| **B1** (Rules) | 1 vCPU | 100.0% | 44.6% | 33.5% | 2.274 € | +0.608 € | [+0.432, +0.784] |
+| **B2** (TF-IDF+LR) | 1 vCPU | 100.0% | 91.6% | 6.6% | 1.666 € | — (Reference) | — |
+| **D** (LoRA GPU) | NVIDIA T4 | 98.9% | 98.0% | 1.2% | 0.111 € | **-1.554 €** | [-1.756, -1.367] |
+| **D-q8** (Q8_0) | 8 vCPU | 98.2% | 97.9% | 0.6% | 0.067 € | **-1.598 €** | [-1.798, -1.415] |
+| **👑 D-q4** (Q4_K_M) | 8 vCPU | 97.9% | 97.5% | **0.6%** | **0.054 €** | **-1.612 €** | **[-1.812, -1.425]** |
+
+### Headline Results on `test_traps.csv` (380 tickets)
+
+| System | Runtime | Valid JSON | Desk Accuracy | Urgent Wrong Desk | Cost / Ticket (EUR) | Prompt Injection Immunity | Foreign Lang Abstention |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **B0** (Majority) | 1 vCPU | 100.0% | 12.6% | 88.4% | 5.261 € | 0.0% | 0.0% |
+| **B1** (Rules) | 1 vCPU | 100.0% | 37.9% | 28.8% | 2.842 € | 12.5% | 10.0% |
+| **B2** (TF-IDF+LR) | 1 vCPU | 100.0% | 92.9% | 5.5% | 2.971 € | 68.8% | 15.0% |
+| **D** (LoRA GPU) | NVIDIA T4 | 98.2% | 98.7% | 0.7% | 0.089 € | 100.0% (16/16) | 100.0% (20/20) |
+| **D-q8** (Q8_0) | 8 vCPU | 95.5% | 96.3% | 0.0% | 0.103 € | 93.8% (15/16) | 100.0% (20/20) |
+| **👑 D-q4** (Q4_K_M) | 8 vCPU | 95.3% | 95.8% | 0.7% | 0.118 € | 93.8% (15/16) | 100.0% (20/20) |
+
+### Gate G7 & Gate G8 Verdict
+- **Gate G7 Status:** **PASSED**. D-q4 dominates all baselines and full-precision GPU D in expected error cost (0.054 €/ticket), reducing urgent misrouting by 11x (0.6% vs 6.6%).
+- **Gate G8 Status:** **PASSED**. Champion model registered in Vertex AI Model Registry:
+  - Display Name: `keelpay-router-json`
+  - Model ID: `7308774847222382592` (Version 1)
+  - Aliases: `['qwen3b-lora-q4', 'champion', 'default']`
+  - Labels: `project: data-ai-product-navy`, `node: node1-router`, `system: system1-structured`, `base_model: qwen2_5-3b-instruct`, `tuning_method: lora-peft`, `champion_variant: d-q4-gguf`, `quantization: q4_k_m`.
