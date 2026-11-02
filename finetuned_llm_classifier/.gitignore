@@ -4,6 +4,8 @@ __pycache__/
 .env
 data/*
 !data/.gitkeep
+# Synthetic and small: committed on purpose for the exercise (the run logs stay ignored)
+!data/dataset/
 notebooks/outputs/
 logs/
 models/
