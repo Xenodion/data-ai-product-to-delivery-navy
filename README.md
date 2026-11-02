@@ -85,17 +85,22 @@ One numbered file per session. Every member authors commits in at least four of 
 |---|---|---|
 | `00_pitch.md` | before S3 — our redefined case | filled |
 | `01_problem_statement.md` | S1–S2 — Assignment 1 | v1 |
-| `governance.md` | created for Assignment 1, one line added every session | Sessions 1–2 filled |
+| `governance.md` | created for Assignment 1, one line added every session | Sessions 1–3 filled |
 | `02_sizing.xlsx` | S2 — Assignment 2 | v1 — filled, conditional go |
 | `02_investment_memo.md` | S2 — Assignment 2 | v1 — conditional go (staged) |
-| `03_product_brief.md` | S3 | v1 |
+| `03_product_brief.md` | S3 — Assignment 3 | v1 — v2 (sections 9–10) after the usability test |
+| `03_ai_lean_canvas.md` | S3 — Assignment 3 | v1 |
+| `03_user_research.md` | S3 — Assignment 3 | desk research done; usability test to run |
+| `03_prototype_link.md` | S3 — Assignment 3 | v0.1 — screenshot to add |
 | `04_architecture.md` | S4 | to do |
 | `05_metrics.md` | S5 | to do |
 | `06_ab_protocol.md` | S6 | to do |
 | `07_operations.md` | S7 | to do |
 | `08_launch_memo.md` | S8 | to do |
-| `spec.md`, `product_brief.md` | final | to do |
-| `/prototype`, `/evals` | from S4 | to do |
+| `spec.md` | S3 skeleton, final in S4 | skeleton v0 — one decision open (drafter bar) |
+| `product_brief.md` | final | to do |
+| `/prototype` | from S3 | static mock of the panel v0.1 (`copilot_panel/`); code from S4 |
+| `/evals` | from S3 | `eval_set_v0.csv`, 20 tickets labelled by hand |
 | `/finetuned_llm_classifier` | Sub-project of the course "Agentic Workflows & LLM Ops" (own uv environment, see its README) | in progress |
 
 ## Rules

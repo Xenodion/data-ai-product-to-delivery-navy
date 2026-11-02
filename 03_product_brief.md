@@ -1,101 +1,92 @@
-# 03 — Product brief (v1)
+# 03 — Product brief · Keelpay agent-assist copilot (routing + drafting) · v1
 
-**Team:** NAVY · **Agent:** Keelpay agent-assist copilot (routing + drafting) · **Last updated:** 31 October 2026
+**Team:** NAVY · **Starting point:** P2 universe, redefined (frozen brief in the README) · **Version:** v1 — 2 November 2026
 
-> Built on the frozen brief (README), the problem statement (`01`) and the sizing (`02_sizing.xlsx`, `02_investment_memo.md`).
+> Built on the README (frozen brief), `01_problem_statement.md` and `02_sizing.xlsx` / `02_investment_memo.md`. Tags: **given** (scenario data), **sizing** (a guess from `02_sizing.xlsx`, tested there), **derived** (arithmetic on those), **measured** (synthetic test tickets, `finetuned_llm_classifier`).
 
-## 1. Framing and success criterion
+## 1. Problem, user, do-nothing
+- **Problem in one sentence (with a number):** at Keelpay (~2,500 merchants, ~36,000 tickets a month, French and English), support agents spend ~15 % of handling time reading a free-text ticket and routing it, and ~45 % finding the payment and writing the reply; ~1 ticket in 7 first lands in the wrong desk, and an urgent one can miss its deadline (given).
+- **User (persona):** a Keelpay support agent on one of the four desks (payments status, disputes, technical / API, compliance) — goal: get each ticket to the right desk and answer it on the right payment, without decoding a free-text message and hunting for the transaction by hand (derived from the pain and the job in `00_pitch.md`; the interviews confirm or refine it in v2) — pain: rebuilding each ticket's facts (what, which payment, how urgent) by hand, and receiving tickets meant for another desk (given).
+- **Do-nothing baseline:** volume grows with the merchant base and so does the reading, routing and writing time, partly offset by agents getting faster on their own (sizing: about 3 % a year, ≈ €93k); 1 ticket in 7 keeps bouncing between desks (`01` §7, `02_investment_memo.md` §4).
 
-| | |
+## 2. The process — as-is and to-be
+Handling time ≈ 10 min a ticket (sizing guess, Inputs row 7). Minutes per step = the given shares × 10 min. Minutes after = the sizing's base case at full adoption (Flow tab).
+
+| # | Step | Who today | Minutes | Error rate | Cost of an error | Automate / augment / keep human (test it fails) | Trust level | Minutes after | Metric for this step |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | Read the ticket | Support agent | 1.5 for steps 1–2 (given 15 %) | counted in step 2: a misread shows up as a misroute | feeds step 2 | **Automate** (model). Passes most tests: well-defined input → output, data can be generated, clear labels. Fails "no long chain of reasoning / background knowledge" on hard tickets → `UNDEFINED` | L1 (the rules check it) | ≈ 0.8 for steps 1–2 (derived: 1.5 × (1 − 55 % auto × 80 % cut)) | Exact match per JSON field; valid JSON ≥ 98.5 % (scoring protocol, amended on 1 November 2026 after the val run; results also reported at 99 %); share sent to triage (`UNDEFINED` / `OTHER`) close to the gold labels' — measured on val, 293 synthetic tickets: 16.0 % against 16.7 % in the labels, 100 % of them rightly sent, 95.9 % of the labelled ones caught |
+| 2 | Route to a desk | Support agent | (in step 1) | 1 in 7 first lands in the wrong desk (given) | €3 per hand-over (sizing); an urgent ticket missed: €150 / €400 / €300 by category (sizing) | **Automate with rules**, no ML: a decision table on a few fields. **Keep human** for critical tickets: fails "tolerance for error" | L3 with sampling; critical → a human confirms | (in step 1) | First-pass correct desk; share routed automatically; urgent tickets auto-routed to the wrong desk (target 0) |
+| 3 | Find the payment and history | Support agent | 4.5 for steps 3–4 (given 45 %) | not measured today (baseline to measure first, `01` §1; the sizing prices only errors added by the copilot) | a reply on the wrong payment: €150–400 (sizing) | **Automate**, no ML: exact query by merchant, ID, date, amount | L1 (read-only, this merchant only) | ≈ 3.1 for steps 3–4 (derived: 4.5 × (1 − 33 % cut × 92 % correctly routed)) | Right transaction attached |
+| 4 | Write the reply | Support agent | (in step 3) | not measured today (QA baseline, `01` §1) | wrong status, amount or deadline told to a merchant: legal and reputational (see below) | **Augment**: a cited draft. Fails "tolerance for error" and "explain the decision", so a person approves | L2 | (in step 3) | Edit rate; drafts on the wrong payment validated unread |
+| 5 | Validate, send, back-office, wrap-up | Support agent | 4.0 (given 40 %) | not measured today (QA baseline, `01` §1) | — | **Keep human**: promises, refunds and policy fail "tolerance for error" and need a person who is accountable | Human only (no send tool) | 4.0 (not touched) | QA score; handling time |
+| 6 | Log reroutes and edits | — (new) | 0 | — | — | **Automate** (telemetry) | L4 | 0 | Share of reroutes and edits captured as labels |
+| | **Total** | | **10** | | | | | **≈ 8.0 (≈ 20 % saved, sizing base)** | |
+
+*The eight tests are Brynjolfsson & Mitchell, "What can machine learning do?", Science (2017) — wording to check against the paper.*
+
+**Where the pain sits (the two steps):** step 2 (route) is short but critical — 1 in 7 misroutes, and urgent tickets can miss a deadline; step 3–4 (find the payment, write) is the largest slice (45 %).
+**The way back to a person (designed first):** `UNDEFINED`, low-confidence and critical tickets go to human triage before any draft; the receiving agent reroutes in one click and the ticket is redrafted once; a second reroute goes to triage; an agent can ignore the draft or switch the copilot off on a ticket; the Head of Support can switch the whole system back to "reading only" or off.
+**Where the governance line sits:** between route and draft on critical tickets (a human confirms the desk), and between draft and send on every ticket (a human only). Owner of the legal and reputational risk: Head of Compliance (`governance.md`, Session 2).
+
+*Trust levels — L1 suggests · L2 drafts, a person approves · L3 acts on a scope, a person samples · L4 acts alone under a threshold.*
+
+## 3. Features — RICE and MoSCoW
+Reach from `02_sizing.xlsx` (36,000 tickets a month; 28,800 for the draft, tickets not sent to triage). Impact, confidence and effort are our judgement.
+
+| Feature | Reach / mo | Impact | Conf. | Effort (wks) | RICE | MoSCoW |
+|---|---|---|---|---|---|---|
+| Decision table and criticality score | 36,000 | 2.0 | 100 % | 1.5 | 48,000 | MUST |
+| Gold set and feedback logger | 36,000 | 1.0 | 80 % | 1.5 | 19,200 | MUST |
+| Review screen (case card) | 36,000 | 1.0 | 80 % | 3.0 | 9,600 | SHOULD |
+| Router (best of options A–D) | 36,000 | 2.0 | 50 % | 4.0 | 9,000 | MUST |
+| Lookup and cited draft | 28,800 | 3.0 | 50 % | 6.0 | 7,200 | MUST |
+| *Autonomous replies (flawed)* | 36,000 | 2.0 | 50 % | 5.0 | 7,200 | WON'T |
+| Sentiment and tone suggestion | 36,000 | 0.5 | 50 % | 2.0 | 4,500 | COULD |
+| *Ledger write access (flawed)* | 7,200 | 2.0 | 50 % | 4.0 | 1,800 | WON'T |
+
+- **MUST (4):** router · decision table and criticality score · lookup and cited draft · gold set and feedback logger.
+- **SHOULD:** review screen (case card: each extracted field with the passage it comes from, the lookups already run, the path taken, one-click reroute). **COULD:** sentiment and tone.
+- **WON'T this time (dated 31 October 2026):** autonomous replies (no L4 send) · ledger write access (no payout, refund or unfreeze) · external model API in production (tickets stay in Keelpay's cloud; the MVP drafter uses a hosted API on synthetic tickets only, a dated exception in `governance.md`) · dispute arbitration, legal or regulatory advice · voice, chat or a merchant-facing bot.
+- **The feature that tests our flip assumption, and why it is a MUST:** the router. It ranks fourth on RICE, but its confidence is the lowest and the whole stage-2 decision rests on it (routing accuracy gates the drafting gain).
+- **The cut that hurt the most:** autonomous replies to simple payment-status tickets — the biggest saving, but a wrong payment sent without a person is this product's trap.
+
+## 4. Data *(details in `governance.md`, Session 3)*
+Synthetic tickets and a seeded ledger, no real merchant data · ≥ 200 gold tickets labelled by a teammate who does not tune the model, with a guideline · French and English, the four desks, ≥ a third hard cases (English and rare dispute types are the weak point) · in the real company the B2B contract and a legal basis decide what may train · train and test kept apart, retrieval limited to the ticket's merchant · ledger and policies versioned, router re-evaluated at every taxonomy or model change.
+
+## 5. Model — one rung per part
+| Part | Rung (1 rules · 2 classical ML · 3 pretrained model · 4 hybrid) | Why the rung below fails |
+|---|---|---|
+| Read (router) | 3 — fine-tuned small model if it beats the prompted one (options A–D, `01` §3) | Measured on 610 synthetic test tickets (`finetuned_llm_classifier/docs/baseline_results.md`). **Rules** fail: 44.6 % right desk, 33.5 % of urgent tickets in the wrong desk. **Classical ML** (TF-IDF + logistic regression) passes the 90 % bar (91.6 %) but fails the guardrail and the extraction: 6.6 % of urgent tickets in the wrong desk (target 0), amount exact in 80.2 % of tickets, transaction ID in 89.5 %. The model must beat it on those |
+| Route + criticality score | 1 — decision table | Nothing below rules; no learning needed for a decision on a few fields |
+| Look up | 1 — exact query | Nothing below rules |
+| Draft | 3 — prompted model with retrieval | Macros and templates cannot combine this merchant's transactions with the desk's policy in a free-text reply; classical ML does not generate text |
+| Log | 1 — telemetry | Nothing below rules |
+| **The copilot as a whole** | **4 — hybrid** | |
+
+## 6. Where it lives (integration surface)
+Side panel on each ticket in the helpdesk the agent already uses (the S4 prototype is a Chainlit app that mimics it, drafter plan D3; the static mock `prototype/copilot_panel/index.html` shows the panel) · speed needed: the reading must be done before an agent opens the ticket — it runs on arrival, while the ticket waits in the queue; measured: about 6.4 s per ticket for the quantised router (D-q4) on a CPU, about 1.5 s on a T4 GPU (293 val tickets, `finetuned_llm_classifier/docs/compact_variants.md`) · format: the JSON, the case card and the cited draft · fallback: `UNDEFINED` or a copilot failure → the agent works the ticket as today · who sees the log: the agent (per ticket), the Head of Support (weekly audit sample), an auditor (full log).
+
+## 7. Success criterion — one sentence
+> By 6 November 2026, on a gold set of ≥ 200 synthetic tickets (French and English, ≥ a third hard), the copilot is on track for the **13.5 % time-saved flip point** of `02_sizing.xlsx`: the router and the decision table send **at least 90 %** of tickets to the right desk on the first pass while routing **at least 50 %** automatically — and **no urgent ticket** is routed automatically to the wrong desk.
+
+**Why these bars reach the flip point.** The prototype runs on synthetic tickets, so it can measure routing but not time saved. In the sizing (Flow tab), routing 50 % automatically saves 15 % × 50 % × 80 % = **6.0 %** of handling time, and 90 % correctly routed lets drafting save 45 % × 90 % × the drafting cut. The flip point (**13.5 %**, `02_investment_memo.md` §2) is reached if the cited draft cuts the find-and-write time by **at least ≈ 19 %** (derived; the sizing's base guess is 33 %, measured in S5–S6). Below 90 % or 50 %, the drafting cut needed rises.
+
+## 8. Risks and rollback trigger
+- **Top risks:**
+  1. An urgent ticket silently routed to the wrong desk.
+  2. A draft on the wrong payment validated unread (automation bias).
+  3. Time saved below the 13.5 % flip point: the base case (≈ 20 %) sits above the published benchmark (+15 % issues per hour ≈ −13 % time per issue, Brynjolfsson, Li & Raymond, *QJE* 2025).
+  4. The fine-tuned router does no better than the prompted model (a valid outcome: we keep the prompted one).
+  5. The MVP's temporary hosted model on synthetic tickets is mistaken for the production design (dated exception, `governance.md`, Session 3).
+- **Rollback trigger (one line):** switch routing back to proposals only if a weekly audit sample finds an urgent ticket auto-routed to the wrong desk, or incremental serious errors exceed 0.1 % of tickets — owned by the Head of Support.
+
+---
+*v2 only — after the users (A3-7, #12)*
+
+## 9. What the users changed
+| Change | Evidence (who said / did what) |
 |---|---|
-| **Proposal** | P2 universe, redefined: Keelpay, a B2B payments fintech (see README). |
-| **Target user** | The Keelpay support agent who handles merchant tickets (payment status, disputes, technical / API, compliance). |
-| **Target trust level** | Routing **L3** (automatic, with sampling and a human for `UNDEFINED` and critical tickets); drafting **L2** (a support agent approves and sends every reply). |
-| **The fatal trap** | A misread message looks handled: an urgent ticket (dispute deadline, compliance hold) sits in the wrong desk, or a confident draft is built on the wrong payment. |
-| **Constraint** | Tickets carry merchant and payment data and never leave Keelpay's cloud: no external model API, for the router or the drafter. |
-| **Do-nothing** | Volume grows with the merchants; reading, routing and writing time grows with it and about 1 ticket in 7 keeps bouncing between desks (`01`, section 7; `02_sizing.xlsx`, do-nothing line). |
-| **Decision and owner** | Head of Support and Head of Compliance decide how much routing is automatic and at which thresholds; stage 2 is a conditional go (`02_investment_memo.md`). |
-| **Rollback trigger** | Switch routing back to proposals only if an urgent ticket is auto-routed to the wrong desk in a weekly audit sample, or incremental serious errors exceed 0.1 % of tickets; the switch is owned by the Head of Support. |
-| **Reference workload** | ~36,000 tickets a month, ~10 minutes of hands-on handling per ticket (guess), 46 support agents (guess). |
-| **Where it lives** | Inside the helpdesk the support agent already uses: a side panel on each ticket showing what the copilot read, the path it took, the sources and the draft. The S4 prototype is a Streamlit app that mimics it. |
+| | |
 
-**Success criterion (one, for the S4 prototype).**
-- **Metric:** share of gold-set tickets sent to the right desk on the first pass by the router plus the decision table, while at least half of the tickets are routed automatically (a router that sends everything to triage would pass accuracy alone).
-- **Threshold:** at least 90 % first-pass correct (today 6 in 7, about 86 %; the sizing's base case is 92 %, and its flip point on routing is about 90 %) and at least 50 % routed automatically (the sizing assumes 55 %).
-- **Guardrail:** no urgent ticket routed automatically to the wrong desk; every doubtful urgent ticket ends as `UNDEFINED` or in triage. Results are reported by class, and the recall on the dispute and compliance classes is read first.
-- **Data:** a gold set of at least 200 synthetic tickets, French and English, at least a third hard cases, labelled by a teammate who does not tune the model.
-- **Date:** end of S4.
-
-## 2. To-be process and trust level per step
-
-Shares of handling time are the scenario's given figures (README); the time the copilot saves on each slice is a guess, derived in `02_sizing.xlsx` (Flow tab) and measured in S4–S6.
-
-| Step | Share of today's handling time | To-be step | Tool / ladder rung | Trust level |
-|---|---|---|---|---|
-| **1. Read** | 15 % (steps 1–2) | The router reads the message and returns a JSON (`UNDEFINED` when unsure) | Rung 3: a small fine-tuned model if it beats the prompted one, otherwise the prompted model | **L1**: suggests, the rules in step 2 check it |
-| **2. Route** | (in step 1) | Decision table on the JSON plus a criticality score; clear tickets routed automatically, `UNDEFINED` / low-confidence / critical tickets to human triage | Rung 1: rules | **L3** with sampling |
-| **3. Look up** | 45 % (steps 3–4) | Matching transactions and history, read-only, limited to the merchant | Rung 1: exact query | **L1**: shows the evidence, decides nothing |
-| **4. Draft** | (in step 3) | Cited draft from retrieval over the desk's policies and read-only queries | Rung 3: prompted model with retrieval | **L2** |
-| **5. Review and send** | 40 % (with back-office and wrap-up, not touched) | A support agent reads, edits, reroutes if the desk is wrong (redrafted once), and sends | Human in the loop | **Human** |
-| **6. Log and feedback** | (in step 5) | Every reading, path, edit and reroute is logged and becomes a label | Rung 1: telemetry | **L4** |
-
-The model ladder, one rung per part: rules for routing, lookup and logging; a pretrained model for reading and drafting; the router climbs from rules and classical ML to a fine-tuned small model only if the rungs below fail the criterion on the gold set, and only against the prompted open-source model in our own cloud (no external API: tickets never leave Keelpay's cloud).
-
-## 3. The eight candidate features
-
-1. **Router (best of options A–D):** reads the message and returns the JSON, `UNDEFINED` when unsure; the fine-tuned model is the candidate under test.
-2. **Decision table and criticality score:** fixed rules on the JSON (required fields per request type, nulls, `UNDEFINED`, amount, urgency, deadline) decide auto-route, triage or critical. The desks and examples of sub-intents (to confirm): payments status (payout delayed or missing, credit not received); disputes (chargeback, contested fee, unauthorised debit); compliance (KYC blocking, account restriction, PSD2 / strong authentication); technical / API (webhook, error code, integration); `UNDEFINED` to human triage (unclear, several requests in one message, low confidence).
-3. **Lookup and cited draft:** deterministic transaction and history lookup, then a draft with retrieved sources and read-only queries, shown in a minimal side panel.
-4. **Gold set and feedback logger:** the 200-ticket gold set, plus reroutes and edits logged as labels.
-5. **Review screen:** the richer version of the panel, built as a case card for the support agent: the extracted fields each with the passage of the message it comes from, the lookups already run (account, transaction status, linked disputes), the path taken, sources side by side, one-click reroute.
-6. **Sentiment and tone suggestion:** flags an irritated merchant and suggests a tone.
-7. **Flawed feature 1, autonomous replies (L4):** the copilot answers simple payment-status tickets without a person.
-8. **Flawed feature 2, ledger write access:** the copilot reopens a payout or applies a refund.
-
-## 4. RICE prioritisation (sorted)
-
-RICE = Reach × Impact × Confidence ÷ Effort (person-weeks). Confidence is 50 %, 80 % or 100 %. All inputs are our judgement.
-
-| Rank | Feature | Reach (/mo) | Impact | Confidence | Effort (wks) | RICE | Decision |
-|---|---|---|---|---|---|---|---|
-| 1 | Decision table and criticality score | 36,000 | 2.0 | 100 % | 1.5 | **48,000** | **MUST** |
-| 2 | Gold set and feedback logger | 36,000 | 1.0 | 80 % | 1.5 | **19,200** | **MUST** |
-| 3 | Review screen | 36,000 | 1.0 | 80 % | 3.0 | **9,600** | **SHOULD** |
-| 4 | Router (best of A–D) | 36,000 | 2.0 | 50 % | 4.0 | **9,000** | **MUST** |
-| 5 | Lookup and cited draft | 28,800 | 3.0 | 50 % | 6.0 | **7,200** | **MUST** |
-| 6 | *Autonomous replies (flawed)* | 36,000 | 2.0 | 50 % | 5.0 | **7,200** | **WON'T** |
-| 7 | Sentiment and tone suggestion | 36,000 | 0.5 | 50 % | 2.0 | **4,500** | **COULD** |
-| 8 | *Ledger write access (flawed)* | 7,200 | 2.0 | 50 % | 4.0 | **1,800** | **WON'T** |
-
-## 5. MoSCoW board
-
-| MUST (4) | SHOULD | COULD | WON'T (out of scope, dated 31 October 2026) |
-|---|---|---|---|
-| 1. Router, best of A–D *(the routing criterion; the fine-tuned model is the experiment)* | 1. Review screen | 1. Sentiment and tone suggestion | 1. Autonomous replies to merchants (no L4 send) |
-| 2. Decision table and criticality score *(the guardrail)* | | | 2. Ledger write access (no payout, refund or unfreeze) |
-| 3. Lookup and cited draft *(the L2 core)* | | | 3. External model API (tickets stay in Keelpay's cloud) |
-| 4. Gold set and feedback logger *(no eval, no MVP)* | | | 4. Dispute arbitration with the card schemes, legal or regulatory advice |
-| | | | 5. Voice or chat channels, a merchant-facing chatbot |
-
-## 6. The two key sentences
-
-**Flip assumption.**
-> The two MUST features that carry the flip are the router and the cited draft. The router tests routing: at least 90 % first-pass accuracy with at least half of the tickets routed automatically and no urgent ticket mis-routed, and, if the fine-tuned model is to be kept, that it beats the prompted one by a margin fixed in advance. Together with the draft, this has to bring total time saved to about 13.5 % of handling time, the point where the copilot beats the rules-only attach in `02_sizing.xlsx` (base case about 20 %, published benchmark about 13 %). The router is a MUST although it ranks fourth on RICE, because its confidence is low and the whole stage-2 decision depends on it.
-
-**The cut that hurt the most.**
-> Autonomous replies to simple "where is my money" tickets: they are the most attractive saving, since a payment-status ticket needs little judgement, but cutting them was necessary because a wrong transaction match sent without a person is the trap of this product, and our routing is already automatic.
-
-## 7. Data, in six lines
-
-1. **Provenance:** synthetic tickets written by the team and a language model, with a seeded merchant and transaction ledger; no real merchant data.
-2. **Volume and labels:** at least 200 gold tickets, labelled by a teammate who does not tune the model, with a written guideline.
-3. **Coverage:** French and English, the four request types, at least a third hard cases; English and rare dispute types are the weak point.
-4. **Rights:** synthetic data, so no personal data; in the real company the B2B contract and a legal basis decide what tickets may train.
-5. **Leakage:** train and test separated, and retrieval limited to the merchant of the ticket (merchant A's data never reaches merchant B's draft).
-6. **Freshness:** policies and ledger are versioned; the router is re-evaluated at every taxonomy or model change.
-
-## 8. What this brief hands to the next sessions
-
-- `spec.md` (S4): the six steps with inputs, outputs and fallbacks (`UNDEFINED` or confidence below the threshold → triage).
-- `04_architecture.md` (S4): the decision table format, the retrieval, the read-only query guardrails, the logs.
-- `05_metrics.md`, `06_ab_protocol.md` (S5–S6): the per-step metrics and the copilot-on / copilot-off weeks.
+## 10. What they could not decide
+…
