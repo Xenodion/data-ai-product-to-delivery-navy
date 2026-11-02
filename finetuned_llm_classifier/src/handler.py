@@ -2,7 +2,7 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # Environment-specific values: set for a T4 GPU (Colab test and Vertex AI endpoint).
-MODEL_DIR = "models/router-phi3"
+MODEL_DIR = "models/router-qwen"
 DEVICE_MAP = "cuda:0"
 TORCH_DTYPE = torch.float16  # T4 has no native bfloat16 support
 
@@ -17,7 +17,7 @@ ALLOWED_PARAMETERS = {
 DEFAULT_MAX_NEW_TOKENS = 160
 MAX_NEW_TOKENS_LIMIT = 256  # caps GPU time per request
 MAX_INSTANCES = 8  # caps the batch size of one request
-MAX_INPUT_TOKENS = 3840  # Phi-3-mini-4k context (4096) minus MAX_NEW_TOKENS_LIMIT
+MAX_INPUT_TOKENS = 3840  # cap on the ticket prompt (Qwen2.5 allows far more), keeps latency and memory bounded
 
 
 def _clean_parameters(raw: dict) -> dict:

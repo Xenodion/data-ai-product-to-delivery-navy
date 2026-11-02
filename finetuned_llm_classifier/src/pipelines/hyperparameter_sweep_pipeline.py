@@ -18,8 +18,8 @@ SWEEP_CONFIGS = [
 
 
 @pipeline(name="keelpay-router-hyperparameter-sweep-pipeline")
-def hyperparameter_sweep_pipeline(input_path: str, num_train_epochs: int = 3) -> None:
-    data_transformation_task = data_transformation(input_path=input_path)
+def hyperparameter_sweep_pipeline(dataset_uri: str, num_train_epochs: int = 3) -> None:
+    data_transformation_task = data_transformation(dataset_uri=dataset_uri)
 
     # Python loop at compile time: one task per config. dsl.ParallelFor would turn the int lora_r into a float.
     previous_task = None
