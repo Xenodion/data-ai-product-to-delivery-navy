@@ -40,7 +40,11 @@ did and amber for what a person does, as in our flow figure.
 ```
 
 - **How to open it:** the page is not hosted online (GitHub shows its source, not the page). Testers open the file locally in a browser, or we share the folder; nothing to install.
-- **Screenshot:** `⟨to add: a screenshot of ticket #K-24121 in assets/, linked here⟩`
+- **Screenshot:** ticket #K-24121, the usability-test task: the reference is `UNDEFINED`, so the copilot shows both €1,250.00 payouts and waits for the agent to pick one before drafting.
+
+  ![Prototype v0.1, ticket #K-24121](assets/prototype_K-24121.png)
+
+- **v0.1, 2 November (after the spec):** the JSON now follows `label_definitions.md` (`delayed_credit`, `missing_payment`, urgency `medium`, `""` for absent fields), and the panel no longer shows a confidence score: the router returns none, its doubt is `UNDEFINED` (`spec.md` §2).
 
 ## Known limits of v0.1 (to tell testers)
 - **Rerouting a critical ticket** to another desk keeps the same draft text; the real copilot would draft again for the new desk.

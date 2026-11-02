@@ -187,9 +187,9 @@ const TICKETS = [
       { src: "amount", t: "€4,812.60" }, " (ref ", { src: "tx", t: "TX-551208" },
       "). Can you check what's going on?\n\nThanks,\nLena — Nordwind Bikes"
     ],
-    fields: { intent: "payment_status", sub_intent: "payout_delayed", transaction_id: "TX-551208", amount: "4812.60", currency: "EUR", urgency: "normal", sentiment: "neutral" },
+    fields: { intent: "payment_status", sub_intent: "delayed_credit", transaction_id: "TX-551208", amount: "4812.60", currency: "EUR", urgency: "medium", sentiment: "neutral" },
     src: { transaction_id: "tx", amount: "amount", currency: "amount" },
-    confidence: 0.97, route: "auto", desk: "payments",
+    route: "auto", desk: "payments",
     lookup: {
       merchant: "Nordwind Bikes · account active · KYC verified",
       tx: [{ id: "TX-551208", line: "SEPA payout · €4,812.60 · created 28 Oct", status: "Returned by the receiving bank: account closed (30 Oct)" }],
@@ -206,9 +206,9 @@ const TICKETS = [
       { src: "amount", t: "mille deux cent cinquante euros" },
       " de la semaine dernière. Mes fournisseurs attendent, pouvez-vous regarder ?\n\nCordialement,\nMarc Dubreuil — Brasserie du Port"
     ],
-    fields: { intent: "payment_status", sub_intent: "payout_missing", transaction_id: "UNDEFINED", amount: "1250.00", currency: "EUR", urgency: "medium", sentiment: "negative" },
+    fields: { intent: "payment_status", sub_intent: "missing_payment", transaction_id: "UNDEFINED", amount: "1250.00", currency: "EUR", urgency: "medium", sentiment: "negative" },
     src: { amount: "amount", currency: "amount" },
-    confidence: 0.91, route: "auto", desk: "payments",
+    route: "auto", desk: "payments",
     lookup: {
       merchant: "Brasserie du Port · account active · KYC: identity document expired 25 Oct",
       tx: [
@@ -237,7 +237,7 @@ const TICKETS = [
     ],
     fields: { intent: "dispute", sub_intent: "chargeback", transaction_id: "TX-547761", amount: "389.00", currency: "EUR", urgency: "high", sentiment: "negative" },
     src: { transaction_id: "tx", amount: "amount", currency: "amount", urgency: "deadline" },
-    confidence: 0.94, route: "critical", desk: "disputes",
+    route: "critical", desk: "disputes",
     criticalWhy: ["Dispute", "Stated deadline: 6 Nov (4 days)", "Urgency high"],
     lookup: {
       merchant: "Atelier Lumen · account active · KYC verified",
@@ -255,9 +255,9 @@ const TICKETS = [
       ", and also ", { src: "b", t: "why is there a \"compliance review\" fee on my invoice??" },
       " Also my login is weird."
     ],
-    fields: { intent: "UNDEFINED", sub_intent: "UNDEFINED", transaction_id: "", amount: "UNDEFINED", currency: "UNDEFINED", urgency: "medium", sentiment: "negative" },
+    fields: { intent: "UNDEFINED", sub_intent: "UNDEFINED", transaction_id: "", amount: "", currency: "", urgency: "medium", sentiment: "negative" },
     src: { intent: "a", sub_intent: "b" },
-    confidence: 0.42, route: "triage", desk: "triage",
+    route: "triage", desk: "triage",
     lookup: { merchant: "Pixelmint Studio · account active · KYC verified", tx: [], disputes: "None open", history: "#K-23360 (20 Oct): webhook timeout, closed" }
   }
 ];
@@ -276,7 +276,7 @@ TICKETS.forEach(t => {
   const pathLog = { auto: "decision table: clear, not critical → routed automatically to " + DESKS[t.desk],
                     critical: "decision table: critical → held for a person to confirm the desk",
                     triage: "decision table: UNDEFINED → sent to human triage, nothing guessed" };
-  state[t.id].log.push({ time: "on arrival", who: "copilot", msg: "read the ticket → JSON (confidence " + t.confidence.toFixed(2) + ")" });
+  state[t.id].log.push({ time: "on arrival", who: "copilot", msg: "read the ticket → JSON" });
   state[t.id].log.push({ time: "on arrival", who: "copilot", msg: pathLog[t.route] });
 });
 
@@ -322,7 +322,7 @@ function fieldsTable(t) {
 function pathList(t) {
   const s = state[t.id];
   const steps = [
-    ["sys", "1 · Read: JSON returned, confidence " + t.confidence.toFixed(2)],
+    ["sys", "1 · Read: JSON returned (" + (t.fields.intent === "UNDEFINED" ? "intent UNDEFINED" : "intent " + t.fields.intent) + ")"],
     t.route === "auto" ? ["sys", "2 · Decision table: clear, not critical → routed automatically"]
       : t.route === "critical" ? ["hum", "2 · Decision table: critical → " + (s.confirmed ? "desk confirmed by you" : "waiting for you to confirm the desk")]
       : ["hum", "2 · Decision table: UNDEFINED → human triage"],
@@ -404,7 +404,7 @@ function renderPanel(t) {
       <select class="btn" id="confirmOther" aria-label="Send to another desk"><option value="">Another desk…</option>${Object.entries(DESKS).filter(([k]) => k !== "triage" && k !== t.desk).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join("")}</select></div></div>`;
   } else if (s.desk === "triage") {
     banner = `<div class="banner hum"><strong>The copilot could not tell what this ticket is, so it did not guess</strong>
-      <span>${t.route === "triage" ? "Several requests in one message (confidence " + t.confidence.toFixed(2) + ")." : "Sent here after a second reroute."} Choose the desk, or split the ticket.</span>
+      <span>${t.route === "triage" ? "Several requests in one message: intent UNDEFINED." : "Sent here after a second reroute."} Choose the desk, or split the ticket.</span>
       <div class="row"><select class="btn" id="triageDesk" aria-label="Choose the desk"><option value="">Send to desk…</option>${Object.entries(DESKS).filter(([k]) => k !== "triage").map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join("")}</select>
       <button class="btn" id="split">Split into separate tickets</button></div></div>`;
   } else if (t.route === "triage") {
