@@ -1,6 +1,6 @@
 # spec.md — Keelpay agent-assist copilot · skeleton v0
 
-> Session 3 skeleton, completed in Session 4. Written from `03_product_brief.md`, the frozen brief (README) and the drafter plan (`docs/plans/copilot-drafter.md`, decisions D1–D4, validated on 1 November 2026). This is what the coding agent reads: every line is a decision; `⟨TO DECIDE⟩` marks the decisions not taken yet.
+> Session 3 skeleton, completed in Session 4. Written from `03_product_brief.md`, the frozen brief (README) and the drafter plan (`docs/plans/copilot-drafter.md`, decisions D1–D4, validated on 1 November 2026). This is what the coding agent reads: every line is a decision. Open decisions were settled in issue #17 (2 November 2026).
 
 ## 1. Problem (one paragraph)
 Keelpay's support agents (~36,000 merchant tickets a month, French and English) spend ~15 % of handling time reading a free-text ticket and routing it, and ~45 % finding the payment and writing the reply; ~1 ticket in 7 first lands in the wrong desk, and an urgent one can miss its deadline. The copilot reads each ticket into a strict JSON, routes it with fixed rules, looks up the merchant's transactions, and drafts a cited reply that the support agent approves, edits or reroutes — nothing reaches the merchant without a person.
@@ -50,12 +50,12 @@ Chainlit app (`finetuned_llm_classifier/src/app/main.py`, plan D3): the agent pa
 ## 7. Evaluation (never tune while looking at it)
 - **Router:** `finetuned_llm_classifier/src/scoring.py` on the sealed test sets (610 + 380) — desk accuracy, share routed automatically (1 − abstention), urgent tickets in the wrong desk, valid JSON (≥ 98.5 %, also reported at 99 %).
 - **Copilot:** `evals/eval_set_v0.csv`, 20 tickets labelled by hand. Metrics to print: desk correct (vs `label_intent`), route correct (vs `hand_over_to_a_person`), **drafts on tickets that must go to a person (must be 0)**, policy blocks, policy breaches on EV-04 (must be 0).
-- **Drafter** (plan, phase 3): retrieval hit@3, citation precision, "sendable as is" (cites the expected article and passes the policy), then ROUGE / BERTScore and a judge for faithfulness. Needs `expected_kb`, `expected_section` and a reference reply per row: to add when the set grows to 50 (Assignment 4).
+- **Drafter** (plan, phase 3): retrieval hit@3, citation precision, "sendable as is" (definition in §8), then ROUGE / BERTScore and a judge for faithfulness. Needs `expected_kb`, `expected_section` and a reference reply per row: to add when the set grows to 50 (Assignment 4).
 
 ## 8. Definition of done
 - On the gold set: **≥ 90 %** of tickets to the right desk on the first pass, **≥ 50 %** routed automatically, **0** urgent ticket auto-routed to the wrong desk (`03_product_brief.md` §7).
 - On `evals/eval_set_v0.csv`: **0** drafts on hand-over tickets, **0** policy breaches.
-- Drafter: "sendable as is" ≥ `⟨TO DECIDE⟩` — set by the drafter plan's owner before the first drafter run (plan, phase 3); not derivable from the sizing, and the course example's figure is not reused (README rule).
+- Drafter (decided by Alexandre on 2 November 2026, #17): a draft is **sendable as is** if it names the right transaction, passes the policy check, and two teammates, each on their own, would send it without editing. Bar: **at least half** of the drafts sendable as is, **and** more than the template drafter, on the tickets that must get a draft (`hand_over_to_a_person` = `no — L2 draft`). "Half" is a judgement: below it agents rewrite most replies, and drafting cannot deliver the ≈ 19 % cut of find-and-write time the flip point needs (`03_product_brief.md` §7). Measured once the eval-set has its reference columns (50 tickets, Assignment 4).
 Below a bar: do not fix the prompt; list the misses by cause and propose the change to this spec.
 
 ## 9. Out of scope (v0)

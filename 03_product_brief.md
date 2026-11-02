@@ -22,7 +22,7 @@ Handling time ≈ 10 min a ticket (sizing guess, Inputs row 7). Minutes per step
 | 6 | Log reroutes and edits | — (new) | 0 | — | — | **Automate** (telemetry) | L4 | 0 | Share of reroutes and edits captured as labels |
 | | **Total** | | **10** | | | | | **≈ 8.0 (≈ 20 % saved, sizing base)** | |
 
-*The eight tests are Brynjolfsson & Mitchell, "What can machine learning do?", Science (2017) — wording to check against the paper.*
+*The eight tests (Brynjolfsson & Mitchell, "What can machine learning do? Workforce implications", *Science* 358(6370), 2017): (1) a function mapping well-defined inputs to well-defined outputs; (2) large digital data sets of input-output pairs exist or can be created; (3) clear feedback with definable goals and metrics; (4) no long chains of reasoning that depend on background knowledge or common sense; (5) no need for a detailed explanation of how the decision was made; (6) tolerance for error, no need for provably correct solutions; (7) the function does not change rapidly over time; (8) no physical dexterity or mobility. List as summarised by I. Wladawsky-Berger (2018); the paper's supplement expands it into a 21-item rubric.*
 
 **Where the pain sits (the two steps):** step 2 (route) is short but critical — 1 in 7 misroutes, and urgent tickets can miss a deadline; step 3–4 (find the payment, write) is the largest slice (45 %).
 **The way back to a person (designed first):** `UNDEFINED`, low-confidence and critical tickets go to human triage before any draft; the receiving agent reroutes in one click and the ticket is redrafted once; a second reroute goes to triage; an agent can ignore the draft or switch the copilot off on a ticket; the Head of Support can switch the whole system back to "reading only" or off.
