@@ -44,9 +44,96 @@ We keep from the course proposal P2 only the universe: a B2B payments fintech, a
 | **The trap** | A misread message looks handled: an urgent ticket (dispute deadline, compliance hold) sits in the wrong desk, or a confident draft is built on the wrong payment. When unsure, the copilot must say so rather than guess. |
 | **Innovative angle** | Anything the copilot cannot determine is marked `UNDEFINED` and left to the support agent, not guessed; the support agent can open any ticket and see what the copilot read and which path it took. Our A/B alternates copilot-on and copilot-off weeks for the same support agents, not for tickets, because the ticket mix changes day to day. |
 
-### The flow
+### The flow & architecture: dual-node workflow and decision trees
 
 ![The Keelpay copilot flow](assets/copilot_flow.png)
+
+The copilot follows a strict two-stage pipeline. The two LLM nodes have separated responsibilities, distinct trust levels, and different model architectures:
+
+```mermaid
+flowchart TD
+    classDef llm fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
+    classDef human fill:#fff3e0,stroke:#f57c00,stroke-width:2px;
+    classDef system fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
+    classDef alert fill:#ffebee,stroke:#d32f2f,stroke-width:2px;
+
+    Start(["📥 Incoming Merchant Ticket<br/>(Email / Free-text in FR or EN)"]) --> N1
+
+    subgraph SUB_A ["NODE 1: ROUTER & EXTRACTION (Sub-case A · Trust L3)"]
+        N1["🤖 Node 1: Fine-Tuned SLM<br/>(Qwen2.5-3B-LoRA / GGUF CPU)"]:::llm
+        N1 --> D1{"Valid JSON &<br/>Confident Fields?"}
+        
+        D1 -- "Invalid or UNDEFINED" --> Triage["👤 Human Triage Queue<br/>(Support Agent L1)"]:::human
+        
+        D1 -- "Valid JSON Schema" --> D2{"Decision Table:<br/>Target Desk"}
+        
+        D2 --> DeskPay["Payments Desk"]:::system
+        D2 --> DeskDisp["Disputes Desk"]:::system
+        D2 --> DeskTech["Technical Desk"]:::system
+        D2 --> DeskComp["Compliance Desk"]:::system
+        
+        DeskPay & DeskDisp & DeskTech & DeskComp --> D3{"urgency == HIGH ?"}
+        D3 -- "Yes" --> QueueUrgent["🚨 Priority Queue (Strict SLA)"]:::alert
+        D3 -- "No" --> QueueStd["Standard Desk Queue"]:::system
+    end
+
+    QueueUrgent & QueueStd --> HumanCheck{"Desk Support Agent:<br/>Routing accurate?"}:::human
+    HumanCheck -- "Misrouted" --> Reroute["🔁 Manual Reroute<br/>(1x allowed, 2nd to triage)"]:::human
+    Reroute --> D2
+
+    subgraph SUB_B ["NODE 2: COPILOT DRAFTER & RAG (Sub-case B · Trust L2)"]
+        HumanCheck -- "Correct Desk" --> FetchData["🔍 1. Read-Only DB Lookup<br/>(Transactions, merchant history)"]:::system
+        FetchData --> FetchKB["📚 2. Knowledge Retrieval (RAG)<br/>Desk policy chunks [KB-xxx]"]:::system
+        
+        FetchKB --> N2["🤖 Node 2: Drafter LLM<br/>(Prompted model + citations)"]:::llm
+        
+        N2 --> Guardrails{"3. Automated Guardrails:<br/>- Citations valid?<br/>- No illegal commitments?"}:::system
+        
+        Guardrails -- "Missing facts / doubt" --> FlagDraft["⚠️ Draft with Warning<br/>'[VERIFICATION NEEDED]'"]:::alert
+        Guardrails -- "Pass" --> DraftReady["📝 Cited Draft Ready"]:::system
+    end
+
+    subgraph HUMAN_LOOP ["FINAL HUMAN-IN-THE-LOOP (Never sends autonomously)"]
+        FlagDraft & DraftReady --> UI["🖥️ Support Agent Workspace (Chainlit)<br/>(Ticket + Extracted JSON + DB facts + Cited Draft)"]:::human
+        UI --> HumanAction["👤 Support Agent edits,<br/>approves & sends"]:::human
+        HumanAction --> Sent(["📤 Sent to Merchant"])
+    end
+```
+
+#### Comparison of the two nodes
+
+| Characteristic | Node 1: Router & Qualifier | Node 2: Copilot Drafter |
+|---|---|---|
+| **Sub-case** | Sub-case A (Routing & Qualification) | Sub-case B (Drafting & Retrieval) |
+| **Model type** | Fine-tuned SLM (Qwen2.5-3B-LoRA / GGUF CPU) | Prompted LLM + RAG (Knowledge Base & DB) |
+| **Input** | Raw ticket text (French / English) | Ticket + Node 1 JSON + DB facts + KB chunks |
+| **Output** | Strict JSON object (7 fields) | Formatted email draft with citations `[KB-xxx]` |
+| **Free-text generation** | **Strictly prohibited** (JSON output only) | Permitted, grounded in retrieved facts |
+| **Abstention rule** | Fills `"UNDEFINED"` when uncertain → Human triage | Inserts `[VERIFICATION NEEDED]` → Agent check |
+| **Trust level** | **L3** (automatic routing, with QA sampling) | **L2** (human reviews and edits every draft) |
+| **Data locality** | Runs inside private infrastructure (CPU/GCS) | Runs inside private infrastructure / hosted mock |
+
+#### The four decision trees & guardrails
+
+1. **Decision Tree 1: Schema Integrity & Abstention**
+   * The model extracts: `intent`, `sub_intent`, `transaction_id`, `amount`, `currency`, `urgency`, `sentiment`.
+   * If parsing fails or any essential field is `"UNDEFINED"` → **Zero guess:** the ticket is routed directly to a Level-1 Support Agent for manual triage.
+2. **Decision Tree 2: Desk Routing Table**
+   * Valid JSON is mapped deterministically to one of four specialized desks:
+     * **`payments`**: Status of transfers, SEPA delays, missing payouts, refund tracking.
+     * **`disputes`**: Chargebacks, suspected fraud, legal notification windows.
+     * **`technical`**: API keys, HTTP errors (4xx/5xx), CMS plugins (Shopify, WooCommerce), webhook failures.
+     * **`compliance`**: KYC onboarding, identity proof verification, AML regulatory account holds.
+3. **Decision Tree 3: Urgency & SLA Escalation**
+   * If `urgency == "HIGH"` (e.g. chargeback deadline within 24h, regulatory block, churn risk) → Ticket enters the high-priority queue with immediate agent SLA.
+4. **Decision Tree 4: Drafter Grounding & Policy Guardrails**
+   * **Read-only lookup:** Transactions are attached by strict matching on the merchant's account. No cross-merchant access.
+   * **Grounded citations:** The drafter must cite the exact knowledge base section (`[KB-xxx - Section]`).
+   * **Negative constraints:** The drafter cannot promise refunds, waive transaction fees, or make binding legal commitments. If an answer cannot be proven from retrieved chunks, it writes `[VERIFICATION NEEDED]`.
+5. **Human-in-the-Loop Contract:**
+   * **The copilot never sends an email autonomously.**
+   * A human support agent reads the draft, reviews citations, adjusts phrasing, and clicks "Send".
+   * If the agent discovers a misrouted ticket at this stage, they reroute it once (the ticket is redrafted in the target desk); a second misroute automatically falls back to manual triage.
 
 ### Starting numbers (given by the scenario)
 
