@@ -22,7 +22,7 @@ The plan, with its gates, is `docs/roadmap.md`; the day-by-day account is in `no
 | Scoring (`src/scoring.py`) and baselines B0-B2 | done; test sets read once, results in `docs/baseline_results.md` |
 | Pipelines on Vertex (training, base model, sweep) with Qwen2.5-3B-Instruct, float16 | training run done (2 h 06 of T4); base-model and sweep pipelines compile, not run |
 | Model D (Qwen2.5-3B + LoRA) on val | cost 0.027 per ticket against 1.478 for B2; valid JSON 290 of 293; test sets not read yet (`docs/results/`) |
-| Compact variants (merged GGUF, smaller models) | not run, see `docs/compact_variants.md` |
+| Compact variants (merged GGUF, smaller models) | D-q4 locked on val (cost 0.020, 6.4 s CPU, 0 % urgent wrong desk, < 18 €/mo); S-1.5B/S-0.5B cancelled under explicit decision rule (`docs/compact_variants.md`) |
 | Final reading of the test sets | to do, after the systems of `docs/scoring_protocol.md` section 7 (confirmed) have their val score |
 | Handler, model registration, endpoint, Chainlit app | handler adapted; the rest conditional on the tests (no endpoint before then) |
 | Requirements of the shared project (evaluation harness in CI, monitoring, routing, caching, production-readiness checklist) | to define |
@@ -36,9 +36,9 @@ The plan, with its gates, is `docs/roadmap.md`; the day-by-day account is in `no
 | `docs/methodology.md` | how we test, control cost and choose |
 | `docs/label_definitions.md` | definition of each label |
 | `docs/baseline_results.md` | B0-B2 on val and the test sets |
-| `docs/compact_variants.md` | procedure for the merged GGUF model and the smaller models (not run) |
-| `docs/results/` | predictions and loss history of the full run of D |
-| `notebooks/01_dataset_build.ipynb`, `02_scoring_and_baselines.ipynb`, `03_finetuning_vertex.ipynb` | the logbook, in the order of discovery |
+| `docs/compact_variants.md` | procedure and val results for merged GGUF models (D-q8, D-q4) and smaller models |
+| `docs/results/` | predictions and loss history of full run D, D-q8, D-q4 and timings |
+| `notebooks/01_dataset_build.ipynb`, `02_scoring_and_baselines.ipynb`, `03_finetuning_vertex.ipynb`, `04_compact_variants.ipynb` | the logbook, in the order of discovery |
 
 ## Setup
 

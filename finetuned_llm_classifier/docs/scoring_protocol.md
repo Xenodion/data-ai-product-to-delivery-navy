@@ -83,8 +83,8 @@ Written before the test sets are read, so that nothing is added after seeing the
 | B0, B1, B2 | majority, rules, TF-IDF + logistic regression | CPU | scored (`docs/baseline_results.md`) |
 | B3 | base Qwen2.5-3B prompted, no fine-tuning | T4 (Vertex) | not run: needs a billed inference job |
 | D | Qwen2.5-3B + LoRA, float16 | T4 (Vertex) | scored on val: cost 0.027 per ticket, valid JSON 290 of 293 |
-| D-q4, D-q8 | D merged, then GGUF 4 and 8 bits | CPU | not run: needs a machine with at least 16 GB of free RAM (`docs/compact_variants.md`) |
-| S-1.5B, S-0.5B | the same recipe on Qwen2.5-1.5B and 0.5B, with a lighter compression (8 or 5 bits) | CPU after GGUF | not run: two billed Vertex trainings, then GGUF |
+| D-q4, D-q8 | D merged, then GGUF 4 and 8 bits | CPU | scored on val (2026-11-02): D-q8 cost 0.051 (7.9 s), D-q4 cost 0.020 (6.4 s), 0 % urgent wrong desk (`docs/compact_variants.md`) |
+| S-1.5B, S-0.5B | the same recipe on Qwen2.5-1.5B and 0.5B, with a lighter compression (8 or 5 bits) | CPU after GGUF | cancelled on 2026-11-02: D-q4 locked as sweet spot (< 18 €/mo CPU, 2.4 GB RAM, 0 % urgent error), smaller models cancelled to avoid compute waste and risk on 400 € errors (`docs/compact_variants.md`) |
 
 **Efficiency metric**, reported next to the expected cost per ticket of section 2:
 
