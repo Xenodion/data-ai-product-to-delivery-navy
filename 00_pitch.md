@@ -1,74 +1,24 @@
-# 00 — Pitch: Keelpay request router (half a page, plus the details behind it)
+# 00 — Bring-your-own pitch (half a page)
 
-> Same frame as P2 — a B2B payments fintech, a human who sends every reply. We redefine the agent's job and the company's scale. The P2 drafting copilot was sized in S2 and got a NO-GO at 12,000 tickets (`02_investment_memo.md`); that work stays in the history and becomes our Stage 2. Every number is tagged **assumption** (our fictional case, with a test), **analogy** (with its source) or **measured** (none yet).
+> We start from proposal P2 (agent-assist copilot, B2B payments fintech) and redefine the case: company, scale, pain, job and trap are our own. The frozen brief is in the README; this page is its half-page pitch. Figures marked *given* come from the scenario; derived figures are guesses re-computed in the S2 sizing.
 
-**The company:** Keelpay, a B2B payments platform for European merchants: SEPA and card payouts, API integration, disputes.
-- **2,500 merchants**, mostly SMEs, writing in French and English (assumption).
-- **30,000 requests a month**, about 12 per merchant (assumption; same order as Paylio's 40,000, S2 slides p. 37).
-- **~45 support agents** (analogy: Paylio's ratio of ~667 tickets per agent-month). Among them is a **triage desk of ~5 agents**.
+**The company:** Keelpay, a B2B payments fintech with ~2,500 merchant customers in France and Belgium, ~36,000 support tickets a month in French and English (mostly by email) and a support team of about 46 agents (guess: 36,000 tickets × ~10 min of hands-on handling ≈ 6,000 hours a month, at ~130 productive hours per agent).
 
-**How a request travels today:**
-- Every email or dashboard ticket lands in one shared inbox.
-- The triage desk reads each message, works out what it is, and moves it to one of four specialist queues: payments status, disputes, technical / API, compliance.
-- Only then does the specialist in charge start the actual work: finding the merchant's account and the transaction, then deciding and replying.
+**The pain, as a cost:** About 60 % of handling time goes into reading and routing a free-text message (~15 %, given) and finding the payment and writing the reply (~45 %, given): roughly 3,600 hours a month, the work of about 28 agents, or about €1.4M a year at ~€50k all-in per agent (guess; French customer-adviser job postings, to be sourced in S2). About 1 ticket in 7 (~5,100 a month, given) first lands in the wrong desk and loses a hand-over, and an urgent one (dispute deadline, compliance hold) can miss its deadline.
 
-**The pain, as a cost:**
-- **Triage by hand:** 30,000 × 1.5 min ≈ 750 h a month ≈ 4.7 FTE ≈ **€211k a year**, at €45k per agent and 160 h a month. The 1.5 min is an assumption; test it by timing 20–30 tickets at the desk.
-- **Misroutes:** 12 % of requests reach the wrong queue (assumption), and each costs ~4 min more (≈ 1.5 FTE ≈ **€68k a year**). Test: count reassigned tickets in the helpdesk.
-- **Time-critical misses:** about 1 % of requests are time-critical (300 a month): disputes with a deadline, compliance holds. When one waits in the wrong queue, the deadline can pass. Cost ≈ €250–300 each (analogy: Mastercard 2025, $128 per chargeback plus the disputed amount).
-- **Total:** routing costs **≈ €279k a year**, before the time-critical misses.
+**Do-nothing baseline:** Volume grows with the merchant base, so the same reading, routing and writing time grows with it, partly offset by agents getting faster. About 1 ticket in 7 keeps bouncing between desks and urgent tickets keep a standing risk of waiting in the wrong queue. The team needs more capacity to hold today's response times, or replies get slower. Priced with ranges in the S2 sizing.
 
-**Do-nothing baseline:**
-- In 12 months, volume grows about 15 % and agents get about 5 % faster on their own (same assumptions as `01` §7).
-- Routing then costs ≈ €279k × 1.15 × 0.95 ≈ **€305k a year**. The triage desk needs about 0.6 extra FTE just to keep up.
-- Time-critical requests are still caught only when someone happens to read them in time.
-
-**The agent's job:** When a merchant request arrives (email or dashboard), the agent reads it and fills a strict JSON. The fields are `queue`, `sub_intent`, `transaction_id`, `amount`, `currency`, `urgency` and `confidence`; a field it cannot determine is `UNDEFINED`. A routing table in code then moves the request to the right queue. The agent also prepares a **case card** for the specialist in charge.
-
-**It does not replace the person in charge.**
-- **The specialist:** still owns the request, checks the case card, decides and replies.
-- **The triage desk:** is moved to the specialist queues, where it absorbs the 15 % growth. Nobody is let go.
-- **What the agent removes:** reading a message to work out what it is, and searching for the account and the transaction.
-
-**Queues and sub-categories** (draft, to confirm):
-
-| Queue (desk) | `sub_intent` examples |
-|---|---|
-| Payments status | payout delayed, payout missing, credit not received |
-| Disputes (*litiges*) | chargeback, contested fee, unauthorised debit |
-| Compliance | KYC blocking, account restriction, PSD2 / strong authentication |
-| Technical / API | webhook, error code, integration |
-| `UNDEFINED` → human triage | unclear, several requests in one message, low confidence |
-
-**The case card:**
-- the extracted fields, each with the passage of the message it comes from;
-- the lookups already run: merchant account, transaction status, linked disputes, KYC status;
-- what the specialist must check before deciding.
+**The agent's job:** When a merchant ticket arrives, the copilot reads it, returns a structured JSON, routes it to the right desk (automatically when clear, to a human triage when unsure or critical), retrieves the matching transactions and history, and drafts a cited reply that a support agent reviews, edits and sends.
 
 **Trust level per step:**
+- Read and route (fine-tuned model plus fixed rules): **L3** with sampling; anything undetermined is `UNDEFINED` and goes to a human; critical tickets get a human confirmation of the desk.
+- Look up transactions and history: **L1** (read-only, limited to the merchant).
+- Draft the reply: **L2** (a support agent reads and approves every reply).
+- Send to the merchant: **human only** — the copilot has no send tool.
 
-| Step | Who | Trust level |
-|---|---|---|
-| Read the request and fill the JSON | Router model | **L3**: acts on its scope, a human audits a sample; one-click reroute by any agent |
-| Map the JSON to a queue | Routing table in code, not the model | L3 |
-| `UNDEFINED`, or low confidence on a time-critical class | Human triage | Human only |
-| Prepare the case card | Agent | **L1**: shows evidence, suggests nothing. For disputes and KYC blocking: evidence only, no next step |
-| Draft the reply | Stage 2, closed in year 1 | (L2 if reopened) |
-| Reply, refund, release a payout, lift a KYC block | Specialist | Human only: the agent has no tool for these |
+**One thing it must never do:** send anything to a merchant — it drafts, a human sends.
 
-**One thing it must never do:** decide or act in the place of the person in charge. It reads, classifies and prepares. It never contacts a merchant and never touches money or an account.
-
-**Why it is a product decision:**
-- **Who decides:** the Head of Support has to decide whether a model may route every request.
-- **The risk:** a time-critical request silently sitting in the wrong queue. It is rare and expensive, so recall on the dispute and compliance classes counts, not overall accuracy. Risk owner: **Head of Compliance** (`governance.md`).
-- **Data:** messages hold account numbers and transaction references. Training data is synthetic; the model runs in our EU cloud project, or under a no-training, EU-region contract.
-- **Which rung to build:** we build the cheapest that passes a test written in advance:
-  1. a mandatory form field or rules (regex and keywords);
-  2. classical ML;
-  3. a prompted LLM;
-  4. a fine-tuned small LLM.
-- **What the model must beat:** the fine-tuned model is kept only if it beats the best cheaper rung on a held-out set. It must win on extracted-key accuracy and on time-critical recall, with at least 99 % valid JSON (`proposal_redefined_use_case.md` §5).
-- **What sizing must include:** an adoption ramp by quarter, never 100 % in year 1.
+**Why it is a product decision:** The Head of Support and the Head of Compliance must decide whether to let a model route tickets automatically, at what confidence and criticality thresholds, and how much of the routing to automate given that tickets stay in Keelpay's own cloud (the data constraint), which rules out an external model API. They risk urgent tickets sitting in the wrong desk, a wrong reply validated unread, and regulatory exposure on dispute and compliance questions.
 
 ## Checklist (all seven must be ticked)
 - [x] A named company type, a ticket volume and a team size

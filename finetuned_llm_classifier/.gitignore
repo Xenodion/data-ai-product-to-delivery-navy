@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+data/*
+!data/.gitkeep
+notebooks/outputs/
+logs/
+models/
+*_pipeline.yaml
