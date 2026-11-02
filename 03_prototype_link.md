@@ -39,6 +39,7 @@ ticket is drafted again once; a second reroute goes to human triage. Use blue fo
 did and amber for what a person does, as in our flow figure.
 ```
 
+- **How to open it:** the page is not hosted online (GitHub shows its source, not the page). Testers open the file locally in a browser, or we share the folder; nothing to install.
 - **Screenshot:** `⟨to add: a screenshot of ticket #K-24121 in assets/, linked here⟩`
 
 ## Known limits of v0.1 (to tell testers)

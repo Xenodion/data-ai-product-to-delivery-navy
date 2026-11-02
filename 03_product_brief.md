@@ -46,7 +46,7 @@ Reach from `02_sizing.xlsx` (36,000 tickets a month; 28,800 for the draft, ticke
 
 - **MUST (4):** router · decision table and criticality score · lookup and cited draft · gold set and feedback logger.
 - **SHOULD:** review screen (case card: each extracted field with the passage it comes from, the lookups already run, the path taken, one-click reroute). **COULD:** sentiment and tone.
-- **WON'T this time (dated 31 October 2026):** autonomous replies (no L4 send) · ledger write access (no payout, refund or unfreeze) · external model API (tickets stay in Keelpay's cloud) · dispute arbitration, legal or regulatory advice · voice, chat or a merchant-facing bot.
+- **WON'T this time (dated 31 October 2026):** autonomous replies (no L4 send) · ledger write access (no payout, refund or unfreeze) · external model API in production (tickets stay in Keelpay's cloud; the MVP drafter uses a hosted API on synthetic tickets only, a dated exception in `governance.md`) · dispute arbitration, legal or regulatory advice · voice, chat or a merchant-facing bot.
 - **The feature that tests our flip assumption, and why it is a MUST:** the router. It ranks fourth on RICE, but its confidence is the lowest and the whole stage-2 decision rests on it (routing accuracy gates the drafting gain).
 - **The cut that hurt the most:** autonomous replies to simple payment-status tickets — the biggest saving, but a wrong payment sent without a person is this product's trap.
 
@@ -64,12 +64,12 @@ Synthetic tickets and a seeded ledger, no real merchant data · ≥ 200 gold tic
 | **The copilot as a whole** | **4 — hybrid** | |
 
 ## 6. Where it lives (integration surface)
-Side panel on each ticket in the helpdesk the agent already uses (the S4 prototype is a Streamlit app that mimics it) · speed needed: the reading must be done before an agent opens the ticket — it runs on arrival, while the ticket waits in the queue; measured: about 6 s per ticket for the fine-tuned router on one T4 GPU (293 predictions in 30 min, `finetuned_llm_classifier/docs/compact_variants.md`) · format: the JSON, the case card and the cited draft · fallback: `UNDEFINED` or a copilot failure → the agent works the ticket as today · who sees the log: the agent (per ticket), the Head of Support (weekly audit sample), an auditor (full log).
+Side panel on each ticket in the helpdesk the agent already uses (the S4 prototype is a Streamlit app that mimics it) · speed needed: the reading must be done before an agent opens the ticket — it runs on arrival, while the ticket waits in the queue; measured: about 6.4 s per ticket for the quantised router (D-q4) on a CPU, about 1.5 s on a T4 GPU (293 val tickets, `finetuned_llm_classifier/docs/compact_variants.md`) · format: the JSON, the case card and the cited draft · fallback: `UNDEFINED` or a copilot failure → the agent works the ticket as today · who sees the log: the agent (per ticket), the Head of Support (weekly audit sample), an auditor (full log).
 
 ## 7. Success criterion — one sentence
-> By 6 November 2026, on a gold set of ≥ 200 synthetic tickets (French and English, ≥ a third hard), the router and the decision table send **at least 90 %** of tickets to the right desk on the first pass while routing **at least 50 %** automatically — and **no urgent ticket** is routed automatically to the wrong desk.
+> By 6 November 2026, on a gold set of ≥ 200 synthetic tickets (French and English, ≥ a third hard), the copilot is on track for the **13.5 % time-saved flip point** of `02_sizing.xlsx`: the router and the decision table send **at least 90 %** of tickets to the right desk on the first pass while routing **at least 50 %** automatically — and **no urgent ticket** is routed automatically to the wrong desk.
 
-**How this threshold links to the flip point.** The prototype runs on synthetic tickets, so it can measure routing but not time saved. In the sizing (Flow tab), routing 50 % automatically saves 15 % × 50 % × 80 % = **6.0 %** of handling time, and 90 % correctly routed lets drafting save 45 % × 90 % × the drafting cut. The flip point (**13.5 %**, `02_investment_memo.md` §2) is reached if the cited draft cuts the find-and-write time by **at least ≈ 19 %** (derived; the sizing's base guess is 33 %, measured in S5–S6). Below 90 % or 50 %, the drafting cut needed rises.
+**Why these bars reach the flip point.** The prototype runs on synthetic tickets, so it can measure routing but not time saved. In the sizing (Flow tab), routing 50 % automatically saves 15 % × 50 % × 80 % = **6.0 %** of handling time, and 90 % correctly routed lets drafting save 45 % × 90 % × the drafting cut. The flip point (**13.5 %**, `02_investment_memo.md` §2) is reached if the cited draft cuts the find-and-write time by **at least ≈ 19 %** (derived; the sizing's base guess is 33 %, measured in S5–S6). Below 90 % or 50 %, the drafting cut needed rises.
 
 ## 8. Risks and rollback trigger
 - **Top risks:**
