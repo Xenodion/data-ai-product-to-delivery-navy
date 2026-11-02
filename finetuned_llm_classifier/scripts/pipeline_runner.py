@@ -12,6 +12,7 @@ from kfp import compiler
 
 from src.constants import GCP_PROJECT_ID, GCP_REGION, DATASET_URI, PIPELINE_ROOT
 from src.pipelines.base_model_pipeline import base_model_pipeline
+from src.pipelines.compact_variants_pipeline import compact_variants_pipeline
 from src.pipelines.hyperparameter_sweep_pipeline import hyperparameter_sweep_pipeline
 from src.pipelines.model_training_pipeline import model_training_pipeline
 
@@ -19,6 +20,7 @@ PIPELINES = {
     "training": model_training_pipeline,
     "sweep": hyperparameter_sweep_pipeline,
     "base": base_model_pipeline,  # B3: the base model prompted, no fine-tuning
+    "compact": compact_variants_pipeline,  # D-q8 and D-q4: merge, GGUF, quantise, predict on CPU
 }
 
 parser = argparse.ArgumentParser()
@@ -40,7 +42,12 @@ parser.add_argument(
 parser.add_argument(
     "--test-file", default="val.csv", help="split the training pipeline predicts on"
 )
+parser.add_argument(
+    "--adapter-uri", help="gs:// folder of the LoRA adapter (compact pipeline only)"
+)
 args = parser.parse_args()
+if (args.pipeline == "compact") != bool(args.adapter_uri):
+    parser.error("--adapter-uri is required by the compact pipeline and only used by it")
 
 template_path = f"{args.pipeline}_pipeline.yaml"
 compiler.Compiler().compile(PIPELINES[args.pipeline], template_path)
@@ -50,6 +57,8 @@ if args.smoke and args.pipeline == "sweep":
     parser.error("--smoke applies to the training and base pipelines, not the sweep")
 if args.model_id and args.pipeline != "sweep":
     extra |= {"model_id": args.model_id}
+if args.pipeline == "compact":
+    extra |= {"adapter_uri": args.adapter_uri}
 if args.fp16 and args.pipeline == "training":
     extra |= {"compute_dtype": "float16"}
 if args.smoke:
