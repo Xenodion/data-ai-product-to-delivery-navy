@@ -1,11 +1,13 @@
 """Fit B0-B2 on train, tune B2's C on val, print the val table. ``--final`` also scores the two test sets.
 
-Run: uv run --with scikit-learn python scripts/run_baselines.py [--final]
+Run: uv run --with scikit-learn python scripts/run_baselines.py [--final] [--save]
 """
 
 import argparse
 import sys
 from pathlib import Path
+
+import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
@@ -38,6 +40,9 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--final", action="store_true", help="also score test_natural and test_traps"
+    )
+    parser.add_argument(
+        "--save", action="store_true", help="save predictions CSVs into docs/results/"
     )
     args = parser.parse_args()
     train_x, train_y, _ = load_split(DATASET / "train.csv")
@@ -72,10 +77,43 @@ def main() -> None:
             )
             print(f"cost {name} - {best}: {mean:.3f} [{low:.3f}, {high:.3f}]")
     trap_x, trap_y, trap_tags = load_split(DATASET / "test_traps.csv")
+    trap_preds = {}
     for name, predict in systems.items():
         print(f"test_traps {name}: (tickets, desk accuracy, cost) per trap")
-        for trap, row in by_trap(trap_y, predict(trap_x), trap_tags).items():
+        trap_raws = predict(trap_x)
+        trap_preds[name] = trap_raws
+        for trap, row in by_trap(trap_y, trap_raws, trap_tags).items():
             print(f"  {trap:28} n={row[0]:3} desk={row[1]:.2f} cost={row[2]:.2f}")
+
+    if args.save:
+        out_dir = Path("docs/results")
+        out_dir.mkdir(parents=True, exist_ok=True)
+        for name, raws in preds.items():
+            rows = [
+                {
+                    "user_input": x,
+                    "reference": y.model_dump_json(),
+                    "extracted_response": r,
+                    "valid_json": True,
+                }
+                for x, y, r in zip(test_x, test_y, raws)
+            ]
+            p = out_dir / f"{name.lower()}_test_natural_predictions.csv"
+            pd.DataFrame(rows).to_csv(p, index=False)
+            print(f"Saved {name} test_natural predictions to {p}")
+        for name, raws in trap_preds.items():
+            rows = [
+                {
+                    "user_input": x,
+                    "reference": y.model_dump_json(),
+                    "extracted_response": r,
+                    "valid_json": True,
+                }
+                for x, y, r in zip(trap_x, trap_y, raws)
+            ]
+            p = out_dir / f"{name.lower()}_test_traps_predictions.csv"
+            pd.DataFrame(rows).to_csv(p, index=False)
+            print(f"Saved {name} test_traps predictions to {p}")
 
 
 if __name__ == "__main__":

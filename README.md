@@ -44,9 +44,107 @@ We keep from the course proposal P2 only the universe: a B2B payments fintech, a
 | **The trap** | A misread message looks handled: an urgent ticket (dispute deadline, compliance hold) sits in the wrong desk, or a confident draft is built on the wrong payment. When unsure, the copilot must say so rather than guess. |
 | **Innovative angle** | Anything the copilot cannot determine is marked `UNDEFINED` and left to the support agent, not guessed; the support agent can open any ticket and see what the copilot read and which path it took. Our A/B alternates copilot-on and copilot-off weeks for the same support agents, not for tickets, because the ticket mix changes day to day. |
 
-### The flow
+### The flow & architecture: dual-node workflow and decision trees
 
 ![The Keelpay copilot flow](assets/copilot_flow.png)
+
+The copilot follows a continuous two-stage pipeline designed for maximum human efficiency. Clear tickets flow directly from Node 1 into DB Lookup and Node 2 Drafter (Trust L3) without requiring an intermediate human routing checkpoint. The support agent performs a single unified review (Trust L2) of both the routing and the cited draft in their workspace. On the ~2% misrouted tickets, the agent triggers a 1-click reroute with automatic re-drafting:
+
+```mermaid
+flowchart TD
+    classDef llm fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
+    classDef human fill:#fff3e0,stroke:#f57c00,stroke-width:2px;
+    classDef system fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
+    classDef alert fill:#ffebee,stroke:#d32f2f,stroke-width:2px;
+
+    Start(["📥 Incoming Merchant Ticket<br/>(Email / Free-text in FR or EN)"]) --> N1
+
+    subgraph SUB_A ["NODE 1: ROUTER & DECISION TABLE (Sub-case A · Trust L3)"]
+        N1["🤖 Node 1: Router SLM (System 1)<br/>(Qwen2.5-3B-LoRA / GGUF CPU)"]:::llm
+        N1 --> D1{"Valid JSON &<br/>Recognized Intent?"}
+        
+        D1 -- "Invalid, OTHER or UNDEFINED" --> Triage["👤 Human Triage Queue<br/>(Support Agent L1)"]:::human
+        
+        D1 -- "Valid JSON Schema" --> D2{"Decision Table:<br/>Criticality & Target Desk"}
+        
+        D2 -- "Dispute / Compliance & HIGH urgency" --> QueueCritical["🚨 Critical Queue<br/>(Held for confirmation)"]:::alert
+        D2 -- "Clear & Standard" --> AutoRoute["⚡ Automated Routing (Trust L3)<br/>(Payments, Disputes, Tech, Compliance)"]:::system
+        
+        Triage -- "Manually routed" --> D2
+    end
+
+    subgraph SUB_B ["NODE 2: COPILOT DRAFTER & RAG (Sub-case B · Trust L2)"]
+        AutoRoute & QueueCritical --> FetchData["🔍 1. Read-Only DB Lookup<br/>(Candidate transactions & merchant card)"]:::system
+        FetchData --> FetchKB["📚 2. Knowledge Retrieval (RAG)<br/>Desk policy chunks [KB-xxx]"]:::system
+        
+        FetchKB --> N2["🤖 Node 2: Drafter LLM (System 2)<br/>(Prompted model + citations)"]:::llm
+        
+        N2 --> Guardrails{"3. Automated Guardrails:<br/>- Citations valid?<br/>- No illegal commitments?"}:::system
+        
+        Guardrails -- "Pass" --> DraftReady["📝 Cited Draft Ready"]:::system
+        Guardrails -- "Missing facts / doubt" --> FlagDraft["⚠️ Draft with Warning<br/>'[VERIFICATION NEEDED]'"]:::alert
+    end
+
+    subgraph HUMAN_LOOP ["UNIFIED HUMAN-IN-THE-LOOP (Trust L2 · Never sends autonomously)"]
+        DraftReady & FlagDraft --> UI["🖥️ Desk Support Agent Workspace (Chainlit)<br/>(Ticket + Extracted JSON + DB facts + Cited Draft)"]:::human
+        UI --> AgentReview{"Single Unified Review:<br/>Routing & Draft accurate?"}:::human
+        
+        AgentReview -- "Accurate (98%)" --> AgentAction["👤 Support Agent edits if needed<br/>& clicks Send"]:::human
+        AgentAction --> Sent(["📤 Sent to Merchant"])
+        
+        AgentReview -- "Misrouted (~2%)" --> Reroute["🔁 1-Click Reroute<br/>(Redrafted once, 2nd to triage)"]:::human
+        Reroute --> D2
+    end
+```
+
+#### Comparison of the two nodes
+
+| Characteristic | Node 1: Router & Qualifier | Node 2: Copilot Drafter |
+|---|---|---|
+| **Sub-case** | Sub-case A (Routing & Qualification) | Sub-case B (Drafting & Retrieval) |
+| **Model type** | Fine-tuned SLM (Qwen2.5-3B-LoRA / GGUF CPU) | Prompted LLM + RAG (Knowledge Base & DB) |
+| **Input** | Raw ticket text (French / English) | Ticket + Node 1 JSON + DB facts + KB chunks |
+| **Output** | Strict JSON object (7 fields) | Formatted email draft with citations `[KB-xxx]` |
+| **Free-text generation** | **Strictly prohibited** (JSON output only) | Permitted, grounded in retrieved facts |
+| **Abstention rule** | Fills `"UNDEFINED"` when uncertain → Human triage | Inserts `[VERIFICATION NEEDED]` → Agent check |
+| **Trust level** | **L3** (automatic routing, with QA sampling) | **L2** (human reviews and edits every draft) |
+| **Data locality** | Runs inside private infrastructure (CPU/GCS) | Runs inside private infrastructure / hosted mock |
+
+#### Cognitive architecture: Kahneman's System 1 vs System 2 & TypeSafe AI's "Jev"
+
+The dual-node division reflects the cognitive dichotomy formalized by Daniel Kahneman (*Thinking, Fast and Slow*):
+
+* **System 1 (Fast, instinctive, structured, low-cost): Node 1 Router SLM**
+  * Operates like the emerging industry category of *"System One models"* (formalized by TypeSafe AI with its proprietary model *Jev*, launched in September 2026).
+  * System 1 models do not author free-text narrative; they take raw communication states and emit deterministic, typed schemas (Pydantic objects) with confidence indices.
+  * *Why build an in-house fine-tuned SLM instead of commercial System 1 APIs like Jev?*
+    1. **European Banking Secrecy & DORA/GDPR:** Keelpay's financial emails (IBANs, chargebacks, dispute amounts) cannot be streamed to third-party US proprietary APIs. The model runs within Keelpay's private cloud.
+    2. **Dynamic Entity Extraction:** While pure System 1 classifiers only select from predefined categorical answers, our Router SLM also extracts unstructured entity variables (`transaction_id`, `amount`, `currency`).
+    3. **Unit Economics & Zero Lock-in:** The quantized model (D-q4) operates on an 8 vCPU instance for < 18 €/month on 36,000 tickets, eliminating variable per-ticket API tolls and vendor lock-in.
+* **System 2 (Deliberative, analytical, narrative, verified): Node 2 Drafter LLM**
+  * Handles contextual synthesis: cross-referencing merchant history, retrieving policy articles (RAG), and drafting human-readable prose verified by explicit policy guardrails.
+
+#### The four decision trees & guardrails
+
+1. **Decision Tree 1: Schema Integrity & Abstention**
+   * The model extracts: `intent`, `sub_intent`, `transaction_id`, `amount`, `currency`, `urgency`, `sentiment`.
+   * If parsing fails or any essential field is `"UNDEFINED"` → **Zero guess:** the ticket is routed directly to a Level-1 Support Agent for manual triage.
+2. **Decision Tree 2: Desk Routing Table**
+   * Valid JSON is mapped deterministically to one of four specialized desks:
+     * **`payments`**: Status of transfers, SEPA delays, missing payouts, refund tracking.
+     * **`disputes`**: Chargebacks, suspected fraud, legal notification windows.
+     * **`technical`**: API keys, HTTP errors (4xx/5xx), CMS plugins (Shopify, WooCommerce), webhook failures.
+     * **`compliance`**: KYC onboarding, identity proof verification, AML regulatory account holds.
+3. **Decision Tree 3: Urgency & SLA Escalation**
+   * If `urgency == "HIGH"` (e.g. chargeback deadline within 24h, regulatory block, churn risk) → Ticket enters the high-priority queue with immediate agent SLA.
+4. **Decision Tree 4: Drafter Grounding & Policy Guardrails**
+   * **Read-only lookup:** Transactions are attached by strict matching on the merchant's account. No cross-merchant access.
+   * **Grounded citations:** The drafter must cite the exact knowledge base section (`[KB-xxx - Section]`).
+   * **Negative constraints:** The drafter cannot promise refunds, waive transaction fees, or make binding legal commitments. If an answer cannot be proven from retrieved chunks, it writes `[VERIFICATION NEEDED]`.
+5. **Human-in-the-Loop Contract:**
+   * **The copilot never sends an email autonomously.**
+   * A human support agent reads the draft, reviews citations, adjusts phrasing, and clicks "Send".
+   * If the agent discovers a misrouted ticket at this stage, they reroute it once (the ticket is redrafted in the target desk); a second misroute automatically falls back to manual triage.
 
 ### Starting numbers (given by the scenario)
 

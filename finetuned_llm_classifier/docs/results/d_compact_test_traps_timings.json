@@ -1,0 +1,21 @@
+{
+  "machine": "x86_64",
+  "cpu_count": 8,
+  "tickets": 380,
+  "cpu_model": "AMD EPYC 7B12",
+  "memory_gb": 33.7,
+  "q8": {
+    "gguf_mb": 3285,
+    "seconds_mean": 7.294,
+    "seconds_median": 6.958,
+    "seconds_p95": 10.945,
+    "valid_json": 380
+  },
+  "q4": {
+    "gguf_mb": 1930,
+    "seconds_mean": 5.845,
+    "seconds_median": 5.561,
+    "seconds_p95": 9.128,
+    "valid_json": 380
+  }
+}
