@@ -21,6 +21,8 @@ dependencies = [
     "ragas>=0.3.2",
     "rouge-score>=0.1.2",
     "sacrebleu>=2.6.0",
+    "scikit-learn>=1.9.1",
+    "seaborn>=0.13.2",
     "tenacity>=9.0",
     "tensorboard>=2.21.0",
     "transformers==4.46.*",

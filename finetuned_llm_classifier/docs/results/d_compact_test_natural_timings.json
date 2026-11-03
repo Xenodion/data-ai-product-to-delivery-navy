@@ -1,0 +1,21 @@
+{
+  "machine": "x86_64",
+  "cpu_count": 8,
+  "tickets": 610,
+  "cpu_model": "Intel(R) Xeon(R) CPU @ 2.20GHz",
+  "memory_gb": 33.7,
+  "q8": {
+    "gguf_mb": 3285,
+    "seconds_mean": 8.905,
+    "seconds_median": 8.57,
+    "seconds_p95": 14.077,
+    "valid_json": 610
+  },
+  "q4": {
+    "gguf_mb": 1930,
+    "seconds_mean": 7.412,
+    "seconds_median": 7.056,
+    "seconds_p95": 11.821,
+    "valid_json": 610
+  }
+}
