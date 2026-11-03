@@ -1,0 +1,86 @@
+[
+  {
+    "name": "Ambiguous payment starts unselected",
+    "pass": true
+  },
+  {
+    "name": "Send visible 1440x900",
+    "pass": true
+  },
+  {
+    "name": "Send visible 1280x720",
+    "pass": true
+  },
+  {
+    "name": "Held payment generates French citation-free reply",
+    "pass": true
+  },
+  {
+    "name": "Source is inspectable",
+    "pass": true
+  },
+  {
+    "name": "Draft survives ticket navigation",
+    "pass": true
+  },
+  {
+    "name": "Draft survives copilot toggle",
+    "pass": true
+  },
+  {
+    "name": "Payment switch protects edited draft",
+    "pass": true
+  },
+  {
+    "name": "Cancel keeps selection and edits",
+    "pass": true
+  },
+  {
+    "name": "No-match requests reference",
+    "pass": true
+  },
+  {
+    "name": "Send-next advances and remains undoable",
+    "pass": true
+  },
+  {
+    "name": "Undo restores original ticket",
+    "pass": true
+  },
+  {
+    "name": "Critical draft blocked",
+    "pass": true
+  },
+  {
+    "name": "Confirmation enables dispute draft",
+    "pass": true
+  },
+  {
+    "name": "Reroute does not reuse unrelated draft",
+    "pass": true
+  },
+  {
+    "name": "Second reroute requires triage",
+    "pass": true
+  },
+  {
+    "name": "Triage permits manual composition",
+    "pass": true
+  },
+  {
+    "name": "Empty reply blocked",
+    "pass": true
+  },
+  {
+    "name": "Search filters tickets",
+    "pass": true
+  },
+  {
+    "name": "Sent reply shows clean captured text",
+    "pass": true
+  },
+  {
+    "name": "Mobile has no horizontal overflow",
+    "pass": true
+  }
+]

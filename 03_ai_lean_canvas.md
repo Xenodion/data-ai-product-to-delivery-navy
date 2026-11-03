@@ -1,26 +1,22 @@
-# 03 — AI Lean Canvas · Keelpay agent-assist copilot (routing + drafting)
+# 03 — Keelpay AI Lean Canvas
 
-> One screen. Nine blocks from the classic Lean Canvas (Ash Maurya) + five blocks that an AI product cannot skip.
-> Filled from our files (2 November 2026); every number comes from the file named in the right-hand column.
+Reference: 3 November 2026. Economic figures are sizing assumptions; extraction results are from a synthetic benchmark; target behavior is not deployed capability.
 
-## The nine classic blocks
-| Block | Our answer | Comes from |
-|---|---|---|
-| 1. Problem — top 3 pains | (1) ~15 % of handling time spent reading a free-text ticket and routing it; (2) ~45 % spent finding the payment and its history and writing the reply; (3) ~1 ticket in 7 first lands in the wrong desk, and an urgent one (dispute deadline, compliance hold) can miss its deadline | 01 §1 (given) |
-| 2. Users / customer segments | Keelpay support agents on four desks (payments status, disputes, technical / API, compliance), ~36,000 merchant tickets a month in French and English from ~2,500 merchants. Decision makers: Head of Support and Head of Compliance | 01, 03 brief §1 |
-| 3. Unique value proposition — one sentence | Every ticket reaches the right desk already read, with the payment found and a cited reply ready to edit — and where the copilot cannot tell, it says so instead of guessing | 01 §5 (press release) |
-| 4. Solution — the MUST features | Router (best of rules, classical ML, prompted and fine-tuned model) · decision table and criticality score · lookup and cited draft · gold set and feedback logger | 03 brief §3 |
-| 5. Channels — where it lives | A side panel on each ticket in the helpdesk the agents already use: what the copilot read, the path taken, the case card, the cited draft, one-click reroute (prototype: `prototype/copilot_panel/index.html`) | 03 brief §6, `03_prototype_link.md` |
-| 6. Value — what it is worth per year (base case, EV) | Year 1: **+€194k** net in the base case, **+€214k** expected value (−€79k pessimistic, +€703k optimistic); steady state +€355k a year. Gross: €275k of agent time + €37k of hand-overs avoided. Staged: CONDITIONAL GO on the S4 bars | 02 memo §1–2 |
-| 7. Cost structure — the seven cost lines | Integration (with training and security review) €28k a year amortised · evaluation €10k · supervision (quality owner) €18k · monitoring €12k · re-evaluation €6k · tokens and inference about €2k · cost of error €41k (uncaught serious errors, incremental to today) | 02 memo §1, §3 |
-| 8. Key metric — the success criterion | Primary: average handling time end to end at constant QA score. S4 gate: on ≥ 200 synthetic gold tickets, ≥ 90 % routed to the right desk first time with ≥ 50 % routed automatically and no urgent ticket auto-routed to the wrong desk — enough to reach the 13.5 % time-saved flip point if the draft cuts find-and-write time by ≥ ≈ 19 % | README, 03 brief §7 |
-| 9. Unfair advantage — data or know-how nobody else has | Our own ledger, dispute history and desk rules, and tickets that never leave Keelpay's cloud (data constraint): a vendor copilot does not see them. Build or buy: Orchestrate 3.66 · Build 3.54 · Buy 3.00 | 02 memo §5 |
+| Block | Position |
+|---|---|
+| 1. Problem | Active time spent reading/assigning and searching/drafting; wrong desk or payment; overlooked urgency. |
+| 2. Users | Support Agents across payments/disputes/technical/compliance; support managers; merchants receiving human-reviewed replies. |
+| 3. Value proposition | A qualified case and verifiable reply to reduce active work at constant quality without autonomous sending. |
+| 4. Solution | Four MUSTs: qualification/assignment; grounded context/reply; human decision/history; evaluation/observability. |
+| 5. Channel | Target agent workspace: Qualification & Routing, Replies to Review, and Overview; local mock-ups exist, integrated demo remains to build. |
+| 6. Value | Savings are hypothetical net of error, adoption, and operating costs; see [memo](02_investment_memo.md) and [sizing](02_sizing.xlsx). Full-product gain is not measured by extraction. |
+| 7. Costs | Integration, evaluation, human quality ownership, monitoring/hosting, reevaluation, variable usage, and errors. Year-one cash differs from amortized cost; external demo cost differs from private production scenario. |
+| 8. Main metric | End-to-end active handling time at constant QA; initial desk and critical-case handling are secondary measures; serious errors and segments are guardrails. |
+| 9. Advantage | In production: access to ledger, merchant context, and policy within approved boundaries. Our synthetic dataset and unbuilt integrations are not an established competitive moat. |
+| 10. Data | 3,205 accepted synthetic tickets split 1,922/293/610/380; generated/reviewed labels differ from ledger/KB fixtures and the twenty product cases. |
+| 11. Models | Qualifier Model D-q4 is a measured candidate; Routing Node, Lookup Node, and Retrieval Node are deterministic; Drafter Model is prompted with sources. Prompting comparison is incomplete. |
+| 12. Evaluation | Preserve historical results; next evaluate rules and full flow; S3 twenty-case contract check, product study, and rare-risk protocol are distinct. |
+| 13. Human control | Qualification only for undecidable dependencies; review each reply; missing payment may lead to clarification; urgency does not prevent preparation. |
+| 14. Risks/governance | No autonomous send or financial action; merchant isolation and supported facts; separate disablement of assignment/drafting/all; see [governance](governance.md). |
 
-## The five AI blocks
-| Block | Our answer | Comes from |
-|---|---|---|
-| 10. Data — sources, rights, gaps | Synthetic tickets and a seeded ledger, no real merchant data: 3,205 generated tickets (train 1,922 · val 293 · tests 610 + 380), labels from scenario cards checked by language models; plus 20 tickets labelled by hand. Rights: synthetic, so no personal data; in production the B2B contract and a legal basis decide. Gaps: English and rare dispute types; generated tickets are cleaner than real mail | 03 brief §4, `finetuned_llm_classifier/docs/scoring_protocol.md` §5, `evals/` · details in governance.md (Session 3) |
-| 11. Model — rung per part | Read: rung 3, fine-tuned small model only if it beats the prompted one (rules measured at 44.6 % right desk; classical ML 91.6 % but 6.6 % of urgent tickets in the wrong desk). Route, criticality, lookup, log: rung 1, rules. Draft: rung 3, prompted model with retrieval. Whole copilot: rung 4, hybrid | 03 brief §5 |
-| 12. Evaluation — the eval-set and its size | `evals/eval_set_v0.csv`: 20 tickets labelled by hand (FR, EN, one NL; four desks; urgent, `UNDEFINED` and `OTHER`; all built around a trap) → 50 with Assignment 4 → 200 by S5. Router scored on 610 + 380 synthetic test tickets under a protocol fixed before reading them | `evals/README_eval_set.md`, scoring protocol |
-| 13. Human in the loop — trust level per step, way back to a person | Read L1 · route L3 with sampling · look up L1 · draft L2 · send human only · log L4. `UNDEFINED`, low-confidence and critical tickets go to human triage before any draft; one-click reroute, redrafted once, a second reroute goes to triage; copilot off per ticket or company-wide | 03 brief §2 |
-| 14. Risks & governance — what it must never do, rollback trigger | Never sends to a merchant; never states a status, amount or date not backed by a linked transaction; never guesses a field (`UNDEFINED`); never routes a critical ticket without a person. Legal and reputational risk owned by the Head of Compliance. Rollback: routing back to proposals only if a weekly audit finds an urgent ticket auto-routed to the wrong desk, or incremental serious errors exceed 0.1 % of tickets | governance.md S1–S2, 03 brief §8 |
+**Decision:** GO for demo/evaluation; conditional pilot; no production approval. External Drafter Model API and traces only for non-critical synthetic demo data; fictional production stays within Keelpay cloud. FIFO/wait are demo MUST; advanced urgency is SHOULD; production safety still needs validation.

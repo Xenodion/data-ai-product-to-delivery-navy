@@ -1,53 +1,23 @@
-# 03 — Prototype link · Keelpay agent-assist copilot
+# 03 — Prototype Baseline and Demo Target
 
-> One clickable prototype of where the copilot lives (the support agent's helpdesk), made in under an hour. It is a question for users, not the product: four synthetic tickets, fictional merchants, no real data.
+## One V0 baseline
 
-- **Link:** `prototype/copilot_panel/index.html` in this repository. It is one self-contained HTML file: download it or clone the repo and open it in any browser, with no install and no server.
-- **Tool:** other: a static HTML page (HTML, CSS and plain JavaScript in one file), written with an AI coding assistant from the prompt below.
-- **Version:** v0.1 (2 November 2026): queue, ticket and copilot panel; four tickets that cover the four paths of the flow (`assets/copilot_flow.png`):
-  1. **Routed automatically, cited draft.** #K-24118, a payout returned by the bank.
-  2. **The payment cannot be told apart** (French, amount in words, no reference). The agent picks the payment, then the draft is written. #K-24121. **This is the usability-test task.**
-  3. **Critical** (forwarded chargeback with a deadline). The agent confirms the desk before any draft. #K-24125.
-  4. **`UNDEFINED`** (several requests in one message), sent to human triage. #K-24127.
-- **The prompt we used (the brief in three paragraphs):**
+The current local reference is the [V0 baseline](prototype/copilot_panel/v2.html). It is a clickable, in-memory interaction mock-up with synthetic payment candidates, source inspection, editing, simulated send, and undo. Its filename and historical browser report still use the earlier V2 work-item identifier; that identifier does not establish a second product version.
 
-```
-Paragraph 1 — who uses it and for what job:
-A Keelpay support agent (B2B payments fintech, ~36,000 merchant tickets a month in French and
-English) on one of four desks: payments, disputes, technical / API, compliance. Job: get each
-ticket to the right desk and answer it on the right payment, without decoding a free-text message
-and hunting for the transaction by hand. Build a clickable mock of their helpdesk with four
-synthetic tickets (fictional merchants), one per path: routed automatically; payment not
-identifiable (French, amount in words, no reference); critical (forwarded chargeback with a
-deadline); UNDEFINED (several requests in one message).
+The earlier [prototype sketch](prototype/copilot_panel/index.html) is retained as a historical source for provenance. It is not a competing option, is not a current target, and should not be shown alongside V0 as a version choice.
 
-Paragraph 2 — what is on the screen (panels, buttons, the one thing it must never do):
-Three columns: the ticket queue with a routing badge per ticket; the ticket with the passages the
-copilot used underlined; the copilot side panel with (1) what the copilot read, as the JSON fields
-(intent, sub_intent, transaction_id, amount, currency, urgency, sentiment), each highlighting its
-source passage on hover; (2) the path taken through the flow; (3) the case card: merchant,
-transactions, linked disputes, last tickets, read-only; (4) the cited draft, editable, with
-numbered sources; (5) a one-click reroute; (6) a log. The copilot never sends: only the agent has
-a Send button. A switch turns the copilot off for one ticket.
+The existing screenshot predates the English UI localization and is therefore not presented as a current V0 capture. Open the HTML baseline for the current interface.
 
-Paragraph 3 — the rules (routing, what is "human only", the trust level):
-A decision table routes clear, non-critical tickets automatically (L3, sampled audit). UNDEFINED
-or low-confidence tickets go to human triage, nothing guessed. Critical tickets (dispute,
-deadline, high urgency) wait for a person to confirm the desk before any draft. Lookups are L1
-(read-only, this merchant only); the draft is L2 (the agent approves every reply). A rerouted
-ticket is drafted again once; a second reroute goes to human triage. Use blue for what the system
-did and amber for what a person does, as in our flow figure.
-```
+The interface copy is in English; synthetic merchant messages and example replies remain in their authored language, including French. The V0 checks verify UI behavior and rendering only. They do not measure usability or product gains. V0 has no business backend, live AI, real queue, or durable state; reload resets the session. It contains a legacy pre-draft urgency gate that conflicts with current policy. Preserve it as a baseline fact; do not reuse that rule in the next build.
 
-- **How to open it:** the page is not hosted online (GitHub shows its source, not the page). Testers open the file locally in a browser, or we share the folder; nothing to install.
-- **Screenshot:** ticket #K-24121, the usability-test task: the reference is `UNDEFINED`, so the copilot shows both €1,250.00 payouts and waits for the agent to pick one before drafting.
+## One future V1
 
-  ![Prototype v0.1, ticket #K-24121](assets/prototype_K-24121.png)
+Build one successor after the complete workflow and UI/UX are reworked against [design feedback and task prompts](03_user_research.md), the [current workflow](docs/design/copilot-workflow.md), and the [product spec](spec.md). Do not make parallel successor variants. The successor becomes the single demo front end and must follow persistent backend state.
 
-- **v0.1, 2 November (after the spec):** the JSON now follows `label_definitions.md` (`delayed_credit`, `missing_payment`, urgency `medium`, `""` for absent fields), and the panel no longer shows a confidence score: the router returns none, its doubt is `UNDEFINED` (`spec.md` §2).
+Its product flow has three distinct spaces: **Overview**, **Qualification & Routing**, and **Replies to Review**. Overview shows injected ticket events, operational counts, waiting age, priority, and ratios with periods/denominators. Clicking a human node opens the correct eligible task. The qualification space resolves only the blocking decision. The review space shows the draft, sources, history, attention items, editing, and clear send gates. New arrivals cannot replace the current task or erase edits.
 
-## Known limits of v0.1 (to tell testers)
-- **Rerouting a critical ticket** to another desk keeps the same draft text; the real copilot would draft again for the new desk.
-- **"Split into separate tickets"** is not built yet.
-- **A ticket triaged from `UNDEFINED`** stops at the desk choice; there is no new reading or draft after it.
-- **Nothing is saved:** reloading the page resets every ticket.
+The V1 front end will continue using English interface copy, while incoming synthetic merchant messages remain in their authored languages. No translated ticket fixtures are needed. Every queue/action/animation comes from backend state. The Python Demo Injector, Qualifier Model, deterministic Routing Node, Lookup Node, Retrieval Node, Drafter Model, Support Agent actions, and Langfuse are the target flow; the external Drafter Model and external traces are allowed only for non-critical synthetic demo data. Sends are simulated and human-triggered.
+
+## Version rule
+
+There is one reviewable baseline (V0) and one planned successor (V1). The predecessor code and earlier work-item records may remain in the repository for provenance, but must not be presented as alternate product designs. Once the new workflow is approved, update one canonical interface and its acceptance record; do not create a third parallel mock-up.

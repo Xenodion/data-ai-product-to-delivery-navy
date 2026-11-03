@@ -34,9 +34,11 @@ Thumbs.db
 decks/
 course_decks/
 
-# Agentic tooling (local only, never committed)
-.specify/
-specs/
+# Spec Kit plans are project artifacts; ignore only generated workbench files.
+.specify/workbench/
+# Keep the pre-existing nested LLMOps Spec Kit installation local; shared plans live at the root.
+finetuned_llm_classifier/.specify/
+finetuned_llm_classifier/specs/
 .claude/
 .agents/
 .meta/
