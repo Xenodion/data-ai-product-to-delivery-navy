@@ -25,7 +25,7 @@ Implement the Routing Node as a pure, typed Python decision module in the shared
 
 ## Dependencies
 
-- Feature 003 product alignment and stable Seven-field `TicketLabel` contract.
+- Stable product decisions in the root deliverables and the seven-field `TicketLabel` contract.
 - Approved synthetic `PolicyConfig`; exact production deadline/escalation values remain owned by Support and Compliance.
 - Backend ticket/merchant context and immutable event IDs from Feature 005.
 - Lookup/retrieval status contracts from Feature 006.
@@ -43,4 +43,4 @@ Implement the Routing Node as a pure, typed Python decision module in the shared
 
 ## Entry and exit criteria
 
-Entry: Feature 003 target docs are stable; Support/Compliance identify the demo policy owner and approve synthetic policy values; Features 005–006 agree on result envelopes. Exit: every acceptance case passes, reason codes/versioning are inspectable, forbidden side effects are structurally absent, and failed components lead to explicit recoverable states. No production readiness is implied.
+Entry: Product target documents and the seven-field contract are stable; Support/Compliance identify the demo policy owner and approve synthetic policy values; Features 005–006 agree on result envelopes. Exit: every acceptance case passes, reason codes/versioning are inspectable, forbidden side effects are structurally absent, and failed components lead to explicit recoverable states. No production readiness is implied.

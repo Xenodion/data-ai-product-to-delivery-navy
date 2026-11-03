@@ -1,6 +1,6 @@
 # Target Architecture — Keelpay Demo
 
-**Status: proposed, not implemented.** Canonical component names: [NAVY Reference Terminology](docs/design/terminology.md). Target behavior: [Product Specification](spec.md) and [Workflow / UX](docs/design/copilot-workflow.md).
+**Status: proposed, not implemented.** Canonical component names: [NAVY Reference Terminology](terminology.md). Target behavior: [Product Specification](../../spec.md) and [Workflow / UX](copilot-workflow.md).
 
 ## Flow
 
@@ -28,7 +28,7 @@ flowchart LR
 | Demo Injector | Synthetic set + cadence → idempotent request | Demo identity/cadence; no production authentication implied | To build |
 | Python API/backend | Ingress, state reads/writes, orchestration, UI commands | Auth, validation, idempotency, atomic transitions; secrets server-side | To build |
 | Qualifier Model | Text → strict seven-field contract | D-q4 candidate; backend parsing/validation; historical benchmark only | Model trained/measured; Cloud Run CPU serving to build |
-| Routing Node | Ticket + qualified fields + authorized context → desk, priority, dependencies, versioned reasons | Deterministic, versioned Python tables; decision contract in `docs/design/copilot-workflow.md` | To specify in Feature 004 |
+| Routing Node | Ticket + qualified fields + authorized context → desk, priority, dependencies, versioned reasons | Deterministic, versioned Python tables; decision contract in `copilot-workflow.md` | To specify in Feature 004 |
 | Lookup Node | Merchant + payment keys → candidates/result | Synthetic ledger fixture, `merchant_id` filter, no write path | To build |
 | Retrieval Node | Intent/context → excerpts and source IDs | Versioned synthetic KB and approved-source list | To build |
 | Drafter Model | Ticket + facts + excerpts → draft or clarification | External API only for non-critical synthetic data; timeout/manual fallback | To integrate |

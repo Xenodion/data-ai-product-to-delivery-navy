@@ -14,7 +14,7 @@
 
 **Success to test.** Measure active time on comparable tasks, net of corrections, at constant QA, and compare with the economic hurdle in the corrected sizing. Track first-pass desk accuracy, automatic-assignment coverage, urgent detection/handling, and serious post-review errors separately. The economic threshold varies with assumptions; 90% desk accuracy and 50% automatic assignment are not substitutes. Twenty S3 cases check the contract; a roughly 200-case exercise is exploratory for rare risks.
 
-**Decision and evidence.** GO for demo construction/evaluation; conditional Keelpay pilot. D-q4 is the measured candidate; prompted-model comparison and complete-product measurement remain. Design decisions include two human workspaces, comparable payment candidates, inspectable sources, visible wait, and live Overview ([design feedback](03_user_research.md)).
+**Decision and evidence.** GO for demo construction/evaluation; conditional Keelpay pilot. D-q4 is the measured candidate; prompted-model comparison and complete-product measurement remain. The design to evaluate separates qualification from reply review, shows payment candidates and sources, and makes waiting and live flow visible ([research plan](03_user_research.md)).
 
 **Data and constraints.** Synthetic benchmark is separate from synthetic ledger/KB fixtures; split and provenance are documented. External Drafter Model and traces are allowed only on non-critical synthetic demo data; fictional production remains in Keelpay cloud. See [governance](governance.md).
 

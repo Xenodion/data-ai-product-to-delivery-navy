@@ -10,7 +10,7 @@ Keelpay is a fictional B2B fintech scenario with about 36,000 monthly tickets. T
 
 `Demo Injector` → `Qualifier Model` → `Routing Node` → `Lookup Node` when useful → `Retrieval Node` when useful → `Drafter Model` → **Human Review by a Support Agent** → explicit simulated send.
 
-A branch to **Human Qualification** is opened only for blocking decisions. The `Routing Node` is deterministic Python, never a model. The component order and relationships are canonical; see [architecture](04_architecture.md).
+A branch to **Human Qualification** is opened only for blocking decisions. The `Routing Node` is deterministic Python, never a model. The component order and relationships are canonical; see [architecture](docs/design/architecture.md).
 
 ## 3. Input and Qualifier Model contract
 

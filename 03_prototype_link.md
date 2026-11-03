@@ -1,23 +1,32 @@
-# 03 — Prototype Baseline and Demo Target
+# 03 — Prototype and Demo Target
 
-## One V0 baseline
+## Original V0 mock-up
 
-The current local reference is the [V0 baseline](prototype/copilot_panel/v2.html). It is a clickable, in-memory interaction mock-up with synthetic payment candidates, source inspection, editing, simulated send, and undo. Its filename and historical browser report still use the earlier V2 work-item identifier; that identifier does not establish a second product version.
+The original V0 is a clickable static mock-up of the Keelpay support workspace. It uses synthetic tickets to show the inbox, ticket context, qualification information, payment candidates, source details, and human review actions.
 
-The earlier [prototype sketch](prototype/copilot_panel/index.html) is retained as a historical source for provenance. It is not a competing option, is not a current target, and should not be shown alongside V0 as a version choice.
+- [Open the V0 mock-up](prototype/copilot_panel/index.html)
+- [View the V0 screenshot](assets/prototype_K-24121.png)
 
-The existing screenshot predates the English UI localization and is therefore not presented as a current V0 capture. Open the HTML baseline for the current interface.
+![Original V0 mock-up showing ticket K-24121 and its payment candidates](assets/prototype_K-24121.png)
 
-The interface copy is in English; synthetic merchant messages and example replies remain in their authored language, including French. The V0 checks verify UI behavior and rendering only. They do not measure usability or product gains. V0 has no business backend, live AI, real queue, or durable state; reload resets the session. It contains a legacy pre-draft urgency gate that conflicts with current policy. Preserve it as a baseline fact; do not reuse that rule in the next build.
+### Prompt used for the V0 mock-up
 
-## One future V1
+> A Keelpay support agent (B2B payments fintech, ~36,000 merchant tickets a month in French and English) on one of four desks: payments, disputes, technical / API, compliance. Job: get each ticket to the right desk and answer it on the right payment, without decoding a free-text message and hunting for the transaction by hand. Build a clickable mock of their helpdesk with four synthetic tickets (fictional merchants), one per path: routed automatically; payment not identifiable (French, amount in words, no reference); critical (forwarded chargeback with a deadline); UNDEFINED (several requests in one message).
+>
+> Three columns: the ticket queue with a routing badge per ticket; the ticket with the passages the copilot used underlined; the copilot side panel with (1) what the copilot read, as the JSON fields (intent, sub_intent, transaction_id, amount, currency, urgency, sentiment), each highlighting its source passage on hover; (2) the path taken through the flow; (3) the case card: merchant, transactions, linked disputes, last tickets, read-only; (4) the cited draft, editable, with numbered sources; (5) a one-click reroute; (6) a log. The copilot never sends: only the agent has a Send button. A switch turns the copilot off for one ticket.
+>
+> A decision table routes clear, non-critical tickets automatically (L3, sampled audit). UNDEFINED or low-confidence tickets go to human triage, nothing guessed. Critical tickets (dispute, deadline, high urgency) wait for a person to confirm the desk before any draft. Lookups are L1 (read-only, this merchant only); the draft is L2 (the agent approves every reply). A rerouted ticket is drafted again once; a second reroute goes to human triage. Use blue for what the system did and amber for what a person does, as in our flow figure.
 
-Build one successor after the complete workflow and UI/UX are reworked against [design feedback and task prompts](03_user_research.md), the [current workflow](docs/design/copilot-workflow.md), and the [product spec](spec.md). Do not make parallel successor variants. The successor becomes the single demo front end and must follow persistent backend state.
+This mock-up illustrates the interface and a sample interaction. It does not run live AI, connect to a backend, maintain a real queue, or send a merchant message. The product behavior and safeguards are defined in the [product specification](spec.md).
 
-Its product flow has three distinct spaces: **Overview**, **Qualification & Routing**, and **Replies to Review**. Overview shows injected ticket events, operational counts, waiting age, priority, and ratios with periods/denominators. Clicking a human node opens the correct eligible task. The qualification space resolves only the blocking decision. The review space shows the draft, sources, history, attention items, editing, and clear send gates. New arrivals cannot replace the current task or erase edits.
+## V1 demo target
 
-The V1 front end will continue using English interface copy, while incoming synthetic merchant messages remain in their authored languages. No translated ticket fixtures are needed. Every queue/action/animation comes from backend state. The Python Demo Injector, Qualifier Model, deterministic Routing Node, Lookup Node, Retrieval Node, Drafter Model, Support Agent actions, and Langfuse are the target flow; the external Drafter Model and external traces are allowed only for non-critical synthetic demo data. Sends are simulated and human-triggered.
+The planned V1 is one functional successor that implements the agreed workflow:
 
-## Version rule
+1. **Overview** shows synthetic ticket events and operational counts from the backend.
+2. **Qualification & Routing** lets a Support Agent resolve only decisions that block safe preparation.
+3. **Replies to Review** presents the draft, supporting facts and sources, history, editing, and a human-controlled simulated send.
 
-There is one reviewable baseline (V0) and one planned successor (V1). The predecessor code and earlier work-item records may remain in the repository for provenance, but must not be presented as alternate product designs. Once the new workflow is approved, update one canonical interface and its acceptance record; do not create a third parallel mock-up.
+The target flow uses a Python Demo Injector, Qualifier Model, deterministic Python Routing Node, synthetic Lookup and Retrieval, a Drafter Model, persistent backend state, and correlated Langfuse traces. Ticket messages remain in their authored languages. External drafting and traces are limited to non-critical synthetic demo data.
+
+V1 is not implemented or deployed. Its detailed runtime and hosting choices remain in the [delivery roadmap](specs/roadmap.md).
