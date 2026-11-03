@@ -1,50 +1,70 @@
-# Governance — our living file
+# Keelpay Governance
 
-> Created for Assignment 1, one line added every session. One question at the oral is drawn from this file.
-> Answers are provisional: write what you know today, and mark what you still have to check.
-> Aligned on 30 October 2026 to the frozen brief in the README (Keelpay, 2,500 merchants, 36,000 tickets a month, two sub-cases: automatic routing by a fine-tuned model plus fixed rules, and a reviewed draft; `UNDEFINED` left to the support agent).
+Reference: 3 November 2026. Responsibilities and rules describe the target product. Controls not yet implemented are requirements, not certified compliance.
 
-## Session 1 — the six questions
-| # | Question | Our answer (provisional) | To check with |
-|---|---|---|---|
-| 1 | **EU AI Act:** which risk tier is our agent in, and why? (minimal · limited — transparency: tell the user it is an AI · high-risk · prohibited) | Minimal to limited risk. It is an internal copilot used by the fintech's own support agents; a human reviews every draft and sends every reply, so the merchant never talks to the AI. Routing is applied automatically, but it only moves a ticket between internal desks. It does not score creditworthiness, decide on onboarding or execute payments, which are the fintech-related uses that would push it towards high-risk. Open point: routing a compliance ticket and flagging it as urgent only informs the support agent; if the output ever drove a due-diligence decision, the tier would need a new look. | Legal / DPO; reading of Annex III and Art. 50 by the team; the teacher |
-| 2 | **Data:** whose data does it use, and on what legal basis? (GDPR art. 6; what the B2B contract allows) | Merchants' account data and tickets, and personal data inside transactions (payers' names, IBAN fragments, merchant staff contacts). Likely basis: performance of the contract (art. 6(1)(b)) for support, or legitimate interest (art. 6(1)(f)); the exact role of the fintech (controller or processor) is not settled. Rule from day one: lookups are scoped to the merchant of the ticket, so merchant A's data can never reach merchant B's draft. The fine-tuned model is trained on synthetic tickets only. Our own prototype uses synthetic data only. | DPO; the B2B contract clauses; the terms of the cloud provider hosting our own project (region, no access to content); no external model provider receives tickets |
-| 3 | **Accountability:** who is accountable when it is wrong — and where is the human? | The support agent who sends the reply remains accountable for what leaves the company; the Head of Support owns the quality of the support outcome; our team, as product owner, owns the copilot's behaviour and its rollback. The human sits between the draft and the merchant on every ticket (L2). Routing is automatic (L3 with sampling, to confirm): a misrouted ticket is caught when the receiving agent opens the draft, and the Head of Support owns the routing rules and thresholds. Safety nets: `UNDEFINED` and critical tickets go to human triage first, a ticket is rerouted and redrafted once, and a second reroute goes to triage. An agent can ignore the draft or switch the copilot off for a ticket; a company-wide switch back to "reading only" (no draft) or off is to be designed in S4. | Head of Support (named owner to confirm); S4 for the override switch |
-| 4 | **Never:** what must it never do? (our first guardrail) | First guardrail: **never send anything to a merchant** — it drafts, a human sends. Further guardrails to confirm: never state a payment status, amount or date that is not backed by a linked transaction; never guess a field it cannot determine (it returns `UNDEFINED`, and `UNDEFINED` always goes to a support agent); never route a critical ticket without a human confirming the desk; never promise a refund or a dispute outcome; never give legal or regulatory advice (it flags, the agent or Compliance decides); never use another merchant's data. | The team; Compliance |
-| 5 | **Explainability:** explainable to whom — the customer, the support agent, the auditor? | *Support agent:* can open any ticket and see what the copilot read (the JSON fields) and which transaction or past ticket each claim in the draft comes from; fields it could not determine show as `UNDEFINED`. *Merchant:* receives an ordinary human reply that names the transactions concerned; they can ask the agent why. *Auditor:* a log per ticket — retrieved items, draft, final text sent, edits, who sent it, model version, the decision path taken and the draft. Retention period of that log is not decided. | DPO; Compliance (retention) |
-| 6 | **The people it cannot serve:** what happens to them? | Tickets where evidence is thin (new merchants with little history, rare dispute types, English-language or forwarded-thread tickets we did not test) come back with `UNDEFINED` fields: a support agent works them as today, but they could end up slower than assisted tickets. We will report handling time and QA for `UNDEFINED` tickets and by merchant segment (size, language, age of account) as a counter-metric, so that a gain on the average cannot hide a loss there. We also report by agent seniority: published results on AI assistance for support agents (Brynjolfsson, Li & Raymond, arXiv:2304.11771) find the gain concentrated among less experienced agents, with small quality declines for the most experienced. The agents are users too: no forced use, and no target that blames them for the tool. | S5 (segments and counter-metrics); Head of Support |
+## Session 1 — Six questions
 
-## Session 2 — the cost of error
-- Which cost-of-error line is a **legal or reputational** risk, not just money? **A wrong status, amount or deadline told to a merchant on a dispute or compliance question, and an urgent ticket (chargeback deadline, compliance hold) left in the wrong desk** (Inputs rows 31 and 32 in `02_sizing.xlsx`: about €400 and €300 per uncaught error on money alone; analogy for disputes: Mastercard 2025, $128 per chargeback). The merchant acts on it (misses a deadline, re-ships, waits) and can complain to the regulator; payment-service providers have information and complaint-handling duties under PSD2. As in Moffatt v. Air Canada (2024 BCCRT 149), the company answers for what its tools tell customers, even though a human sends the reply. Routing is automatic here (L3), so the exposure is not only the reply: it is also a critical ticket nobody sees in time. Hence the criticality score (a human confirms the desk of a critical ticket before any draft), `UNDEFINED` for anything the model cannot determine, and a draft that never states a status, amount or date not backed by a linked transaction (S1, question 4). Payment-status errors (about €150 each, guess) are mainly money: extra contacts, goodwill credits, a churn tail.
-- Who in the company **owns** that risk? **The Head of Compliance** owns the legal exposure: the wording the copilot may use on disputes and compliance, and any decision to widen what is routed automatically. **The Head of Support** owns the routing rules, the criticality thresholds and the switch back to "reading only" or off (S1, question 3). Our team, as product owner, owns the measurement: the incremental uncaught-serious-error rate (assumed 0.05–0.12 % of tickets by category; bar: at most 0.1 % overall) reported on every evaluation run from S4, together with the share of critical tickets that reach a human within the agreed delay.
+| Question | Position and owner |
+|---|---|
+| AI Act risk | Working hypothesis: internal support copilot, outside credit scoring, decision-based onboarding, or automatic payment. Exact classification must be checked with Legal/DPO against intended use; a human in the loop alone does not determine classification. |
+| Data and legal basis | Demo uses non-critical synthetic data. Production tickets/transactions may contain personal data; controller/processor roles, purposes, and legal bases must be documented. A B2B contract does not resolve every processing question. |
+| Who is accountable? | Support owns quality, rules, queues, and operational rollback; Compliance owns sensitive policies/exposure; NAVY owns implementation and measurement. A Support Agent decides whether to send but is not solely responsible for system errors. |
+| Prohibited actions | Autonomous send, ledger write, refund/unfreeze, regulatory decision, cross-merchant data mixing, unsupported claims. |
+| Explainable to whom? | Support Agent: facts, sources, rules, open issues. Auditor: versions, actions, history. Merchant: human reply and route to clarification. |
+| Unequal outcomes | Measure triage/wait/QA by language, case type, merchant tenure, and agent tenure; do not let average gains hide a degraded segment. |
 
-## Session 3 — data and trust level
+Classification and obligations must be checked against the [AI Act](https://eur-lex.europa.eu/eli/reg/2024/1689). [CNIL guidance](https://cnil.fr/fr/assurer-que-le-traitement-est-licite) requires a legal basis suited to processing purposes and conditions; none is declared established here.
 
-### The six-question data audit
-| # | Question | Our answer | Source type | To check with |
-|---|---|---|---|---|
-| 1 | **Provenance** — where does each row come from, who collected it, when? | No real data. **Router dataset:** scenario cards fix the labels, then a language model writes the ticket text: DeepSeek v4.1 Flash for train and val, Xiaomi MiMo v2.6 Flash for the two test sets (31 October 2026), reviewed by two blind model voters and a judge when they disagree (`finetuned_llm_classifier/docs/methodology.md`). **Eval-set v0:** 20 tickets drafted with Claude on 2 November 2026, labelled by hand (`evals/`). **Prototype:** four invented tickets and fictional merchants. | measured (repo files) | — |
-| 2 | **Volume & labels** — how many rows, labelled by whom, with which guideline? | 3,205 accepted tickets: train 1,922 · val 293 · test_natural 610 · test_traps 380 (rejected tickets kept apart in `*_quarantine.csv`). Their labels come from the cards and were checked by language models, not by humans (`scoring_protocol.md` §5). 20 tickets labelled by hand by a team member who does not tune the model. One guideline for both: `finetuned_llm_classifier/docs/label_definitions.md`. | measured | — |
-| 3 | **Coverage** — which languages, plans, regions vs the users we ship to? | Val (293): French 161, English 124, Spanish 5, German 2, Italian 1; formal email 125, forwarded thread 60, short email 59, chat 49; seven merchant sectors; 100 tickets carry a trap (lookalike or malformed reference, approximate amount, polite but urgent…). Eval-set: French 10, English 9, Dutch 1. Our users are merchants in France and Belgium: Dutch-speaking Belgian merchants are almost absent. | measured | Head of Support (real language mix) |
-| 4 | **Rights** — legal basis (GDPR art. 6), what the customer contract allows, retention | Today: synthetic data only, so no personal data, which is why external model APIs could write it. In production: performance of the contract (art. 6(1)(b)) or legitimate interest (art. 6(1)(f)) for support (S1, question 2); whether real tickets may ever train a model, and for how long tickets and logs are kept, is **not decided**. | guess | DPO; the B2B contract |
-| 5 | **Leakage** — can a row reappear in the test set, or in another customer's answer? | Splits fixed before training; the test sets were written by a different model than train; both test sets stay sealed until the final reading, under a protocol confirmed on 1 November before any test set was read. The eval-set v0 was written by a third model and never used for tuning. Between merchants: see isolation below. | measured (protocol) | Vincent (protocol owner) |
-| 6 | **Freshness** — how old is it, does that world still exist? | Generated 31 October – 2 November 2026 from today's taxonomy (four desks, sixteen sub-intents). The world is fictional, so it cannot go stale by itself, but the taxonomy, the policies and the ledger can: they are versioned, and the router is re-evaluated at every taxonomy or model change (brief §4). | measured | — |
+## Session 2 — Error cost and decision
 
-- **Purpose limitation (GDPR art. 5):** ticket data is used to route the ticket and prepare a reply for that ticket's merchant, and nothing else; synthetic data is also used to train and evaluate the router. Real tickets do not train any model until the DPO has settled the legal basis. Retention of tickets and logs: not decided (S1, question 5) — the DPO and Compliance set it.
-- **Isolation between customers:** every lookup and every retrieval of transactions and past tickets is filtered on the merchant of the ticket; the only shared index is the desks' policies, which hold no merchant data. Merchant A's data cannot reach merchant B's draft (S1, question 2). In the prototype, lookups are by merchant and transaction ID only.
-- **Known gaps by segment:** Dutch-speaking merchants (no ticket in the dataset, one in the eval-set); English is a minority; rare dispute types; real mail is messier than generated tickets, and the accepted tickets are easier on urgency and tone than real mail (`scoring_protocol.md` §5). Results are reported by language, desk and trap type, and for `UNDEFINED` tickets (S1, question 6).
-- **Dated exception for the MVP (2 November 2026, issue #8):** the brief forbids an external model API. The MVP's drafter uses a hosted model API as a stand-in, **on synthetic tickets only**; the provider is chosen in phase 0 of the drafter plan (`docs/plans/copilot-drafter.md`, issue #25). The production design stays an open model in Keelpay's own cloud. We make no claim of compliance and no statement on data sovereignty without the provider's terms. The exception ends when the drafter moves to Keelpay's cloud or a real ticket would be sent.
+A wrong desk costs time; an unhandled urgent ticket or reply about the wrong payment may cause financial, legal, and reputational harm. Sizing error costs are assumptions, not observed penalties. Head of Compliance owns sensitive exposure; Head of Support owns service quality and interruption of affected functions.
 
-### Trust level per step (same scale as Session 1)
-| Step | Trust level | Why (cost of an error) |
-|---|---|---|
-| 1. Read the ticket (JSON) | L1 — suggests; the rules in step 2 check it | A misread field is only a proposal; `UNDEFINED` instead of a guess |
-| 2. Route to a desk | L3 — acts, a person samples weekly; critical tickets need a person to confirm the desk | A misroute costs a hand-over (about €3, sizing); an urgent ticket in the wrong desk can miss a deadline (€300–400, sizing) |
-| 3. Look up transactions and history | L1 — read-only, this merchant only | Showing the wrong payment misleads the agent; it changes nothing by itself |
-| 4. Draft the reply | L2 — a support agent approves every reply | A wrong status, amount or deadline told to a merchant is a legal and reputational risk (Session 2) |
-| 5. Send to the merchant | Person only — the copilot has no send tool | What leaves the company is a person's decision |
-| 6. Log reroutes and edits | L4 — automatic | No customer effect; it only records |
-## Session 4 — human-in-the-loop points and the override switch (to come)
-## Session 5 — counter-metrics and the segments we report (to come)
-## Session 6 — protected segments and the harm threshold that stops an experiment (to come)
-## Session 7 — accountable owner, rollback authority, incident path (to come)
+Benchmark silent errors (wrong desk/reference under the scorer), errors after rules, serious errors sent to merchants, and their increment versus a control are four different measures. Average financial risk assumptions are not evidence. The proposed 0.1% threshold for incremental serious errors requires a defined denominator and rare-risk protocol; 20 or 200 cases cannot certify it.
+
+## Session 3 — Data audit
+
+| Question | Available data and limits |
+|---|---|
+| Provenance | Synthetic scenario cards/tickets; DeepSeek for train/validation, Xiaomi for tests per CSV; distinct readers/judges configured in the sub-project. Ledger/KB flow fixtures are a separate dataset. |
+| Volume and labels | 1,922 train, 293 validation, 610 test_natural, 380 test_traps = 3,205 accepted, plus quarantines. Labels were generated and LLM-reviewed; this is not exhaustive human annotation. |
+| Coverage | test_natural: FR 309, EN 291, other languages 10; payment_status 114, dispute 141, technical_api 144, compliance 114, OTHER 36, UNDEFINED 61. Synthetic mix, not a measure of Keelpay traffic. |
+| Rights | No real customer ticket in the project. Production requires review of purposes, data-subject rights, and provider terms. Do not conflate anonymized, pseudonymized, and synthetic data. |
+| Leakage | Deduplicated card pool followed by disjoint splits and configured reserves. The audit found no exact text duplicates across four splits; semantic similarity is not ruled out. Merchant isolation must be tested in the future backend. |
+| Freshness | Dataset and rules are versioned. Changes to taxonomy, prompt, model, policy, or fixture require appropriate re-evaluation; synthetic tickets do not certify external payment rules. |
+
+The tests include non-representative traps and languages. Pre-filter quotas do not guarantee twenty accepted examples per family; the dataset log flags nine families below twenty. Do not present a stress-set average as production performance.
+
+**Purpose:** support assignment and replies only, not credit or merchant profiling. **Retention:** 90 days for audit logs is a proposal requiring confirmation by data type; demo state may reset under a test protocol; training corpus and human notes stay separate. Feedback does not automatically become a trusted training label.
+
+**Location:** fictional production keeps models/data/traces in Keelpay cloud under the scenario's internal policy. The demo allows external Drafter Model API and Langfuse only for non-critical synthetic data. This exception never covers real tickets. Secrets stay server-side.
+
+## Session 4 — Human decisions and recovery
+
+| Step | Assurance level and rule |
+|---|---|
+| Qualifier Model | Reading assistance; seven fields and contract validation; no invented confidence |
+| Routing Node | Deterministic Python, bounded L3 for supported intents; unknown/invalid intent goes to Human Qualification |
+| Lookup Node | Read-only, merchant-scoped; an incorrect lookup remains a real risk |
+| Priority | Surface urgency while preparation continues; handling/escalation configured separately |
+| Retrieval Node | Read-only approved sources; grounded facts or clarification; automated checks are imperfect |
+| Drafter Model | L2; prepares factual, documentary, or clarification draft; automated checks are imperfect |
+| Human Review/send | Support Agent only; editing optional, checking required, unchanged draft needs confirmation |
+| History | Automatic actor/version record; traceability is not a quality guarantee |
+
+An absent/ambiguous payment reference blocks claims about that payment, not a known desk or a clarification. Unknown sentiment uses neutral tone. Unknown sub-intent blocks only its dependent procedure. Urgency alone never pauses draft preparation.
+
+**Recovery:** first desk correction → recalculate context and draft; second → manual triage, no automatic loop. “Copilot off” leaves manual writing usable. Receipt and total age remain preserved.
+
+**Separate rollback:** stop automatic assignment (suggestions/qualification), stop drafting (keep context plus human writing), or stop the whole copilot and use a manual queue. Head of Support triggers; NAVY executes; Compliance joins sensitive incidents. A serious incident triggers immediate review and tailored restriction, not just waiting for a weekly sample.
+
+## Open settings and S5–S7
+
+| Setting / evidence | Owner and closure criterion |
+|---|---|
+| Critical signals, deadlines, hours, escalation | Support + Compliance; tested configuration including missed urgencies |
+| QA rubric and serious errors | Support/Compliance; events and denominators defined |
+| Rare risk and A/B | NAVY; pre-registered protocol, appropriate sample size, segments |
+| Retention/legal basis | DPO/Legal; decision by purpose and data category |
+| Isolation and durable recovery | Tech lead; cross-merchant, reconnect, idempotency, and failure tests |
+
+The demo requires FIFO and visible waiting time. Advanced urgency and multi-agent are SHOULD for demo implementation; this neither validates nor waives pilot safety requirements. Metrics, A/B, and operations deliverables will use available course instructions and observations actually collected.
