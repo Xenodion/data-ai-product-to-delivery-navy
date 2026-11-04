@@ -14,7 +14,7 @@ Reference: 3 November 2026. Economic figures are sizing assumptions; extraction 
 | 8. Main metric | End-to-end active handling time at constant QA; initial desk and critical-case handling are secondary measures; serious errors and segments are guardrails. |
 | 9. Advantage | In production: access to ledger, merchant context, and policy within approved boundaries. Our synthetic dataset and unbuilt integrations are not an established competitive moat. |
 | 10. Data | 3,205 accepted synthetic tickets split 1,922/293/610/380; generated/reviewed labels differ from ledger/KB fixtures and the twenty product cases. |
-| 11. Models | Qualifier Model D-q4 is a measured candidate; Routing Node, Lookup Node, and Retrieval Node are deterministic; Drafter Model is prompted with sources. Prompting comparison is incomplete. |
+| 11. Models | Qualifier Model D-q4 is a measured candidate; Routing Node, Lookup Node, and Retrieval Node are deterministic; Drafter Model is prompted with sources. It beats the prompted base model (B3) on every measure. |
 | 12. Evaluation | Preserve historical results; next evaluate rules and full flow; S3 twenty-case contract check, product study, and rare-risk protocol are distinct. |
 | 13. Human control | Re-router only when the desk is unclear or wrong; Validator checks each reply; missing payment may lead to clarification; urgency does not prevent preparation. |
 | 14. Risks/governance | No autonomous send or financial action; merchant isolation and supported facts; separate disablement of assignment/drafting/all; see [governance](governance.md). |

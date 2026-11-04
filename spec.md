@@ -66,4 +66,4 @@ Each ticket shows age since receipt and time in its current step. Rerouting does
 
 ## 9. Evidence limits and deliverables
 
-D-q4 is a Qualifier Model candidate measured on a historical benchmark. That benchmark does not validate the complete `Routing Node`, `Drafter Model`, interface, or time saved. Prompted-model comparison, integration, user tasks, and production remain outstanding. Do not rewrite historical prototypes or measurements as target behavior.
+D-q4 is a Qualifier Model candidate measured on a historical benchmark. That benchmark does not validate the complete `Routing Node`, `Drafter Model`, interface, or time saved. Integration, user tasks, and production remain outstanding; the prompted base model (B3) was compared and does not meet the routing bars. Do not rewrite historical prototypes or measurements as target behavior.

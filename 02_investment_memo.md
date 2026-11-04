@@ -17,7 +17,7 @@ Base year-one cash illustration is **€137,631**, distinct from €194,298 annu
 
 ## How sure?
 
-The 20.262% saving and 0.0745% weighted serious-error input are assumptions, not measured full-flow or post-review outcomes. Base annualized costs include €41.4k assumed serious-error cost, €1.3k processing, and €74.3k fixed/semi-fixed costs. D-q4 has a useful synthetic component benchmark, but does not validate routing policy, reply quality, human review, or time saved; comparison with prompting is still open.
+The 20.262% saving and 0.0745% weighted serious-error input are assumptions, not measured full-flow or post-review outcomes. Base annualized costs include €41.4k assumed serious-error cost, €1.3k processing, and €74.3k fixed/semi-fixed costs. D-q4 has a useful synthetic component benchmark, but does not validate routing policy, reply quality, human review, or time saved; it also beats the prompted base model (10.5 silent errors per 100 for B3 against 0.7).
 
 Under fixed base assumptions, total active-time savings must reach 5.93% to break even, 13.32% to beat the base next-best, and 12.79% to beat base do-nothing. These thresholds move when assumptions change; they are not accuracy targets.
 

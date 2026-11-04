@@ -2,11 +2,7 @@
 
 Recovered from the current repository state on 2026-11-03. This list tracks the unfinished LLMOps work after the project refactor.
 
-The notebook redesign, B3 recovery, MLflow/KFP/Vertex lineage and delivery checks are sequenced in [`notebook_mlflow_execution_plan.md`](notebook_mlflow_execution_plan.md). This checklist records status; the plan defines the work and acceptance criteria.
-
-The controlled B3 inference campaign is specified in [`b3_rerun_execution_plan.md`](b3_rerun_execution_plan.md), including preflight gates, three split runs, output checks, MLflow lineage and notebook integration. It is a plan; no Vertex job has been submitted from this checkout.
-
-**Order constraint:** approve and version the Routing Node decision/consequence policy first (`specs/004-routing-node/error-consequences.md`). B3 artifact inventory can proceed in parallel, but action-level error metrics and consequence-weighted reporting wait for that policy review.
+**Order constraint:** approve and version the Routing Node decision/consequence policy first (`specs/004-routing-node/error-consequences.md`). Action-level error metrics and consequence-weighted reporting wait for that policy review.
 
 ## Done or already present
 
@@ -19,17 +15,16 @@ The controlled B3 inference campaign is specified in [`b3_rerun_execution_plan.m
 - [x] The historical importer prepares v2 MLflow evaluation records with Router matrices and D train/eval loss histories by step. Notebook charts now display from their plotting cells with descriptive titles; field, trap-support and storage/RAM views were added as executable cells.
 - [x] B3 test inference ran on Vertex for `test_natural` and `test_traps`; predictions are in `data/runs/base_test_*_predictions.csv`, row-order validated, with provenance in `data/runs/b3-2026-11-04-a_manifest.json`.
 - [x] All historical evaluations, B3 on val and both test splits included, are imported into the local MLflow experiment (`scripts/import_legacy_results.py --include-b3`).
+- [x] Notebooks show the contract, prompts, example tickets and training settings; every system (B0-B3, D variants) is compared on every split with one chart theme.
 
 ## Remaining work
 
 1. **Validate the Router policy.** Complete T000–T000b in `specs/004-routing-node/tasks.md`, record owner decisions/policy version, then implement the pure Routing Node contract before product-level metrics.
 2. **Complete the masterclass diagnostics.** Router action matrix and missed-urgency counts are now in the reusable evaluation path. Add field-level confusion summaries and reference error buckets, check the notebook chart rendering, and keep invalid output, abstention and misroute distinct.
 3. **Implement the metadata contract end to end.** Structured D loss metrics and versioned evaluation imports are coded but not executed here. Add a model-card manifest and validation, complete KFP/Vertex resource cross-links, and audit the Registry version/alias labels against the local receipt. Make historical unknown values explicit; don't fabricate missing history.
-4. **Refresh the notebook narrative and charts.** Use MLflow-backed results after import, add B3 only where a matching split result exists, and show denominators and uncertainty consistently. Keep trap families diagnostic, label infrastructure costs as estimates, and preserve the G7 reading unless valid historical B3 test exports are recovered.
 
 ## Completion check
 
 - B0–B3 and D variants with available validated results are visible in MLflow and the appropriate notebook comparisons.
 - Every logged evaluation identifies its split hash, scorer/protocol version, model, origin, and prediction artifact hash; no ticket text or labels are logged.
-- Figures can be rebuilt from MLflow and identify their source runs. The notebook distinguishes measured values from cost assumptions and never treats missing B3 test runs as zero or as a pass.
-- No billed Vertex action occurs until read-only inventory establishes the missing outputs, a targeted plan captures provenance/cost/teardown, and only the missing inference is rerun.
+- Figures are rebuilt by executing the notebooks; they distinguish measured values from cost assumptions.

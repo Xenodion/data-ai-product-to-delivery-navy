@@ -20,7 +20,7 @@ The plan, with its gates, is `docs/roadmap.md`; the day-by-day account is in `no
 |---|---|
 | Dataset (`data/dataset/`: train 1922, val 293, test_natural 610, test_traps 380, plus quarantines) | done and frozen |
 | Scoring (`src/scoring.py`) and baselines B0-B2 | done; B2 on test_natural: 33.9 silent errors per 100 tickets, 6.6 % of urgent tickets in a wrong desk (`docs/baseline_results.md`) |
-| Pipelines on Vertex (training, base model, sweep) with Qwen2.5-3B-Instruct, float16 | training run done (2 h 06 of T4); B3 inference was run historically; local `val` export (`data/runs/base_val_predictions.csv`) matches the frozen 293-row split exactly and can be imported; B3 test exports/provenance are missing; sweep pipeline compiles but has not run |
+| Pipelines on Vertex (training, base model, sweep) with Qwen2.5-3B-Instruct, float16 | training run done (2 h 06 of T4); B3 (prompted base model) scored on val, test_natural and test_traps, provenance in `data/runs/b3-2026-11-04-a_manifest.json`; sweep pipeline compiles but has not run |
 | Model D (Qwen2.5-3B + LoRA) on val | 0.7 silent errors per 100 tickets against 28.3 for B2, 0 % of urgent tickets in a wrong desk against 7.6 % (`docs/results/`) |
 | Compact variants (merged GGUF, smaller models) | D-q4 locked on val (0.3 silent errors per 100, 0 % urgent in a wrong desk, 6.4 s per ticket on CPU, about 20 euros a month); S-1.5B and S-0.5B cancelled (`docs/compact_variants.md`) |
 | Final reading of the test sets (Gate G7) | done in `notebooks/05_final_evaluation.ipynb`. Champion D-q4: 0.7 silent errors per 100 tickets against 33.9 for B2, 0.6 % of urgent tickets in a wrong desk (1 of 167) against 6.6 %. Desk accuracy and auto-routing bars of the brief met; urgent guardrail and silent-error trigger not met on the model alone (`docs/scoring_protocol.md` section 8) |
@@ -41,10 +41,9 @@ The plan, with its gates, is `docs/roadmap.md`; the day-by-day account is in `no
 | `docs/mlops_tracking.md` | local MLflow setup, historical import, offline Vertex-manifest sync, Vertex registry linkage |
 | `src/tracking.py` | shared MLflow run schema, metric normalization, provenance, idempotent records, and offline Vertex manifest sync |
 | `scripts/import_legacy_results.py`, `sync_vertex_run.py`, `link_vertex_model.py` | local historical import, offline pipeline sync, and registry linkage |
-| `notebooks/01_dataset_build.ipynb`, `02_scoring_and_baselines.ipynb`, `03_finetuning_vertex.ipynb`, `04_compact_variants.ipynb`, `05_final_evaluation.ipynb` | the experiment logbook (G1 to G8); B2/B3/D validation comparison is added; B3 MLflow import, test provenance recovery, and figure refresh remain open; see `docs/llmops_recovery_tasks.md` |
+| `notebooks/01_dataset_build.ipynb`, `02_scoring_and_baselines.ipynb`, `03_finetuning_vertex.ipynb`, `04_compact_variants.ipynb`, `05_final_evaluation.ipynb` | the experiment logbook (G1 to G8); B0-B3 and D variants compared on every split; open work in `docs/llmops_recovery_tasks.md` |
 | `docs/data_science_masterclass.md` | metric choice, use-case error matrices, charts, model tagging, lineage, historical recovery, and experiment method |
 | `../specs/004-routing-node/error-consequences.md` | pending review of the deterministic routing tree and business consequences; gates product-level error metrics |
-| `docs/b3_vertex_recovery.md` | Vertex Pipelines inventory and conditional B3 inference recovery plan |
 | `docs/llmops_recovery_tasks.md` | recovered unfinished LLM fine-tuning/MLflow work and completion checklist |
 
 ## Setup
