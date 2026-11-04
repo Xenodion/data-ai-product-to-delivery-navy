@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from scripts.run_baselines import DATASET, SHOWN, show
 from src.scoring import by_trap, load_split, score
 from src.router_evaluation import evaluate_router
-from src.tracking import log_evaluation, metric_summary_for_traps
+from src.tracking import log_evaluation
 
 
 def main() -> None:
@@ -75,8 +75,7 @@ def main() -> None:
         for trap, row in by_trap(truths, raws, traps).items():
             print(f"  {trap:28} n={row[0]:3} desk={row[1]:.2f} cost={row[2]:.2f}")
     if args.mlflow:
-        extra = metric_summary_for_traps(by_trap(truths, raws, traps)) if args.split == "test_traps" else {}
-        extra.update({f"router.{key}": value for key, value in router["counts"].items()})
+        extra = {f"router.{key}": value for key, value in router["counts"].items()}
         extra.update({f"router.{key}": value for key, value in router["rates"].items() if value is not None})
         matrix_path = DATASET.parent.parent / "logs" / "mlflow" / "router_matrices" / f"{args.system_id}-{args.split}-action-matrix.json"
         matrix_path.parent.mkdir(parents=True, exist_ok=True)

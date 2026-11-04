@@ -32,6 +32,28 @@ NEUTRAL = "#B9A999"
 ACCENT = "#C2410C"
 SECOND = "#E8A33D"
 
+# One display name per system, the same in every table and figure.
+LABELS = {
+    "B0": "B0 majority class",
+    "B1": "B1 keyword rules",
+    "B2": "B2 TF-IDF + logistic regression",
+    "B3": "B3 Qwen 3B prompted, not fine-tuned",
+    "D": "D Qwen 3B fine-tuned (GPU)",
+    "D-q8": "D-q8 fine-tuned, 8-bit (CPU)",
+    "D-q4": "D-q4 fine-tuned, 4-bit (CPU)",
+}
+SILENT = "silent error = valid answer with a wrong desk or reference, not handed to a person"
+
+# Dataset categories (intents) get their own tones so they never read as a system colour.
+INTENT_COLORS = {
+    "payment_status": "#9C4A1A",
+    "dispute": "#D98B3A",
+    "technical_api": "#6F8796",
+    "compliance": "#5E5048",
+    "OTHER": "#CFC3B6",
+    "UNDEFINED": "#E9E2DA",
+}
+
 
 def setup() -> None:
     """Apply the theme to matplotlib (call once at the top of each journal)."""
@@ -124,5 +146,29 @@ def hbar(
     ax.set_yticks(ys, labels)
     ax.invert_yaxis()
     ax.set_xlim(0, top * 1.18)
+    ax.grid(axis="y", visible=False)
+    ax.tick_params(axis="y", length=0)
+
+
+def grouped_hbar(
+    ax: Axes,
+    groups: list[str],
+    series: dict[str, list[float]],
+    colors: dict[str, str],
+    fmt: str = "{:.1f}",
+) -> None:
+    """One row per group, one bar per series inside it; missing values (NaN) leave a gap."""
+    n = len(series)
+    height = 0.8 / n
+    top = max(v for vals in series.values() for v in vals if v == v)
+    for k, (name, vals) in enumerate(series.items()):
+        ys = [g + (k - (n - 1) / 2) * height for g in range(len(groups))]
+        ax.barh(ys, vals, height=height * 0.92, color=colors[name], label=name)
+        for y, v in zip(ys, vals):
+            if v == v:
+                ax.text(v + top * 0.012, y, fmt.format(v), va="center", fontsize=8.5, color=INK)
+    ax.set_yticks(range(len(groups)), groups)
+    ax.invert_yaxis()
+    ax.set_xlim(0, top * 1.15)
     ax.grid(axis="y", visible=False)
     ax.tick_params(axis="y", length=0)

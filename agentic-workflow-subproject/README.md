@@ -38,9 +38,9 @@ The plan, with its gates, is `docs/roadmap.md`; the day-by-day account is in `no
 | `docs/baseline_results.md` | B0-B2 on val and the test sets |
 | `docs/compact_variants.md` | procedure and val results for merged GGUF models (D-q8, D-q4) and smaller models |
 | `docs/results/` | predictions and loss history of full run D, D-q8, D-q4 and timings |
-| `docs/mlops_tracking.md` | local MLflow setup, historical import, offline Vertex-manifest sync, Vertex registry linkage, and figure export runbook |
+| `docs/mlops_tracking.md` | local MLflow setup, historical import, offline Vertex-manifest sync, Vertex registry linkage |
 | `src/tracking.py` | shared MLflow run schema, metric normalization, provenance, idempotent records, and offline Vertex manifest sync |
-| `scripts/import_legacy_results.py`, `sync_vertex_run.py`, `link_vertex_model.py`, `build_tracking_figures.py` | local historical import, offline pipeline sync, registry linkage, and slide-figure generation |
+| `scripts/import_legacy_results.py`, `sync_vertex_run.py`, `link_vertex_model.py` | local historical import, offline pipeline sync, and registry linkage |
 | `notebooks/01_dataset_build.ipynb`, `02_scoring_and_baselines.ipynb`, `03_finetuning_vertex.ipynb`, `04_compact_variants.ipynb`, `05_final_evaluation.ipynb` | the experiment logbook (G1 to G8); B2/B3/D validation comparison is added; B3 MLflow import, test provenance recovery, and figure refresh remain open; see `docs/llmops_recovery_tasks.md` |
 | `docs/data_science_masterclass.md` | metric choice, use-case error matrices, charts, model tagging, lineage, historical recovery, and experiment method |
 | `../specs/004-routing-node/error-consequences.md` | pending review of the deterministic routing tree and business consequences; gates product-level error metrics |
@@ -79,10 +79,9 @@ uv run python scripts/pipeline_runner.py sweep --confirm-billable-run           
 uv run --with scikit-learn python scripts/score_predictions.py <predictions.csv> val
 uv run python scripts/import_legacy_results.py --dry-run
 uv run python scripts/import_legacy_results.py --include-b3   # local B3 export only; validates the split and logs to local MLflow
-uv run python scripts/build_tracking_figures.py
 ```
 
-The B3 import and figure scripts do not access Vertex or GCS. Inspect Vertex Pipelines/ML Metadata and its output artifacts first. If a required B3 inference output is genuinely absent, the project lead has authorized a targeted, versioned inference rerun for the missing split(s); this is not retraining. Capture cost, exact provenance, and teardown checks.
+The B3 import does not access Vertex or GCS. Inspect Vertex Pipelines/ML Metadata and its output artifacts first. If a required B3 inference output is genuinely absent, the project lead has authorized a targeted, versioned inference rerun for the missing split(s); this is not retraining. Capture cost, exact provenance, and teardown checks.
 
 ## Training settings
 
@@ -110,7 +109,7 @@ src/
   app/main.py              # Chainlit app (to do, conditional)
   pipeline_components/     # KFP components
   pipelines/               # training and sweep pipelines
-scripts/                   # GCP check/upload/runner, baselines/scoring, MLflow import/sync/registry-link/figure tools
+scripts/                   # GCP check/upload/runner, baselines/scoring, MLflow import/sync/registry-link tools
 notebooks/                 # the logbook (5 notebooks: G1 to G8 complete)
 docs/                      # protocol, roadmap, methodology, results (see the table above)
 data/dataset/              # the four splits and their quarantine (committed on purpose); other data is gitignored

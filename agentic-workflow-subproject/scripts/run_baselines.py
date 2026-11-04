@@ -14,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.baselines import fit_tfidf, predict_majority, predict_rules, predict_tfidf
 from src.scoring import by_trap, load_split, paired_bootstrap, score, severities
-from src.tracking import log_evaluation, metric_summary_for_traps
+from src.tracking import log_evaluation
 
 DATASET = Path("data/dataset")
 SHOWN = (
@@ -86,11 +86,6 @@ def main() -> None:
                     "valid_json": bool(raw),
                 })
         result = score(labels, predictions)
-        trap_metrics = (
-            metric_summary_for_traps(by_trap(labels, predictions, trap_tags))
-            if split == "test_traps"
-            else {}
-        )
         run_id, created = log_evaluation(
             system_id=current_system[0],
             split=split,
@@ -100,7 +95,6 @@ def main() -> None:
             params=({"regularization_C": best_c} if current_system[0] == "B2" else {}),
             stage="selection" if split == "val" else "final",
             tracking_origin="local",
-            extra_metrics=trap_metrics,
             metric_evidence={
                 name: {"status": "measured", "source": "src/scoring.py"}
                 for name in result

@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "campaign_id": "b3-2026-11-04-a",
+  "created_at_utc": "2026-11-04T12:05:16.132940+00:00",
+  "status": "completed_test_splits",
+  "model": {
+    "system_id": "B3",
+    "model_id": "Qwen/Qwen2.5-3B-Instruct",
+    "model_revision": "unknown",
+    "adapter": null,
+    "max_rows": 0,
+    "max_new_tokens": 160,
+    "do_sample": false,
+    "quantization": "4-bit NF4",
+    "compute_dtype": "float32"
+  },
+  "splits": {
+    "val": {
+      "path": "data\\dataset\\val.csv",
+      "rows": 293,
+      "sha256": "e33a1445911555300c43bc0cc3381033e6f6bd8f2376666dd834e726fce0b2ed"
+    },
+    "test_natural": {
+      "path": "data\\dataset\\test_natural.csv",
+      "rows": 610,
+      "sha256": "a71b7b14f5c4b1d96d576e51f15c5459e55f5d74c9ef361c646abea2e1657e2c"
+    },
+    "test_traps": {
+      "path": "data\\dataset\\test_traps.csv",
+      "rows": 380,
+      "sha256": "3bb153bc3bde7053634a2b174d6dcd9f5379a329cab6ccae0c3e819b256b2b4b"
+    }
+  },
+  "pipeline_contract_train_input": {
+    "path": "data\\dataset\\train.csv",
+    "rows": 1922,
+    "sha256": "ad758b61b19ef6c41a4459a1013b1e0ed6dfdc753e01310a66ce222a62cc82d1",
+    "used_for_inference": false
+  },
+  "source_sha256": {
+    "prompt": "2ec2384ec31569b2f5beb9287b72eff205ac0e3a6efe01662ca50d67773c629e",
+    "inference_component": "952727326b3781116d6ebb5c28e04ca716c02405a9b5c90994035d8e7189d791",
+    "base_pipeline": "0f9b9d8b918f3e5483727a879f2b879610e0104fa82c0bb856964870b513a073",
+    "data_transformation": "3a89f0130efd593bb2cd7d8eed7a5727e2ad60f13a7f744881296e19a0bee5c9",
+    "compiled_template": "e0e8b95d3d184535482e4dbbbcf23c644ac85814a276ea691263b9adca79c0be"
+  },
+  "provenance": {
+    "git_commit": "d654cbabfdc2591995d7fe7d404ffd4f7d6822e0",
+    "git_dirty": true,
+    "git_status_sha256": "d9b0b9fdc0eb6340980fad9f56b5a775fc94cc162147c046ab30ee4d599207bf"
+  },
+  "vertex": {
+    "project": "agentics-workflows-2",
+    "region": "europe-west2",
+    "pipeline_root_prefix": "gs://navy-team-llmops-bucket/pipeline_root/158407666882/",
+    "remote_dataset_sha256_verified": false,
+    "approved_budget_eur": null,
+    "jobs": {
+      "test_natural": {
+        "pipeline_job": "projects/158407666882/locations/europe-west2/pipelineJobs/keelpay-router-base-model-pipeline-20261104131602",
+        "tracking_id": "c79fa7b3479d",
+        "state": "PIPELINE_STATE_SUCCEEDED",
+        "start_utc": "2026-11-04T12:16:07Z",
+        "end_utc": "2026-11-04T13:41:17Z",
+        "predictions_gcs": "gs://navy-team-llmops-bucket/pipeline_root/158407666882/keelpay-router-base-model-pipeline-20261104131602/inference-component_-3375422494507794432/predictions",
+        "predictions_local": "data/runs/base_test_natural_predictions.csv",
+        "predictions_local_sha256": "c4ff52f2e45b520e2d7f5595af0f8148e6d03c5b61ec57657f6b7f628ad332d3",
+        "local_file_note": "lone LF converted to CRLF to match the Windows working copy of the split (git core.autocrlf); content otherwise unchanged",
+        "rows_aligned_with_split": true
+      },
+      "test_traps": {
+        "pipeline_job": "projects/158407666882/locations/europe-west2/pipelineJobs/keelpay-router-base-model-pipeline-20261104171140",
+        "tracking_id": "b9f6ab949721",
+        "state": "PIPELINE_STATE_SUCCEEDED",
+        "start_utc": "2026-11-04T16:11:45Z",
+        "end_utc": "2026-11-04T16:53:30Z",
+        "predictions_gcs": "gs://navy-team-llmops-bucket/pipeline_root/158407666882/keelpay-router-base-model-pipeline-20261104171140/inference-component_-4772101328946069504/predictions",
+        "predictions_local": "data/runs/base_test_traps_predictions.csv",
+        "predictions_local_sha256": "f5267024e7d43e1b10c4291a28a3cd3db7b94cc4825d1935d683815ea116c356",
+        "local_file_note": "lone LF converted to CRLF to match the Windows working copy of the split (git core.autocrlf); content otherwise unchanged",
+        "rows_aligned_with_split": true
+      }
+    },
+    "remote_dataset_check": "test_natural.csv and test_traps.csv on GCS equal the local splits after CRLF->LF normalization (checked 2026-11-04); raw byte hashes differ only by line endings",
+    "teardown_check": "2026-11-04 ~17:00 UTC: no running pipeline or custom job; no NAVY endpoint"
+  },
+  "gate": "DONE_TEST_SPLITS_SCORED_LOCALLY"
+}

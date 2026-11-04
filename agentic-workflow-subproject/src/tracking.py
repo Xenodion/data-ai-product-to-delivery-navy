@@ -298,17 +298,6 @@ def log_record(
     return run_id, True
 
 
-def metric_summary_for_traps(trap_rows: dict[str, tuple[int, float, float]]) -> dict[str, float]:
-    """Flatten the scorer's per-trap `(n, desk_accuracy, severity)` table."""
-    metrics: dict[str, float] = {}
-    for trap, (count, accuracy, severity) in trap_rows.items():
-        slug = "".join(c.lower() if c.isalnum() else "_" for c in trap).strip("_")
-        metrics[f"trap.{slug}.n"] = float(count)
-        metrics[f"trap.{slug}.desk_accuracy"] = float(accuracy)
-        metrics[f"trap.{slug}.severity_score"] = float(severity)
-    return metrics
-
-
 def log_evaluation(
     *,
     system_id: str,

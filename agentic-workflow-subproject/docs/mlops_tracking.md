@@ -112,15 +112,9 @@ uv run python scripts/link_vertex_model.py `
 The command writes a lineage event to MLflow and an ignored local receipt. It does not call Vertex, register a model, move an alias, or change a deployment. A changed alias/version is a new event.
 The resource argument must contain an immutable model version. The receipt also copies the source run's dataset/scorer/prediction hashes and Vertex pipeline job reference when known; `unknown` is retained when historical provenance cannot be recovered. A local link is only one side of synchronization: inspect the Vertex model version/labels and KFP execution lineage separately before declaring the crosswalk verified.
 
-## Rebuild slide figures
+## Figures
 
-Once legacy runs or later pipeline results are present in the configured MLflow experiment:
-
-```powershell
-uv run python scripts/build_tracking_figures.py
-```
-
-It writes SVG and PNG charts to `docs/figures/` and logs the exports with their source run IDs. Available views include quality versus monthly inference cost, silent and urgent error rates, quality versus measured latency, trap-family severity, and training loss when the training history artifact is present. A chart is omitted if the required source metrics are unavailable; test-trap results remain diagnostic and do not become headline quality.
+Charts live in the executed notebooks (`notebooks/0*.ipynb`), built with the shared theme in `notebooks/_viz.py`. MLflow keeps metrics, loss curves, sanitized predictions and provenance; it holds no separate figure set.
 
 ## Recovery and safeguards
 

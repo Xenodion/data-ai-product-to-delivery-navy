@@ -14,12 +14,11 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from src.scoring import by_trap, load_split, score
+from src.scoring import load_split, score
 from src.router_evaluation import evaluate_router
 from src.tracking import (
     build_dataset_manifest,
     log_evaluation,
-    metric_summary_for_traps,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -45,6 +44,8 @@ LEGACY_RESULTS = [
     ("D-q4", "test_natural", RESULTS_DIR / "d_q4_test_natural_predictions.csv"),
     ("D-q4", "test_traps", RESULTS_DIR / "d_q4_test_traps_predictions.csv"),
     ("B3", "val", ROOT / "data" / "runs" / "base_val_predictions.csv"),
+    ("B3", "test_natural", ROOT / "data" / "runs" / "base_test_natural_predictions.csv"),
+    ("B3", "test_traps", ROOT / "data" / "runs" / "base_test_traps_predictions.csv"),
 ]
 
 TIMINGS = {
@@ -71,11 +72,10 @@ def _source_metrics(
         )
     raw_outputs = list(predictions["extracted_response"])
     metrics = score(truths, raw_outputs)
-    trap_metrics = metric_summary_for_traps(by_trap(truths, raw_outputs, trap_tags))
     router = evaluate_router(truths, raw_outputs)
-    trap_metrics.update({f"router.{key}": value for key, value in router["counts"].items()})
-    trap_metrics.update({f"router.{key}": value for key, value in router["rates"].items() if value is not None})
-    return metrics, trap_metrics, {"evaluation_n": len(tickets), "dataset_sha256": None,
+    router_metrics = {f"router.{key}": value for key, value in router["counts"].items()}
+    router_metrics.update({f"router.{key}": value for key, value in router["rates"].items() if value is not None})
+    return metrics, router_metrics, {"evaluation_n": len(tickets), "dataset_sha256": None,
                                   "router_matrix": router["action_matrix"]}
 
 
@@ -176,12 +176,12 @@ def main() -> None:
             print(f"SKIP missing local source: {source.relative_to(ROOT)}")
             continue
         try:
-            metrics, trap_metrics, context = _source_metrics(source, split)
+            metrics, router_metrics, context = _source_metrics(source, split)
         except (KeyError, ValueError) as exc:
             print(f"INVALID {source.relative_to(ROOT)}: {exc}")
             continue
 
-        extra_metrics: dict[str, float] = {**trap_metrics}
+        extra_metrics: dict[str, float] = {**router_metrics}
         extra_params: dict[str, Any] = _legacy_params(system_id)
         extra_artifacts: list[dict[str, str]] = []
         metric_history: dict[str, list[tuple[int, float]]] = {}
