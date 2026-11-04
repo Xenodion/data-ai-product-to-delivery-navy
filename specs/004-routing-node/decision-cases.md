@@ -1,6 +1,6 @@
 # Routing Node Decision Cases
 
-These synthetic cases define behavior of the deterministic decision layer. They are not model-performance scores, source fixtures, or production policy approval. `Q` means Human Qualification; `HR` means mandatory Human Review before every simulated send.
+These synthetic cases define behavior of the deterministic decision layer. They are not model-performance scores, source fixtures, or production policy approval. `Q` means a Re-router task; `HR` means mandatory Validator review before every simulated send.
 
 | ID | Input condition | Desk / priority | Human step and dependency | Preparation / expected effect |
 |---|---|---|---|---|

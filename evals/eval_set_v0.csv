@@ -24,7 +24,7 @@ Je constate avec stupéfaction que le compte de ma société est bloqué depuis 
 Veuillez agréer, Madame, Monsieur, l'expression de mes salutations distinguées.
 
 J. Vermeulen, gérant
-Brasserie Vermeulen SPRL, Liège","Compliance desk, held as critical; JSON as in the label columns; no draft before a person confirms the desk","In the message: no reference, amount or currency to extract",yes — confirm the desk,fr (Belgium) · formal letter,"AI-generated (Claude, 2 Nov 2026) · labelled by hand","formal register, legal threat, deadline as a weekday",compliance,account_hold,,,,high,negative
+Brasserie Vermeulen SPRL, Liège","Compliance desk, routed automatically, high priority shown; JSON as in the label columns; then an L2 draft","In the message: no reference, amount or currency to extract",no — L2 draft,fr (Belgium) · formal letter,"AI-generated (Claude, 2 Nov 2026) · labelled by hand","formal register, legal threat, deadline as a weekday",compliance,account_hold,,,,high,negative
 NAVY-EV-04,NAVY · Keelpay copilot,"Subject: webhooks down
 
 webhooks stopped since 02:00 UTC, every call returns 500. log below:
@@ -61,7 +61,7 @@ Avis de rétrofacturation
 Transaction : TX-604219
 Montant : 76,90 EUR
 Motif : 10.4 (fraude, carte non présente)
-Date limite de réponse : 03/11/2026","Disputes desk, held as critical; JSON as in the label columns; no draft before a person confirms the desk","In the message: transaction_id TX-604219, amount 76.90, currency EUR; ledger record TX-604219",yes — confirm the desk,fr · forwarded notice,"AI-generated (Claude, 2 Nov 2026) · labelled by hand","deadline stated as a date, which falls the next day",dispute,chargeback,TX-604219,76.90,EUR,high,neutral
+Date limite de réponse : 03/11/2026","Disputes desk, routed automatically, high priority shown; JSON as in the label columns; then an L2 draft","In the message: transaction_id TX-604219, amount 76.90, currency EUR; ledger record TX-604219",no — L2 draft,fr · forwarded notice,"AI-generated (Claude, 2 Nov 2026) · labelled by hand","deadline stated as a date, which falls the next day",dispute,chargeback,TX-604219,76.90,EUR,high,neutral
 NAVY-EV-09,NAVY · Keelpay copilot,"Subject: Fwd: Chargeback received
 
 No rush on this one, just tell us what you need from us.
@@ -134,7 +134,7 @@ Apologies for bothering you again. Whenever convenient, could someone kindly loo
 
 Many thanks,
 Olivia
-Harbour Yoga Studios","Compliance desk, held as critical; JSON as in the label columns; no draft before a person confirms the desk","In the message: no reference, amount or currency to extract",yes — confirm the desk,en · very polite email,"AI-generated (Claude, 2 Nov 2026) · labelled by hand","urgency hidden by politeness, no explicit request type",compliance,account_hold,,,,high,neutral
+Harbour Yoga Studios","Compliance desk, routed automatically, high priority shown; JSON as in the label columns; then an L2 draft","In the message: no reference, amount or currency to extract",no — L2 draft,en · very polite email,"AI-generated (Claude, 2 Nov 2026) · labelled by hand","urgency hidden by politeness, no explicit request type",compliance,account_hold,,,,high,neutral
 NAVY-EV-18,NAVY · Keelpay copilot,"Subject: ?
 
 ça marche pas",Human triage (intent UNDEFINED); JSON as in the label columns; no draft,"In the message: no reference, amount or currency to extract",yes — triage,fr · very short,"AI-generated (Claude, 2 Nov 2026) · labelled by hand",too short to understand,UNDEFINED,UNDEFINED,,,,UNDEFINED,neutral

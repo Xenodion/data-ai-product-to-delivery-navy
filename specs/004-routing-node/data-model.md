@@ -18,7 +18,7 @@ QualifierResult is model output; RoutingDecision is business logic; LookupResult
 ## State transitions
 
 1. `received → qualifier_pending → decision_pending`.
-2. Invalid/unavailable/undecidable intent → `qualification_required`; retain any independently derived priority.
+2. Invalid/unavailable/undecidable intent → `reroute_required`; retain any independently derived priority.
 3. Supported intent → assign desk. If payment facts are required, `lookup_pending → payment_selection_required | clarification_ready | factual_ready | manual_required` according to scoped results.
 4. Required source available → `draft_pending → review_ready`; missing information → `clarification_ready`; unusable component/policy state → `manual_required` or `blocked` with reason.
 5. High priority adds an attention attribute and configured ordering/escalation event but does not suspend stages 3–4.

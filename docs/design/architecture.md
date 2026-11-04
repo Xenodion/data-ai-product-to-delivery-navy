@@ -38,7 +38,7 @@ flowchart LR
 | Retrieval Node | Intent/context → excerpts and source IDs | Versioned synthetic KB and approved-source list | To build |
 | Drafter Model | Ticket + available context → draft attempt | Draft even when the desk may need correction; Validator handles quality issues after generation | To integrate |
 | Event store / queues | Commands and transitions → current state + history | Durable backend authority, versions, claims/locks, idempotency | Technology to choose |
-| Front end | Backend state → Overview, Qualification & Routing, Replies to Review | No duplicated business rules; no service secrets | To build |
+| Front end | Backend state → Overview, Re-router, Validator | No duplicated business rules; no service secrets | To build |
 | Langfuse | Allowed technical/action spans → traces | Ticket/step/version correlation; delay/outage does not alter queue authority | To integrate |
 | Re-router | Proposed desk + ticket → corrected desk | One human workflow node; correction invalidates prior draft and triggers a fresh draft | Target workflow |
 | Validator | Generated draft + ticket/context → corrected/approved draft | One human workflow node; can hand desk errors to Re-router and approve simulated send | Target workflow |
@@ -54,15 +54,15 @@ The `Drafter Model` tool set should be extensible through an explicit allowlist.
 
 Ticket state and transitions are the source for counters, history, queues, and Overview. Langfuse receives derived traces and may lag; it does not decide eligibility, ordering, or ticket status. Each command changes state through the backend and records actor, server timestamp, version, required reason, and outcome. Ingress and send are idempotent.
 
-Minimum readable states distinguish `received`, `qualifying`, `qualification_required`, `looking_up`, `drafting`, `review_ready`, `manual_required`, `send_blocked`, `sent_simulated`, `failed_retryable`, and `failed_manual`. The runtime plan may normalize enum names, but must not conflate an error with a missing ticket or human wait.
+Minimum readable states distinguish `received`, `qualifying`, `reroute_required`, `looking_up`, `drafting`, `review_ready`, `manual_required`, `send_blocked`, `sent_simulated`, `failed_retryable`, and `failed_manual`. The runtime plan may normalize enum names, but must not conflate an error with a missing ticket or human wait.
 
 Minimum events: ingress; Qualifier Model start/finish/error; Routing Node decision/version; qualification requested/resolved; Lookup Node start/result; payment selection; Retrieval Node result; Drafter Model start/finish/error; draft version/edit; agent claim/release; requalification/desk change; send check; simulated send.
 
 ## Queues and experience
 
-Two operational queues: **Qualification & Routing** for blocking decisions and **Replies to Review** for stable drafts. Default order is oldest received first; show total age and current-step age. An explicit urgent-first mode sorts by priority and then FIFO within each level. New arrivals do not replace the selected task. Overview counters use defined transitions and a stated period/denominator. Simulated demo sessions are separate from genuinely connected Support Agents.
+Two operational queues: **Re-router** for desk corrections and **Validator** for generated drafts. Default order is oldest received first; show total age and current-step age. An explicit urgent-first mode sorts by priority and then FIFO within each level. New arrivals do not replace the selected task. Overview counters use defined transitions and a stated period/denominator. Simulated demo sessions are separate from genuinely connected Support Agents.
 
-Clicking a Human Qualification node opens its oldest eligible task under the active ordering mode; clicking Human Review does the same in the review queue. Claim is atomic. If no task is available or it is claimed, state that clearly.
+Clicking the Re-router node opens its oldest eligible task under the active ordering mode; clicking the Validator node does the same in the Validator queue. Claim is atomic. If no task is available or it is claimed, state that clearly.
 
 ## Failures and recovery
 

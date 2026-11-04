@@ -21,10 +21,10 @@ Do not open `finetuned_llm_classifier/data/dataset/*.csv` or any model output wh
 | `label_urgency` | `high` (deadline within 48 h, activity blocked, funds or account frozen, regulatory deadline) · `medium` (real problem, not blocking) · `low` (informational) · `UNDEFINED` |
 | `label_sentiment` | `negative` · `neutral` · `positive` · `UNDEFINED` |
 
-**The three copilot columns** (the course template). In v0 they are **derived from the hand labels by fixed rules**, not labelled a second time: desk from `label_intent` (`OTHER` / `UNDEFINED` → human triage); hand-over `yes — triage` for `OTHER` / `UNDEFINED`, `yes — confirm the desk` for a dispute or compliance ticket with `high` urgency (the brief's criticality rule), otherwise `no — L2 draft`; evidence = the reference, amount and currency labelled, plus the ledger record to look up. What each column means:
+**The three copilot columns** (the course template). In v0 they are **derived from the hand labels by fixed rules**, not labelled a second time: desk from `label_intent` (`OTHER` / `UNDEFINED` → human triage); hand-over `yes — triage` for `OTHER` / `UNDEFINED`, otherwise `no — L2 draft` (high urgency is shown, never holds the draft); evidence = the reference, amount and currency labelled, plus the ledger record to look up. What each column means:
 - `expected_output_or_action`: the desk, then what a good draft must and must not do, in one line, specific enough for two graders to say yes or no. Example: *"Payments desk; the draft names the payment and its status, asks for nothing already given, promises no date not backed by the ledger."* For a ticket that goes to a person, write what the person must see.
 - `evidence_or_source`: what the answer rests on — the reference, amount or deadline in the message, the ledger record to look up, or the policy.
-- `hand_over_to_a_person`: `yes — triage` for `UNDEFINED` / `OTHER`; `yes — confirm the desk` for a critical ticket (dispute or compliance with a deadline or high urgency, per the brief); otherwise `no — L2 draft`.
+- `hand_over_to_a_person`: `yes — triage` for `UNDEFINED` / `OTHER`; otherwise `no — L2 draft` (high urgency is shown, never holds the draft).
 
 Write in `notes` anything you hesitated on: it is where disagreements are explained later.
 

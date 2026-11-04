@@ -1,54 +1,54 @@
-# Arbre de décision du Routing Node
+# Routing Node decision tree
 
-Cet arbre décrit la décision initiale du Router : desk, Re-router et priorité. Le protocole historique du Qualifier et les seuils de gouvernance restent définis dans [`scoring_protocol.md`](../../agentic-workflow-subproject/docs/scoring_protocol.md) et [`governance.md`](../../governance.md).
+This tree describes the Router's initial decision: desk, Re-router and priority. The historical Qualifier protocol and the governance thresholds remain defined in [`scoring_protocol.md`](../../agentic-workflow-subproject/docs/scoring_protocol.md) and [`governance.md`](../../governance.md).
 
 ```mermaid
 flowchart TD
-    A[Sortie du Qualifier Model] --> B{Sortie valide ?}
-    B -->|Non ou modèle indisponible| C[Desk inconnu et priorité inconnue]
-    C --> D[Créer une tâche Re-router]
-    B -->|Oui| E{Intent routable ?}
-    E -->|Non| K[Desk inconnu et tâche Re-router]
-    E -->|Oui| L[Assigner le desk depuis l'intent]
-    K --> F{Urgency = high ?}
+    A[Qualifier Model output] --> B{Valid output?}
+    B -->|No, or model unavailable| C[Unknown desk and unknown priority]
+    C --> D[Create a Re-router task]
+    B -->|Yes| E{Routable intent?}
+    E -->|No| K[Unknown desk and Re-router task]
+    E -->|Yes| L[Assign the desk from the intent]
+    K --> F{Urgency = high?}
     L --> F
-    F -->|Oui| G[Priorité : urgent]
-    F -->|Non, medium ou low| H[Priorité : non urgent]
-    F -->|UNDEFINED| I[Priorité : inconnue]
+    F -->|Yes| G[Priority: urgent]
+    F -->|No, medium or low| H[Priority: not urgent]
+    F -->|UNDEFINED| I[Priority: unknown]
 
-    D --> J[Retourner desk + priorité]
+    D --> J[Return desk + priority]
     G --> J
     H --> J
     I --> J
 ```
 
-**Intents routables :** `payment_status` → payments ; `dispute` → disputes ; `technical_api` → technical/API ; `compliance` → compliance. `UNDEFINED`, `OTHER` et tout intent non mappé déclenchent Re-router.
+**Routable intents:** `payment_status` → payments; `dispute` → disputes; `technical_api` → technical/API; `compliance` → compliance. `UNDEFINED`, `OTHER` and any unmapped intent trigger the Re-router.
 
-Un intent non routable conserve la priorité extraite si la sortie est valide : un ticket urgent reste visible pendant le Re-router. Une sortie invalide ou indisponible a une priorité inconnue, sauf signal indépendant approuvé par la politique et tracé avec sa provenance. Le `sub_intent` est transmis sans changer la décision. Le Re-router et le Validator sont les deux interventions humaines du flux ; une urgence seule n'arrête pas la préparation d'un brouillon.
+A non-routable intent keeps the extracted priority if the output is valid: an urgent ticket stays visible while it is with the Re-router. An invalid or unavailable output has an unknown priority, unless an independent signal is approved by the policy and traced with its provenance. The `sub_intent` is passed on without changing the decision. The Re-router and the Validator are the two human interventions of the flow; urgency alone never stops the preparation of a draft.
 
-## Scoring avant mise en service
+## Scoring before go-live
 
-Le scoring sur validation/test compare les modèles sur les mêmes tickets et une référence indépendante. `val` sert aux réglages ; la comparaison finale sur `test_natural` suit la règle déjà fixée dans le protocole historique, sans réajuster le modèle après lecture du test. Le scorer historique du Qualifier conserve ses métriques, ses règles de comparaison et ses seuils : cette lecture Router s'ajoute sans les redéfinir.
+Scoring on validation/test compares the models on the same tickets against an independent reference. `val` is used for tuning; the final comparison on `test_natural` follows the rule already fixed in the historical protocol, without re-tuning the model after reading the test. The historical Qualifier scorer keeps its metrics, comparison rules and thresholds: this Router reading is added without redefining them.
 
-| But | Mesures minimales |
+| Goal | Minimum measures |
 |---|---|
-| Décision initiale | Exactitude de l'action (`bon desk` ou `Re-router`) / tous les tickets ; matrice référence × action avec les quatre desks et Re-router. |
-| Utilité et abstention | Couverture automatique = desk assigné / tous les tickets ; Re-router inutile = référence à un desk connu mais Re-router / tous les tickets. |
-| Erreur grave de desk | Vrai urgent assigné automatiquement au mauvais desk / tous les vrais urgents, avec nombre brut ; Re-router ne compte pas comme mauvais desk. |
-| Urgence manquée | Vrai urgent dont la priorité finale initiale est `medium`, `low` ou `unknown` / tous les vrais urgents, avec nombre brut et sous-compte `unknown`. |
+| Initial decision | Action accuracy (`right desk` or `Re-router`) / all tickets; reference × action matrix with the four desks and the Re-router. |
+| Usefulness and abstention | Automatic coverage = desk assigned / all tickets; needless Re-router = reference to a known desk but sent to the Re-router / all tickets. |
+| Serious desk error | True urgent ticket automatically assigned to the wrong desk / all true urgent tickets, with raw count; the Re-router does not count as a wrong desk. |
+| Missed urgency | True urgent ticket whose initial final priority is `medium`, `low` or `unknown` / all true urgent tickets, with raw count and an `unknown` sub-count. |
 
-La matrice se lit aussi sur le seul sous-ensemble des vrais urgents. Les deux erreurs graves peuvent se chevaucher : ne pas additionner leurs taux. Montrer également les urgents envoyés au Re-router et les faux `high` comme diagnostics de charge, sans en faire de nouveaux seuils bloquants.
+The matrix is also read on the subset of true urgent tickets only. The two serious errors may overlap: do not add their rates. Also show urgent tickets sent to the Re-router and false `high` as workload diagnostics, without turning them into new blocking thresholds.
 
-Le protocole historique du **Qualifier seul** suit desk accuracy ≥ 90 %, couverture ≥ 50 %, zéro urgent automatiquement au mauvais desk et sa règle de comparaison des modèles. Le garde-fou urgent de D-q4 échoue (1/167). La proposition de 0,1 % dans la gouvernance vise les **erreurs graves incrémentales atteignant les marchands après le flux complet**, versus un contrôle ; elle ne s'applique pas aux 0,7 % d'erreurs silencieuses du modèle seul. Son dénominateur et son protocole restent à approuver. Le passage du Router requiert les cas déterministes de la spec et une évaluation sur références adaptées au flux ; les seuils de risque produit encore ouverts relèvent de Support/Compliance. Le poids historique de 10 points est une hypothèse de benchmark, pas un coût métier validé.
+The historical **Qualifier-only** protocol tracks desk accuracy ≥ 90 %, coverage ≥ 50 %, zero urgent tickets automatically on the wrong desk, and its model comparison rule. The D-q4 urgent guardrail fails (1/167). Passing the Router requires the deterministic cases of the spec and an evaluation on references suited to the flow; the product risk thresholds still open belong to Support/Compliance. The historical weight of 10 points is a benchmark assumption, not a validated business cost.
 
-## Monitoring après mise en service
+## Monitoring after go-live
 
-À l'inférence, on connaît la prédiction et les événements du flux, mais pas automatiquement la bonne réponse. Precision, rappel, exactitude et matrice de confusion exigent des étiquettes de référence ; elles ne se calculent pas de façon fiable à partir des seules prédictions.
+At inference time, we know the prediction and the flow events, but not automatically the right answer. Precision, recall, accuracy and the confusion matrix require reference labels; they cannot be computed reliably from predictions alone.
 
-| Type | À suivre dans les événements de production |
+| Type | To track in production events |
 |---|---|
-| Direct, à chaque inférence | Erreurs/indisponibilité, validité du contrat, latence, versions modèle/schéma/règle ; volumes par intent, desk, priorité et Re-router. |
-| Flux humain | Corrections du Re-router, corrections du Validator, reprises de brouillon, âge du ticket et attente de l'urgent ; conserver décision initiale et décision corrigée. |
-| Différé, sur échantillon vérifié | Réannoter desk/action et urgence ; recalculer matrice, urgents au mauvais desk et urgences manquées avec nombres et dénominateurs, par version et segment. |
+| Direct, at every inference | Errors/unavailability, contract validity, latency, model/schema/rule versions; volumes by intent, desk, priority and Re-router. |
+| Human flow | Re-router corrections, Validator corrections, draft rework, ticket age and urgent waiting time; keep the initial decision and the corrected decision. |
+| Deferred, on a verified sample | Re-label desk/action and urgency; recompute the matrix, urgent tickets on the wrong desk and missed urgencies with counts and denominators, by version and segment. |
 
-Une correction humaine est un signal de monitoring utile, mais elle ne constitue une référence de vérité que si elle est enregistrée comme telle et contrôlée. Suivre les mesures initiales du Router séparément des résultats corrigés par le Re-router/Validator. Surveiller les versions et les tendances dans le temps ; alerter sur les seuils approuvés, sans inventer de seuils de production dans le code.
+A human correction is a useful monitoring signal, but it is a ground-truth reference only if it is recorded as such and checked. Track the Router's initial measures separately from the results corrected by the Re-router/Validator. Monitor versions and trends over time; alert on approved thresholds, without inventing production thresholds in code.

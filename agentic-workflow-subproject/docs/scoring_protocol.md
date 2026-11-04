@@ -64,7 +64,6 @@ The first three rows are component bars carried by the historical benchmark. The
 | First-pass routing | desk accuracy of at least 90 % | sizing flip point (about 90 %); today about 86 % (scenario) |
 | Automatic routing | auto-routed rate of at least 50 % | sizing base case 55 % |
 | Guardrail, urgent | no urgent ticket routed automatically to a wrong desk | brief |
-| Post-deployment risk proposal | incremental serious errors reaching merchants below 0.1 % of tickets versus control; denominator and protocol still to approve | governance; not measurable by the model-only scorer |
 
 Only the first three rows can be inspected in this model-only benchmark. Current product behavior permits draft preparation for high-priority tickets while surfacing priority; every draft still receives Human Review. A model-level miss does not establish full-flow failure, and a model-level pass would not prove the integrated flow is safe. The end-to-end demo evaluation is future work and requires separate fixtures/oracles; it is not an already executed S4 result.
 
@@ -142,9 +141,9 @@ On the traps D is a little better than D-q4 (fewer tickets sent to a human, more
 | Desk accuracy | at least 90 % | 97.5 %: met | 91.6 %: met |
 | Auto-routed | at least 50 % | 82.5 %: met | 90.5 %: met |
 | Urgent in a wrong desk | none | 1 of 167 (0.6 %): not met on the model alone | 11 of 167 (6.6 %) |
-| Model-only silent errors (diagnostic, no 0.1 % gate) | lower than comparator under the selection rule | 0.7 % (4 tickets of 610) | 33.9 % |
+| Model-only silent errors (diagnostic) | lower than comparator under the selection rule | 0.7 % (4 tickets of 610) | 33.9 % |
 
-The two first bars do not separate B2 from the fine-tuned models; silent errors do. The urgent guardrail fails on the model alone. The proposed 0.1 % limit concerns incremental serious errors after the complete flow versus a control, so this synthetic test cannot score it. The 0.075 % of uncaught serious errors in the investment memo is an assumption, not a measured reviewer catch rate.
+The two first bars do not separate B2 from the fine-tuned models; silent errors do. The urgent guardrail fails on the model alone. The 0.075 % of uncaught serious errors in the investment memo is an assumption, not a measured reviewer catch rate.
 
 ### Registration
 

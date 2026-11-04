@@ -19,3 +19,5 @@ mlflow.db-shm
 mlflow.db-wal
 mlartifacts/
 mlruns/
+# Figures live inside the executed notebooks; local exports are not committed
+docs/figures/

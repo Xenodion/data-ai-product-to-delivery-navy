@@ -4,7 +4,7 @@ Date: 3 November 2026. Status: proposed product and delivery roadmap; implementa
 
 ## Frame
 
-Shared references: AI Product decisions `docs/design/ai-product-decisions.md`, workflow `docs/design/copilot-workflow.md`, terminology `docs/design/terminology.md`, and architecture `docs/design/architecture.md`. Numbered course files contain the course deliverables; `specs/` contains future product implementation contracts and the delivery roadmap. The original V0 mock-up is retained; Features 007–009 describe one English-language V1 successor.
+Shared references: workflow `docs/design/copilot-workflow.md`, terminology `docs/design/terminology.md`, and architecture `docs/design/architecture.md`. Numbered course files contain the course deliverables; `specs/` contains future product implementation contracts and the delivery roadmap. The original V0 mock-up is retained; Features 007–009 describe one English-language V1 successor.
 
 ## Lots and dependencies
 

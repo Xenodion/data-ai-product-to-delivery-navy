@@ -62,7 +62,7 @@ Inputs, versioned or referenced by immutable IDs:
 Output is a typed `RoutingDecision`, not a mutation of the seven-field model output. It must carry:
 
 - Decision version and stable reason codes with brief agent-facing explanations.
-- Desk, or `triage`/manual state when Human Qualification is required.
+- Desk, or `triage`/manual state when a Re-router task is required.
 - Priority (`high`, `medium`, `low`, or `unknown`) plus signal provenance; never invent `critical`.
 - Required human step and exact dependency (intent/desk, sub-intent/procedure, payment selection/clarification, or manual recovery).
 - Payment resolution state (`not_required`, `exact_id`, `candidate_selection`, `clarification`, `not_found`, `conflict`, `wrong_merchant`, `unavailable`).
@@ -79,7 +79,7 @@ See [`contracts.md`](contracts.md), [`data-model.md`](data-model.md), and [`deci
 - **FR-004**: Keep desk assignment independent from payment lookup and sentiment. Do not block known desk on absent payment ID alone.
 - **FR-005**: Resolve payment only using approved keys and merchant-scoped results. Multiple plausible candidates remain unselected until a Support Agent acts or a clarification is prepared.
 - **FR-006**: Calculate priority independently of desk. Continue safe drafting for high priority while emitting attention, signal source, and configured escalation/ordering effects.
-- **FR-007**: Require Human Qualification when the request/desk cannot be determined or a required policy decision cannot safely proceed. Explain exactly what is needed.
+- **FR-007**: Create a Re-router task when the request/desk cannot be determined or a required policy decision cannot safely proceed. Explain exactly what is needed.
 - **FR-008**: Choose factual/documentary drafting only when required facts and sources resolve; choose clarification when information is missing; use manual handling for invalid/failed/content-blocked paths that cannot safely be drafted.
 - **FR-009**: After desk change, mark downstream lookup/retrieval/draft stale. Permit one re-preparation; send a second change to manual triage and prevent automatic loops.
 - **FR-010**: Emit a complete decision event with ticket, tenant, actor/system, model/contract version, policy/rule version, reason codes, input/result references, and timestamps. Do not include sensitive data in Langfuse unless separately approved by the demo data boundary.
@@ -90,7 +90,7 @@ See [`contracts.md`](contracts.md), [`data-model.md`](data-model.md), and [`deci
 
 - **SC-001**: All approved decision cases produce the exact desk, priority, dependency, preparation mode, stale-state effect, and reason codes expected.
 - **SC-002**: Repeating a case with identical versioned inputs yields the same output; changing any decision-relevant input changes only the decisions that depend on it.
-- **SC-003**: Unknown sentiment and high priority do not themselves add Human Qualification or block preparation.
+- **SC-003**: Unknown sentiment and high priority do not themselves add a Re-router task or block preparation.
 - **SC-004**: Missing payment identity preserves a known desk and prohibits payment-specific claims until resolution or clarification.
 - **SC-005**: Cross-merchant lookup results are never accepted as facts or candidates.
 - **SC-006**: Reroute count cannot produce an automatic loop; a second desk change always becomes manual triage.

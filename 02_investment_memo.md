@@ -23,7 +23,7 @@ Under fixed base assumptions, total active-time savings must reach 5.93% to brea
 
 ## What if we’re wrong?
 
-The Low case loses €78,444 and misses the Base next-best hurdle. A one-variable sensitivity gives €55.1k net at 10% saving and €326.4k at 30%. A roughly 200-case exploration cannot certify a rare error rate below 0.1%; twenty cases check the contract only. Do not pilot unless comparable full-flow tasks show value at constant QA and the serious-error controls are validated.
+The Low case loses €78,444 and misses the Base next-best hurdle. A one-variable sensitivity gives €55.1k net at 10% saving and €326.4k at 30%. A roughly 200-case exploration cannot certify a rare error rate; twenty cases check the contract only. Do not pilot unless comparable full-flow tasks show value at constant QA and the serious-error controls are validated.
 
 ## Compared to what?
 

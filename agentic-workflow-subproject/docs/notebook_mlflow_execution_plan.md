@@ -36,7 +36,7 @@ Pour chaque figure : code reproductible, source/sha256 du split, nom du système
 - B3 est présent uniquement là où une sortie vérifiée existe ; une nouvelle inférence est clairement datée et identifiée.
 - Les affirmations de taille, RAM, latence et coût correspondent à leur mesure ou portent explicitement la mention d'estimation.
 - Chaque graphique final est relié au split et au run MLflow source ; chaque version enregistrée dans Vertex possède un lien vérifiable vers le run MLflow et le job Vertex/KFP ou un état `unknown` explicite.
-- Aucun taux de précision/rappel production n'est dérivé des seules prédictions, et le seuil proposé de 0,1 % d'erreurs graves après le flux n'est pas appliqué aux 0,7 % d'erreurs silencieuses du modèle seul.
+- Aucun taux de précision/rappel production n'est dérivé des seules prédictions.
 
 ## État au moment de ce plan
 

@@ -11,7 +11,7 @@
 
 ## Product and decision
 
-When a merchant ticket arrives, the copilot qualifies it, assigns known requests through deterministic rules, retrieves authorized context, and prepares a sourced reply or clarification. A Support Agent resolves only necessary ambiguities, reviews every reply, and explicitly triggers each send. No autonomous send, refund, account unfreeze, or ledger write.
+When a merchant ticket arrives, the copilot qualifies it, assigns known requests through deterministic rules, retrieves authorized context, and prepares a sourced reply or clarification. A Support Agent corrects the desk when it is unclear or wrong (Re-router), checks every reply (Validator), and explicitly triggers each send. No autonomous send, refund, account unfreeze, or ledger write.
 
 **GO to build and evaluate the demo; CONDITIONAL GO for a Keelpay pilot.** Expansion depends on end-to-end evidence at constant quality. Deterministic context attachment without AI is an alternative to test, not a delivered project.
 
@@ -25,11 +25,11 @@ The canonical names are **Qualifier Model** (seven-field extractor), **Routing N
 
 ## Reference flow
 
-Demo Injector → Qualifier Model → Routing Node → Lookup Node / Retrieval Node → Drafter Model → Support Agent review → simulated send. Human Qualification is required only when a dependent decision cannot be made. An unidentified payment may require selection or clarification; unknown sentiment does not block routing. Priority alone does not block draft preparation.
+Demo Injector → Qualifier Model → Routing Node → Lookup Node / Retrieval Node → Drafter Model → Validator → simulated send. An unclear or wrong desk goes to the Re-router while the draft is still prepared. An unidentified payment may require selection or clarification; unknown sentiment does not block routing. Priority alone does not block draft preparation.
 
 Bounded L3 assignment, assisted lookup/context, L2 reply, human send. The first desk correction triggers one re-preparation; a second reroute requires manual triage. Do not automatically split multi-intent tickets.
 
-Three target tabs: **Overview**, **Qualification & Routing**, and **Replies to Review**. Clicking a human node opens an eligible task. Waiting time and oldest-first are MUST for the demo; advanced urgency and multi-agent are SHOULD. Overview reflects backend events; Langfuse observes processing but does not store operational queues.
+Three target tabs: **Overview**, **Re-router**, and **Validator**. Clicking a human node opens an eligible task. Waiting time and oldest-first are MUST for the demo; advanced urgency and multi-agent are SHOULD. Overview reflects backend events; Langfuse observes processing but does not store operational queues.
 
 ## Demo and fictional production are separate
 

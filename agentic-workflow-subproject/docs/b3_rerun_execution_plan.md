@@ -72,7 +72,7 @@ Le script de scoring accepte actuellement un préfixe de split pour les smoke ru
 - Notebook 2 : montrer B2/B3/D sur **validation**, avec la validation de la campagne B3 retenue ; les graphiques sont générés par les cellules, avec comptes, dénominateurs et titres descriptifs.
 - Notebook 5 : ajouter B3 uniquement si les exports `test_natural` et/ou `test_traps` passent P3. Refaire les graphiques comparatifs sur les mêmes tickets : erreurs silencieuses et intervalle apparié, urgents au mauvais desk en comptes, couverture/Re-router, matrice Router, coût/latence avec provenance. Si B3 manque sur un split, afficher explicitement `absent` sans barre à zéro.
 - Garder le verdict D-q4 historique comme constat daté, puis écrire une **nouvelle lecture** après B3. Ne pas retoucher a posteriori les résultats publiés, les seuils ou les poids du score de sévérité.
-- Comparer B3 à D selon la règle déjà fixée : erreurs silencieuses, sévérité, urgent mal routé, puis coût/latence. Montrer le nombre brut d'urgents et les limites des petits sous-groupes. Le seuil proposé de 0,1 % d'erreurs graves après flux complet ne s'applique pas aux erreurs du modèle seul.
+- Comparer B3 à D selon la règle déjà fixée : erreurs silencieuses, sévérité, urgent mal routé, puis coût/latence. Montrer le nombre brut d'urgents et les limites des petits sous-groupes.
 
 **Fin :** les trois splits B3 sont tracés et reproductibles ou leur absence est documentée ; notebooks exécutés de haut en bas, figures visibles dans leurs cellules et exportées ; MLflow et Vertex/KFP se recoupent par identifiants immuables ; aucune dépense récurrente ou ressource GPU laissée active.
 

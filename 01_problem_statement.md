@@ -22,7 +22,7 @@ Support agents at Keelpay, a B2B payments fintech handling about 36,000 tickets 
 | Tickets first routed to the wrong desk | ~1 in 7 (about 14.3 %, ~5,143 tickets a month) | given | Scenario data |
 | Languages | French, English | given | Scenario data |
 | Average handling time, team size, cost per support agent | 10 min/ticket, 46 agents, 130 productive h/month | assumption | Derived bottom-up in the S2 sizing, tagged and sourced there |
-| Target for handling time | -20.26 % (base case) / -13.5 % (flip point) | analogy & economic hurdle | Set in S2 against published benchmarks (Brynjolfsson, Li & Raymond, QJE 2025: +15 % issues/h ≈ -13 % time) and fixed in S6 |
+| Target for handling time | -20.26 % (base case) / -13.32 % (flip point) | analogy & economic hurdle | Set in S2 against published benchmarks (Brynjolfsson, Li & Raymond, QJE 2025: +15 % issues/h ≈ -13 % time) and fixed in S6 |
 | QA score | "no lower than today's" | baseline to measure | Baseline to measure before anything else; no drop tolerated |
 
 Handling time means hands-on time and excludes waiting in a queue. Queue waiting (time to first reply) is a separate, secondary indicator; routing errors lengthen it because a ticket waits twice.
@@ -85,7 +85,7 @@ By extracting transaction references from unstructured inquiries and pre-draftin
 |---|---|---|---|---|
 | 1 | **Routing safety & silent errors:** An AI classifier can understand free-text tickets and significantly reduce silent misrouting compared to today's baseline (~14 % misrouted), particularly on urgent tickets, by sending ambiguous requests to human triage rather than guessing. | guess | Test on an eval-set of tickets in Session 4; compare error rates in the automated lane against tickets sent to triage. | S4 prototype |
 | 2 | **Automated routing share:** The routing rules can automate a substantial portion of tickets (target ~50 %) without human touch, freeing up agent capacity while keeping human triage volume manageable. | guess | Measure the share of automatically routed tickets vs tickets sent to triage on the prototype eval-set. | S4 prototype |
-| 3 | **Drafting efficiency:** Providing agents with a pre-drafted reply and attached transaction context saves enough handling time to reach our economic flip point (~13.5 % net time saved from sizing), at constant QA score. | analogy (Brynjolfsson et al., 2025) | Time-study on a sample with/without draft in Session 5, then validate in Session 6 trial. | S5 metrics, S6 A/B |
+| 3 | **Drafting efficiency:** Providing agents with a pre-drafted reply and attached transaction context saves enough handling time to reach our economic flip point (13.32 % net time saved from sizing), at constant QA score. | analogy (Brynjolfsson et al., 2025) | Time-study on a sample with/without draft in Session 5, then validate in Session 6 trial. | S5 metrics, S6 A/B |
 | 4 | **Human verification:** Support agents actively review drafts and catch wrong transaction matches or incorrect policy statements before sending, rather than blindly validating unread text. | guess | Observe agents handling tickets with seeded errors during prototype usability testing. | S4 prototype, S5 counter-metric |
 | 5 | **Net workflow gain:** Across the whole flow, the time saved on routing and drafting outweighs the time spent qualifying ambiguous cases and correcting reroutes, beating the do-nothing baseline. | guess | Measure active handling time net of corrections during the full workflow evaluation. | S6 A/B |
 

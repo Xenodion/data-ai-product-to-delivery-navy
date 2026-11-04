@@ -9,8 +9,8 @@ One JSON object, exactly seven keys, **every value a string** (no JSON `null`, n
 | Convention | Meaning |
 |---|---|
 | lowercase `snake_case` | a real class (`payment_status`, `delayed_credit`, `high`) |
-| `UNDEFINED` | the ticket does not allow a decision: ambiguous, too vague, malformed reference. The dependent product decision may require Human Qualification; this does not imply global triage |
-| `OTHER` | understood, but no desk or listed sub-intent fits (`intent` and `sub_intent` only). An unsupported intent requires Human Qualification to identify a desk |
+| `UNDEFINED` | the ticket does not allow a decision: ambiguous, too vague, malformed reference. The dependent product decision may require a Re-router task; this does not imply global triage |
+| `OTHER` | understood, but no desk or listed sub-intent fits (`intent` and `sub_intent` only). An unsupported intent requires a Re-router task to identify a desk |
 | `""` (empty string) | absent from the ticket; only on `transaction_id`, `amount`, `currency` |
 
 Validation rules (all checked by `TicketLabel`):
