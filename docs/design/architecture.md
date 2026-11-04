@@ -10,11 +10,16 @@ flowchart LR
   API --> DB[(Durable ticket state<br/>queues + versions + events)]
   API --> Q[Qualifier Model<br/>compact Qwen LoRA, CPU]
   Q --> R[Routing Node<br/>deterministic Python]
-  R -->|facts needed| L[Lookup Node<br/>synthetic tenant-scoped data]
-  R -->|sources needed| RET[Retrieval Node<br/>versioned synthetic KB]
+  R -. optional facts .-> L[Lookup Node<br/>synthetic data]
+  R -. optional sources .-> RET[Retrieval Node<br/>synthetic KB]
   L --> RET
   RET --> D[Drafter Model<br/>external API, synthetic only]
-  D --> DB
+  R --> D
+  R -. route unclear .-> RR[Re-router<br/>human desk correction]
+  D --> V[Validator<br/>human draft correction + approval]
+  V -. desk wrong .-> RR
+  RR -->|correct desk; refresh draft| D
+  V --> DB
   DB --> UI[Static front end<br/>3 tabs]
   UI -->|human actions| API
   API -. correlated spans .-> LF[Langfuse<br/>observability]
@@ -28,14 +33,16 @@ flowchart LR
 | Demo Injector | Synthetic set + cadence → idempotent request | Demo identity/cadence; no production authentication implied | To build |
 | Python API/backend | Ingress, state reads/writes, orchestration, UI commands | Auth, validation, idempotency, atomic transitions; secrets server-side | To build |
 | Qualifier Model | Text → strict seven-field contract | D-q4 candidate; backend parsing/validation; historical benchmark only | Model trained/measured; Cloud Run CPU serving to build |
-| Routing Node | Ticket + qualified fields + authorized context → desk, priority, dependencies, versioned reasons | Deterministic, versioned Python tables; decision contract in `copilot-workflow.md` | To specify in Feature 004 |
+| Routing Node | Ticket + intent/sub-intent/urgency → initial desk and visible priority | Deterministic, versioned Python mapping; draft continues if routing may need correction | To specify in Feature 004 |
 | Lookup Node | Merchant + payment keys → candidates/result | Synthetic ledger fixture, `merchant_id` filter, no write path | To build |
 | Retrieval Node | Intent/context → excerpts and source IDs | Versioned synthetic KB and approved-source list | To build |
-| Drafter Model | Ticket + facts + excerpts → draft or clarification | External API only for non-critical synthetic data; timeout/manual fallback | To integrate |
+| Drafter Model | Ticket + available context → draft attempt | Draft even when the desk may need correction; Validator handles quality issues after generation | To integrate |
 | Event store / queues | Commands and transitions → current state + history | Durable backend authority, versions, claims/locks, idempotency | Technology to choose |
 | Front end | Backend state → Overview, Qualification & Routing, Replies to Review | No duplicated business rules; no service secrets | To build |
 | Langfuse | Allowed technical/action spans → traces | Ticket/step/version correlation; delay/outage does not alter queue authority | To integrate |
-| Support Agent | Qualification, correction, fact/source review, optional edit, simulated send | Human action recorded against version; no auto-send | Target workflow |
+| Re-router | Proposed desk + ticket → corrected desk | One human workflow node; correction invalidates prior draft and triggers a fresh draft | Target workflow |
+| Validator | Generated draft + ticket/context → corrected/approved draft | One human workflow node; can hand desk errors to Re-router and approve simulated send | Target workflow |
+| Support Agent | Human role acting in Re-router and Validator | Actions recorded against versions; no auto-send | Target workflow |
 
 ## Workflow orchestration and Drafter tools
 

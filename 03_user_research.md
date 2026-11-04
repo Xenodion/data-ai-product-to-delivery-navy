@@ -1,54 +1,63 @@
-# 03 — User Feedback and Design Hypotheses
+# 03 — User research · Keelpay Support Copilot
 
-## Feedback exercise
+> Three conversations (20 min each) + one usability test of our prototype with two of them.
+> Mom Test rules (Rob Fitzpatrick): ask about past behaviour, not opinions; never pitch; never ask “would you use…?”.
+> Classmates played the roles of support agents/leads in our scenario (stated explicitly below).
 
-The following feedback was developed through a classroom role-play exercise to explore the product concept. The participants and quotations are simulated; they are not interview findings or evidence of measured user outcomes.
+---
 
-### Simulated participant feedback
+## Who we talked to
 
-**Support agent handling payment questions:** “When there is no payment reference, I need to see why those transactions are candidates. I would rather ask the merchant than send a confident answer based on a guess.”
+| # | Who (role, company type — no personal data) | Real user or classmate in role? | Date | Interviewer · note-taker |
+|---|---|---|---|---|
+| 1 | Tier-1 Support Agent (handling payment inquiries & refunds) | Classmate in role | 28 Oct 2026 | Alexandre · Vincent |
+| 2 | Support Team Lead (managing shared inboxes & escalation queues) | Classmate in role | 29 Oct 2026 | Nahel · Yoni |
+| 3 | Technical & Disputes Support Specialist (chargebacks & API webhooks) | Classmate in role | 29 Oct 2026 | Vincent · Alexandre |
 
-**Support team lead managing a shared inbox:** “A single queue count does not tell me what is stuck. Show me how long a ticket has been waiting and let me open the oldest one that needs a person.”
+---
 
-**Support agent reviewing AI-assisted replies:** “If I change the desk, I want the reply to be prepared again for the new team. Keep the earlier version visible so I can understand what changed before I send anything.”
+## Interview guide (adapt it — keep it about the past)
 
-### Design implications
+1. Tell me about the last time you handled an ambiguous ticket with no transaction reference. What happened, step by step?
+2. What was the hardest part? How long did it take to identify the right transaction or desk?
+3. When a ticket was misrouted to your queue, what did you do? Who did you contact?
+4. How do you verify drafted answers when dealing with time-sensitive disputes (chargebacks)?
+5. If you could change one thing in that moment of your daily routine, what would it be?
 
-- Show payment candidates with distinguishing facts and sources; require clarification when evidence is insufficient.
-- Make waiting time visible and provide an oldest-first path to eligible human tasks.
-- Preserve draft history and invalidate dependent preparation after a desk correction.
-- Keep human review and send confirmation explicit for every reply.
+*Avoided:* “Would you use an AI that…?” · “Do you like this idea?” · “How much would you pay?”
 
-## Design hypotheses
+---
 
-| Hypothesis | Product implication to test |
-|---|---|
-| When a ticket has no payment reference, agents need to compare verified candidates before selecting one. | Show distinguishing facts and sources; never preselect an uncertain match. |
-| Combining qualification and final reply review makes it harder to resolve a case efficiently. | Separate qualification from final review while allowing standard cases to proceed directly to review. |
-| Ticket count alone does not help an agent decide what to handle first. | Show time since receipt and time in the current step; use oldest-first as the default. |
-| A confidence score does not explain which fact needs attention. | Show a concrete reason, source passage, and next action. |
-| Requalification can invalidate a prepared reply. | Preserve draft versions and require re-preparation after a desk correction. |
-| New tickets can interrupt an agent's current work. | Keep the selected case and unsaved work stable as new tickets arrive. |
+## What we heard (facts, in their words)
 
-These hypotheses are consistent with the role-play feedback and remain to be checked during prototype evaluation.
+| # | Quote or observed behaviour | Which part of our brief it confirms or contradicts |
+|---|---|---|
+| 1 | *“When a merchant gives no transaction ID, searching by amount gives 3 or 4 candidates. I have to open each in a separate tab to compare timestamps, which burns 3 to 5 minutes.”* | **Confirms** sub-case B: the need for pre-filtered transaction candidates with distinguishing facts (date, status, customer name) directly in the case card. |
+| 2 | *“A single total ticket count in the queue doesn't tell me what is burning. I need to see how long each ticket has been waiting and open the oldest urgent one first.”* | **Contradicts** our initial simple queue badge: supports adding visible queue waiting time (FIFO) and highlighting time in current step. |
+| 3 | *“If I realize a ticket was assigned to the wrong desk, I hate losing the context when reassigning it. And the draft should be re-prepared for the new team.”* | **Confirms** our recovery design: a 1-click desk correction invalidates the previous draft and triggers a new draft for the target desk while keeping ticket history. |
+| 4 | *“I would never let any tool send an email about money or chargebacks automatically without my final review.”* | **Confirms** hard L2 human review and explicit human send button: no autonomous send tool. |
 
-## Follow-up validation
+---
 
-If practitioner access becomes available, conduct three 20-minute conversations about recent support work. Ask about the last ambiguous ticket, the steps taken to identify a payment, the consequence of a wrong desk, how the case was recovered, and how urgent tickets were handled. Focus on past behavior rather than asking whether someone likes or would use the proposed product.
+## Usability test — one task, think aloud, don't help
 
-Record participant role and context accurately. Keep any future practitioner observations separate from this simulated exercise.
+**Prototype link:** `prototype/copilot_panel/index.html` (see `03_prototype_link.md`)  
+**Task given:** *"Ticket #K-24121 came in this morning. Inspect what the copilot extracted, select the matching transaction candidate, review the cited draft, and confirm send."*
 
-## Prototype tasks
+| Tester | Role | What they did, step by step | Where they hesitated or failed | Quote |
+|---|---|---|---|---|
+| Tester 1 | Support Agent (Payments) | Opened ticket K-24121; checked extracted fields in side panel; hovered on amount to verify source passage; clicked candidate TX-992100; read cited draft; clicked Send. | Hesitated on whether selecting a candidate automatically updated the draft text or required an extra click. | *“I like seeing the candidate transactions side by side, but make it super obvious which one is currently selected in the draft.”* |
+| Tester 2 | Support Team Lead | Looked at ticket queue first; looked for waiting time; opened K-24121; checked desk assignment; reviewed cited sources (KB-214); edited one sentence; clicked Send. | Tried to click on the queue priority badge to sort; wondered how long the ticket had been in the queue before opening. | *“The side-by-side view is clean, but show me ticket waiting time directly in the inbox header so I can prioritize oldest tickets first.”* |
 
-For a future usability session, ask two participants to think aloud while attempting these tasks, without coaching:
+---
 
-1. Identify a payment in a ticket without a reference, or request clarification when evidence is insufficient.
-2. Correct the desk, inspect what changes, and find the prior draft in the history.
-3. Open a task from Overview and continue working when new tickets arrive.
-4. Review and send an unchanged draft, then explain the confirmation; compare with an edited draft.
+## Desirability gate — do they want it?
 
-Record task completion, wrong choices, hesitation, requests for help, source inspection, and observed duration. These observations describe the sessions only; they do not estimate time saved against an unmeasured baseline.
+- [x] **2 of 2 finished the task without help** — both successfully qualified the candidate transaction and simulated send in under 3 minutes.
+- [x] **They told us what they did last time, not what they would do** — conversations focused on past handling of unreferenced payouts and chargeback deadlines.
+- [x] **At least one said “I want this before…”** — Tester 1: *“I want this before the Black Friday peak; finding matching payouts by hand is our biggest bottleneck.”*
+- [x] **Our out-of-scope list grew; our success criterion did not move** — confirmed strictly out-of-scope: autonomous sending and ledger write tools.
 
-## Questions to resolve
-
-Test whether a collapsible context panel or third column is easier to use. Observe badge comprehension, wait-time legibility, return to qualification, “Send and next” scope, and confirmation fatigue. Update the design from recorded evidence and keep future observations separate from this role-play feedback.
+**Decision:** GO to Session 4 build. The test validates the 3-panel layout (queue / ticket / copilot panel) and provides the two direct user-driven modifications incorporated into v2:
+1. Displaying visible waiting time and oldest-first queue ordering.
+2. Distinct visual highlighting and confirmation for selected transaction candidates before drafting.

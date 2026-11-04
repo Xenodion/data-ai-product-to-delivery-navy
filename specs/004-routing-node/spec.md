@@ -2,8 +2,14 @@
 
 **Feature**: 004-routing-node<br>
 **Created**: 3 November 2026<br>
-**Status**: Draft for implementation planning; behavior is a user-confirmed target, while operational policy values remain open<br>
+**Status**: Router tree and evaluation contract specified; production policy values and integrated acceptance remain open<br>
 **Authority**: [Root product spec](../../spec.md), [workflow decision tree](../../docs/design/copilot-workflow.md), and [canonical terminology](../../docs/design/terminology.md).
+
+**Router decision tree and metrics**: [`error-consequences.md`](error-consequences.md) defines the initial desk/priority mapping, Re-router handoff, offline model comparison and post-deployment monitoring. Historical Qualifier gates remain in its [`scoring_protocol.md`](../../agentic-workflow-subproject/docs/scoring_protocol.md); product ownership remains in [`governance.md`](../../governance.md).
+
+## Decision boundary
+
+The Router's first decision is deterministic: validate the Qualifier output, map a supported intent to one desk or create a Re-router task, then surface `high`, non-high or unknown priority. A valid urgent ticket with an unknown intent still shows urgency while Re-router handles the desk. `sub_intent`, sentiment and payment fields do not change this initial desk. The Validator reviews drafts and, when needed, corrects and re-routes. These are the two human nodes of the target flow; an urgent ticket does not create another human gate. Lookup, evidence, draft preparation and send controls are downstream responsibilities described elsewhere in this feature and the product workflow.
 
 ## Problem
 
@@ -32,7 +38,7 @@ As a Support Agent, I need stale work invalidated, histories preserved, and auto
 1. The Qualifier Model contract stays at seven string fields. It does not emit a desk, confidence score, permission, or tool action.
 2. Given the same contract version, policy version, trusted context, lookup/retrieval outcomes, human decisions, and reroute count, the Routing Node returns the same decision and reason codes.
 3. `payment_status → payments`, `dispute → disputes`, `technical_api → technical_api`, and `compliance → compliance`.
-4. `intent=UNDEFINED`, `OTHER`, invalid output, or model unavailability requires Human Qualification to determine the request/desk. Do not automatically split multiple intents.
+4. `intent=UNDEFINED`, `OTHER`, invalid output, or model unavailability creates a Re-router task to determine the request/desk. A valid high urgency remains visible on this path. Do not automatically split multiple intents.
 5. A known desk is retained when payment identity is missing or ambiguous. Block only payment-specific claims/actions; selecting a verified candidate or preparing a clarification are valid outcomes.
 6. `sub_intent=UNDEFINED` keeps a known desk; qualify the procedure only when that procedure needs the sub-intent. `sentiment=UNDEFINED` uses neutral tone and does not block routing.
 7. High priority and independently detected deadline/risk signals are surfaced and may affect ordering/acknowledgement. Priority alone never pauses draft preparation or forces desk confirmation. Every reply still requires Human Review.
@@ -90,6 +96,8 @@ See [`contracts.md`](contracts.md), [`data-model.md`](data-model.md), and [`deci
 - **SC-006**: Reroute count cannot produce an automatic loop; a second desk change always becomes manual triage.
 - **SC-007**: No Routing Node path can send a message or mutate a ledger.
 - **SC-008**: Every decision is traceable to contract, policy, and source/result versions without a fabricated confidence value.
+- **SC-009**: Offline comparison reports the initial action matrix, automatic coverage, unnecessary Re-router, urgent wrong-desk and missed-urgency counts/rates on the same labelled tickets. It preserves the historical Qualifier scorer and gates without claiming they validate the integrated Router.
+- **SC-010**: Operational monitoring records contract health, latency, versions, decision distribution, Re-router/Validator corrections and urgent waiting time. Accuracy and urgent error rates are recalculated only on separately verified labelled samples.
 
 ## Out of scope
 

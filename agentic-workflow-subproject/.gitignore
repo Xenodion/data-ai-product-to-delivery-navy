@@ -1,0 +1,21 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+data/*
+!data/.gitkeep
+# Synthetic and small: committed on purpose for the exercise (the run logs stay ignored)
+!data/dataset/
+!data/seeds/
+!data/gate2/
+!data/_gate2*/
+!data/runs/
+notebooks/outputs/
+logs/
+models/
+*_pipeline.yaml
+mlflow.db
+mlflow.db-shm
+mlflow.db-wal
+mlartifacts/
+mlruns/

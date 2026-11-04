@@ -29,6 +29,6 @@ The Low case loses €78,444 and misses the Base next-best hurdle. A one-variabl
 
 Weighted project EV exceeds weighted next-best by **€113.5k** and do-nothing by **€116.0k**. Moving the full 20-point optimistic probability weight to Base still leaves €112.5k EV versus the €100.2k Base next-best hurdle; a 22.41-point shift would be needed to cross it. Probabilities remain judgments. Demo external API/trace costs need a separate budget; no real ticket may go to an external service.
 
-**Sources:** fictional scenario in [README](README.md); assumptions and sensitivities in [02_sizing.xlsx](02_sizing.xlsx); component evidence in the [LLMOps project](finetuned_llm_classifier/README.md); product gates in [spec](spec.md).
+**Sources:** fictional scenario in [README](README.md); assumptions and sensitivities in [02_sizing.xlsx](02_sizing.xlsx); component evidence in the [LLMOps project](agentic-workflow-subproject/README.md); product gates in [spec](spec.md).
 
 **Build / buy / orchestrate:** Orchestrate an in-house, tenant-scoped workflow around the Qualifier Model, deterministic Routing Node, and human sending; consider a bought Drafter Model only if it runs within the fictional production cloud boundary and beats the validated build case.
