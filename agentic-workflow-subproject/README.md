@@ -8,9 +8,9 @@ It is an isolated uv project (own `pyproject.toml`, Python 3.11.6, `uv.lock`, `.
 
 ## Target flow
 
-![Keelpay target flow: deterministic rules and tools on top, the two LLMs in the middle, the human app at the bottom](docs/design/keelpay_workflow_map.png)
+![Keelpay target flow v2](docs/design/flow-v2/flow_v2.svg)
 
-This is the target flow; only the Qualifier Model exists today. A ticket is read by the Qualifier Model, the Routing Node picks a desk with Python rules, and the Drafter Model always writes a reply, calling read-only tools for facts (SQL lookup, RAG search; the first version drafts without them). A Support Agent corrects the desk in the Re-router when needed and approves every reply in the Validator. The first desk change triggers one new draft; after a second change, the agent fixes the draft or writes the reply by hand.
+Target flow validated on 6 November 2026; only the Qualifier Model exists today. A ticket is read by the Qualifier Model, the Routing Node picks a desk with Python rules, read-only tools fetch facts, and the Drafter Model writes only from that evidence. A policy check blocks forbidden content, a Support Agent approves in the Validator, and a final compliance gate checks the text before the simulated send. Tickets the flow cannot route go to the Re-router, where a person corrects them once, writes the reply, or closes them. Details: [node table](docs/design/flow-v2/node_table_v1.md); build order: [task list](specs/013-flow-v2/tasks.md).
 
 ## Contract with the rest of NAVY
 

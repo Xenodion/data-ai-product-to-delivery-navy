@@ -1,62 +1,29 @@
-# Target Architecture — Keelpay Demo
+# Target Architecture: Keelpay Demo
 
-**Status: proposed, not implemented.** Canonical component names: [NAVY Reference Terminology](terminology.md). Target behavior: [Product Specification](../../../spec.md) and [Workflow / UX](copilot-workflow.md).
+**Status: target validated on 6 November 2026, not implemented.** The flow, the nodes and their measures are in [flow-v2/node_table_v1.md](flow-v2/node_table_v1.md); the diagram is [flow_v2.svg](flow-v2/flow_v2.svg); the build order is in [specs/013-flow-v2/tasks.md](../../specs/013-flow-v2/tasks.md). Names: [terminology](terminology.md). Screens: [workflow and UX](copilot-workflow.md). This page keeps what the node table does not cover: runtime, state, failures and deployment.
 
-## Flow
+![Flow v2 target](flow-v2/flow_v2.svg)
 
-```mermaid
-flowchart LR
-  IN[Demo Injector<br/>Python] --> API[Ingress API<br/>Cloud Run]
-  API --> DB[(Durable ticket state<br/>queues + versions + events)]
-  API --> Q[Qualifier Model<br/>compact Qwen LoRA, CPU]
-  Q --> R[Routing Node<br/>deterministic Python]
-  R -. optional facts .-> L[Lookup Node<br/>synthetic data]
-  R -. optional sources .-> RET[Retrieval Node<br/>synthetic KB]
-  L --> RET
-  RET --> D[Drafter Model<br/>external API, synthetic only]
-  R --> D
-  R -. route unclear .-> RR[Re-router<br/>human desk correction]
-  D --> V[Validator<br/>human draft correction + approval]
-  V -. desk wrong .-> RR
-  RR -->|correct desk; refresh draft| D
-  V --> DB
-  DB --> UI[Static front end<br/>3 tabs]
-  UI -->|human actions| API
-  API -. correlated spans .-> LF[Langfuse<br/>observability]
-  DB --> UI
-```
+## Runtime pieces
 
-## Responsibilities and trust boundaries
+| Piece | Role | Status |
+|---|---|---|
+| Demo Injector | Sends synthetic tickets (the envelope with `ticket_id` and `turn`) at a controllable cadence | To build |
+| Python API and backend | Ingress, state, orchestration of the fixed path, UI commands; auth, validation, idempotency, secrets server-side | To build |
+| Durable store | Tickets, queues, versions, events; the authority for counters and history | Technology to choose |
+| Qualifier Model (node 2) | D-q4, local CPU | Trained and measured; serving to build |
+| Front end | Overview, Re-router, Validator; no business rules of its own | To build |
+| Langfuse | Derived traces; it never decides ticket status | To integrate |
 
-| Component | Input / output | Source of truth / control | Status |
-|---|---|---|---|
-| Demo Injector | Synthetic set + cadence → idempotent request | Demo identity/cadence; no production authentication implied | To build |
-| Python API/backend | Ingress, state reads/writes, orchestration, UI commands | Auth, validation, idempotency, atomic transitions; secrets server-side | To build |
-| Qualifier Model | Text → strict seven-field contract | D-q4 candidate; backend parsing/validation; historical benchmark only | Model trained/measured; Cloud Run CPU serving to build |
-| Routing Node | Ticket + intent/sub-intent/urgency → initial desk and visible priority | Deterministic, versioned Python mapping; draft continues if routing may need correction | To specify in Feature 004 |
-| Lookup Node | Merchant + payment keys → candidates/result | Synthetic ledger fixture, `merchant_id` filter, no write path | To build |
-| Retrieval Node | Intent/context → excerpts and source IDs | Versioned synthetic KB and approved-source list | To build |
-| Drafter Model | Ticket + available context → draft attempt | Draft even when the desk may need correction; Validator handles quality issues after generation | To integrate |
-| Event store / queues | Commands and transitions → current state + history | Durable backend authority, versions, claims/locks, idempotency | Technology to choose |
-| Front end | Backend state → Overview, Re-router, Validator | No duplicated business rules; no service secrets | To build |
-| Langfuse | Allowed technical/action spans → traces | Ticket/step/version correlation; delay/outage does not alter queue authority | To integrate |
-| Re-router | Proposed desk + ticket → corrected desk | One human workflow node; correction invalidates prior draft and triggers a fresh draft | Target workflow |
-| Validator | Generated draft + ticket/context → corrected/approved draft | One human workflow node; can hand desk errors to Re-router and approve simulated send | Target workflow |
-| Support Agent | Human role acting in Re-router and Validator | Actions recorded against versions; no auto-send | Target workflow |
-
-## Workflow orchestration and Drafter tools
-
-The runtime may use **LangGraph or LangChain** to compose and observe the end-to-end flow; evaluate the fit in the implementation plan rather than treating either library as selected. The orchestrator coordinates backend nodes and state transitions. It does not replace the deterministic Python `Routing Node`, move queue authority out of the backend, or grant the `Drafter Model` policy authority.
-
-The `Drafter Model` tool set should be extensible through an explicit allowlist. Each tool needs a typed input/output contract, tenant and data scope, authorization, timeout/error behavior, and trace correlation. Tools may retrieve or inspect approved synthetic context; they cannot send messages, change queues or routing decisions, write to a ledger, issue refunds, or unfreeze accounts. The backend and `Routing Node` decide which operations are available for a ticket.
+The path is a fixed workflow written in plain Python. LangGraph or LangChain may compose it only if the implementation plan shows a gain; neither is selected. Tools (nodes 6 and 7) follow the tiers of the node table, with typed contracts, merchant scope, timeout and trace.
 
 ## Authoritative state and events
 
 Ticket state and transitions are the source for counters, history, queues, and Overview. Langfuse receives derived traces and may lag; it does not decide eligibility, ordering, or ticket status. Each command changes state through the backend and records actor, server timestamp, version, required reason, and outcome. Ingress and send are idempotent.
 
-Minimum readable states distinguish `received`, `qualifying`, `reroute_required`, `looking_up`, `drafting`, `review_ready`, `manual_required`, `send_blocked`, `sent_simulated`, `failed_retryable`, and `failed_manual`. The runtime plan may normalize enum names, but must not conflate an error with a missing ticket or human wait.
+Minimum readable states distinguish `received`, `qualifying`, `reroute_required`, `gathering_evidence`, `drafting`, `review_ready`, `no_draft`, `manual_required`, `send_blocked`, `sent_simulated`, `failed_retryable`, `failed_manual`, `closed`. The runtime plan may normalize enum names, but must not conflate an error with a missing ticket or human wait.
 
-Minimum events: ingress; Qualifier Model start/finish/error; Routing Node decision/version; qualification requested/resolved; Lookup Node start/result; payment selection; Retrieval Node result; Drafter Model start/finish/error; draft version/edit; agent claim/release; requalification/desk change; send check; simulated send.
+Minimum events: ingress with `turn`; each node start, finish and error; Routing decision and version; evidence decision (`factual`, `clarification`, `no_draft`); draft version and edit; policy result; Judge recommendation; human correction, direct send or closure with reason; agent claim and release; final compliance result; simulated send.
 
 ## Queues and experience
 
@@ -66,12 +33,11 @@ Clicking the Re-router node opens its oldest eligible task under the active orde
 
 ## Failures and recovery
 
-- Qualifier Model failure: record the error and send to qualification/manual recovery; evaluate any independent signals available.
-- Lookup failure: make no payment assertion; offer clarification or manual recovery.
-- Retrieval failure or insufficient sources: do not produce an unsupported factual reply.
-- Drafter Model timeout/error: keep the ticket and context; offer controlled retry or manual writing.
+- Qualifier Model failure or invalid output: Re-router, with a reason code.
+- Tool `unavailable`, `missing` or `ambiguous`: the Evidence gate returns `clarification` or `no_draft`; no unsupported factual reply.
+- Drafter Model timeout or error: Validator with the context and no draft; a person writes.
 - Langfuse outage: expose an observability incident; ticket state continues according to runtime policy, without claiming a trace exists.
-- Draft invalidated by desk/context change: retain its version, block sending, and recalculate once; a second desk change goes to manual triage.
+- Human correction at the Re-router or Validator: one re-entry at node 5; a second correction means the person finishes.
 
 ## Deployment boundary
 

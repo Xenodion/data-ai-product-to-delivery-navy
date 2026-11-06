@@ -19,7 +19,7 @@ Short and kept up to date: one line per gate, a gate is passed only when its che
 ## Open items
 
 - Complete the LLM fine-tuning comparison recovery in `docs/llmops_recovery_tasks.md`: import the validated B3 `val` export into MLflow, recover/verify B3 test artifacts before any further test comparison, refresh comparison figures and notebook narrative, and make training/inference/registry lineage visible from MLflow. Do not rerun a billed Vertex job to recreate metadata.
-- Test the complete flow on synthetic tickets: priority remains visible while draft preparation proceeds; every draft receives Human Review before simulated send. Measure missed urgencies and handling time as well as model errors.
+- Build and test the flow v2 on synthetic tickets, in the order of `specs/013-flow-v2/tasks.md`. Measure missed urgencies, turns per ticket and handling time as well as model errors.
 - Integrate the Drafter Model outside this folder, using an external API only with non-critical synthetic demo data.
 - Build the deterministic Routing Node, synthetic lookup/KB, durable queues, functional three-tab UI, Python Demo Injector, and Langfuse traces as shared-project work.
 

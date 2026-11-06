@@ -1,6 +1,6 @@
 # Keelpay Workflow and Demo Experience
 
-Status: agreed target behavior, 3 November 2026. Read with [Product Specification](../../../spec.md) and [NAVY Reference Terminology](terminology.md). The original V0 mock-up illustrates a sample interface; it does not implement this flow.
+Status: screens and behavior of the human steps; flow rules updated on 6 November 2026 to match [flow v2](flow-v2/node_table_v1.md), which prevails on any conflict. Read with [Product Specification](../../../spec.md) and [NAVY Reference Terminology](terminology.md). The original V0 mock-up illustrates a sample interface; it does not implement this flow.
 
 ## 1. Demo outcome
 
@@ -8,51 +8,51 @@ The audience watches synthetic tickets arrive, follows their processing, then ta
 
 The front end has three distinct tabs: **Overview**, **Re-router**, and **Validator**. The two human nodes share the same tickets; Overview explains the process using their actual backend events.
 
-The **Qualifier Model** returns seven fields and never selects a queue or invokes an action. The **Routing Node** deterministically proposes a desk from intent and surfaces priority. The **Drafter Model** attempts a draft for every ticket. **Re-router** corrects desk assignments; **Validator** handles draft problems and approves each send. Lookup and retrieval remain downstream product capabilities, not branches in this high-level routing tree.
+The **Qualifier Model** returns seven fields and never selects a queue or invokes an action. The **Routing Node** deterministically picks a desk, or triage, and surfaces priority. For a routed ticket, the context plan calls the tools, the **Evidence gate** decides `factual`, `clarification` or `no_draft`, and the **Drafter Model** writes only from that evidence. The **Re-router** takes tickets the flow cannot route; the **Validator** reviews drafts.
 
-Drafting continues when the initial route is uncertain or wrong. High priority remains visible and does not block preparation. The Validator handles draft issues after generation; when the desk is wrong, the Validator sends it to Re-router for correction and redrafting. Every reply passes through the Validator before its simulated send.
+An unclear ticket goes to the Re-router and no draft is prepared. High priority stays visible and never changes the path. When the Evidence gate returns `no_draft`, the ticket reaches the Validator with its context and no draft. A policy-blocked draft cannot be approved. Every model draft passes through the Validator; a person may also write and send from the Re-router or Validator, and that text goes through the Final compliance gate like any other. A merchant reply keeps the same `ticket_id` with `turn` raised by 1.
 
 ## 2. Re-router
 
-**Purpose:** correct an unclear or wrong desk assignment. This node does not hold up draft generation.
+**Purpose:** handle tickets the flow cannot route (`OTHER`, `UNDEFINED`, Qualifier failure, turn limit, spam). No draft is prepared while a ticket is here.
 
-**Queue:** requester, subject, age, proposed desk or “To determine,” priority, and a short routing reason. Keep filters limited to priority, reason, and desk. Show whether drafting is still running or a refreshed draft is ready.
+**Queue:** requester, subject, age, proposed desk or “To determine,” priority, and a short routing reason. Keep filters limited to priority, reason, and desk.
 
 **Dossier:** original message, proposed desk/priority, the fields that informed the route, and a readable reason. Full JSON may be collapsed. Do not display invented confidence scores.
 
-**Actions:** confirm or correct desk and, when needed, sub-intent. Preserve the original model output and record the human correction separately.
+**Actions:** (1) correct and enrich with typed fields (desk, sub-intent, transaction id, amount, note), each marked `source=human`; (2) write the reply and send it; (3) close without reply, with a logged reason. Preserve the original model output and record the human correction separately.
 
-Primary action: **Confirm route**. It saves the correction and triggers a fresh draft for the selected desk. It never sends. Unknown or unsupported intents can remain in the Re-router queue while a generic draft attempt continues.
+Primary action: **Confirm and continue**. It re-enters the flow once at the context plan; the Qualifier does not rerun. A second correction means the person finishes. Spam and thank-you notes are closed here with a reason.
 
 ## 3. Validator
 
-**Purpose:** handle draft issues after generation, validate the reply, and send it as a simulation.
+**Purpose:** review the draft with its evidence, validate the reply, and send it as a simulation.
 
-**Queue:** generated drafts, showing desk, requester, subject, age, and priority. Show in-progress preparation separately. Do not require a human decision before drafting.
+**Queue:** drafts and `no_draft` tickets, showing desk, requester, subject, age, and priority. Show in-progress preparation separately.
 
-**Dossier:** merchant message, concise context, sources where available, editable draft, and concrete attention items. Explain the issue and required action; color alone is insufficient.
+**Dossier:** merchant message, earlier turns, evidence with the date of each fact, editable draft, and the remaining objections (policy, Judge). Explain the issue and required action; color alone is insufficient.
 
 **History:** receipt, route, draft versions, Validator corrections, Re-router handoffs, errors, and simulated send. Keep details accessible without hiding the writing area.
 
-Primary action: **Approve and send**. If the desk is wrong, send the ticket to Re-router; the corrected desk triggers a new draft which returns to Validator. Edit inline. Avoid a toolbar of technical actions.
+Primary action: **Approve and send**. Other actions: edit inline, send back for one redraft, write the reply by hand, or send the ticket to the Re-router if the desk is wrong. Avoid a toolbar of technical actions.
 
 ### Send gates
 
 | Situation | Behavior |
 |---|---|
 | Empty draft, active processing without stable version, already sent, or stale version | Block with a specific reason |
-| Draft has an issue | Validator handles it by editing, clarifying, or using the Re-router if the desk is wrong |
+| Draft blocked by the Policy check | Cannot be approved; the person writes the reply |
 | Draft unchanged | Targeted confirmation: “You have not edited this draft. Confirm you checked the facts and sources before sending it as written.” Do not require cosmetic edits |
 | Draft edited | Validate the current version; editing alone does not prove quality |
 | Validator approves | Save version, Validator, and one idempotent simulated-send event |
 
-The Validator handles issues in the Validator node; a wrong desk is the only handoff to Re-router. An unresolved draft cannot be sent.
+Every text, model or human, passes the Final compliance gate before sending. An unresolved draft cannot be sent.
 
 ## 4. Live Overview
 
 **Purpose:** explain how the demo actually works, its bottlenecks, and trade-offs without requiring the audience to read traces.
 
-Main flow: Demo Injector → Qualifier Model → Routing Node → Drafter Model → Validator → Sent. Re-router corrections may happen alongside drafting; a changed desk invalidates the draft and triggers a new one. Show priority, correction loops, validator outcomes, and errors. Queues are waiting tickets; processing counts are tickets actually in progress.
+Main flow: Demo Injector → Qualifier Model → Routing Node → context and evidence → Drafter Model → policy check → Validator → Sent. Re-router tickets leave the main flow until a person acts. Show priority, correction loops, validator outcomes, and errors. Queues are waiting tickets; processing counts are tickets actually in progress.
 
 | Metric | Definition and display |
 |---|---|
@@ -82,9 +82,9 @@ Tabs preserve navigation context. Corrections and drafts persist server-side; re
 
 ## 6. Routing Node and human-node flow
 
-The compact tree and provisional C0–C3 groups are in [`error-consequences.md`](../../specs/004-routing-node/error-consequences.md). The Routing Node uses only the intent/sub-intent and urgency dimensions from the Qualifier Model for this decision. It assigns an initial desk, surfaces priority, and lets the draft attempt proceed even when the route may be wrong. Unknown output or intent creates Re-router work in parallel; it is not a pre-draft hold. No confidence score is assumed.
+The compact tree and provisional C0–C3 groups are in [`error-consequences.md`](../../specs/004-routing-node/error-consequences.md). The Routing Node uses only the intent/sub-intent and urgency dimensions from the Qualifier Model for this decision. It assigns a desk or triage and surfaces priority. Unknown output or intent sends the ticket to the Re-router, with no draft. No confidence score is assumed.
 
-The Validator handles draft quality after generation. A draft issue stays with the Validator; a desk issue is handed to Re-router. Re-router correction creates a new desk-specific draft and returns the ticket to Validator. Priority stays visible throughout and does not pause drafting.
+The Validator reviews draft quality. A desk issue goes to the Re-router; a person's correction re-enters the flow once and returns the ticket to the Validator with a new draft. Priority stays visible throughout and never changes the path.
 
 ## 7. Navigation, persistence, and ownership
 
@@ -105,15 +105,17 @@ Langfuse traces each ticket with spans, versions, latency, retries/errors, avail
 ## 9. Target demo test cases
 
 - Clear French/English tickets assign to the expected desk and produce a source-backed draft.
-- Unknown/invalid intent creates Re-router work while a draft is attempted; unknown sub-intent does not automatically block drafting.
+- Unknown or invalid intent goes to the Re-router with no draft; unknown sub-intent does not block routing.
 - Unknown sentiment does not block routing and yields neutral tone.
-- Validator detects a wrong desk and sends the ticket to Re-router; correction produces a fresh draft that returns to Validator.
+- Validator detects a wrong desk and sends the ticket to Re-router; one correction produces a fresh draft that returns to Validator.
 - Multi-intent requests are not silently split or collapsed into a single factual answer.
-- High-priority tickets continue preparation while urgency is visible in Overview, Re-router, and Validator.
+- Urgency is visible in Overview, Re-router, and Validator and never changes the path.
+- A merchant reply with `turn` 2 keeps the desk and loads the earlier turn.
+- A policy-blocked draft cannot be approved; human text with another merchant's identifier is hard-blocked.
 - Malformed cross-merchant ID never exposes another merchant's record.
 - Retrieval/Drafter Model errors leave a visible retry/manual state and ticket history.
 - Unchanged draft requires the targeted confirmation; edited draft remains tied to its version.
-- Desk correction recalculates once; second change goes to manual triage and blocks stale-send.
+- A correction re-enters once; a second one means the person finishes; a stale draft cannot be sent.
 - Duplicate injector request does not create a duplicate ticket; duplicate send does not send twice.
 - New arrivals do not replace an open ticket or discard edits; waiting time and FIFO remain correct after reroute/reload.
 - Overview nodes navigate to the correct actual queue and task; counts use the same backend state as queues.
