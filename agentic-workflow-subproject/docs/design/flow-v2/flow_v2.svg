@@ -69,7 +69,7 @@
 <rect x="390" y="382" width="290" height="168" rx="12" fill="#fff" stroke="#d8c2f1" stroke-width="1.6"/>
 <path d="M390,416 v-22 a12,12 0 0 1 12,-12 h266 a12,12 0 0 1 12,12 v22 z" fill="#7c34c9"/>
 <text x="404" y="405" font-size="13" fill="#fff" font-weight="700" text-anchor="start">LOCAL MODEL · D-Q4</text>
-<text x="666" y="405" font-size="13" fill="#fff" font-weight="700" text-anchor="end">L3</text>
+<text x="666" y="405" font-size="13" fill="#fff" font-weight="700" text-anchor="end">L1</text>
 <text x="404" y="442" font-size="18" fill="#1e2a3b" font-weight="700" text-anchor="start">2 · Qualifier</text>
 <text x="404" y="467" font-size="14.5" fill="#566273" font-weight="400" text-anchor="start">Extracts intent, reference,</text>
 <text x="404" y="487" font-size="14.5" fill="#566273" font-weight="400" text-anchor="start">amount, urgency, sentiment.</text>
@@ -105,7 +105,7 @@
 <rect x="730" y="382" width="268" height="168" rx="12" fill="#fff" stroke="#a9dfd9" stroke-width="1.6"/>
 <path d="M730,416 v-22 a12,12 0 0 1 12,-12 h244 a12,12 0 0 1 12,12 v22 z" fill="#0b7f78"/>
 <text x="744" y="405" font-size="13" fill="#fff" font-weight="700" text-anchor="start">TOOL · SQL</text>
-<text x="984" y="405" font-size="13" fill="#fff" font-weight="700" text-anchor="end">L4</text>
+<text x="984" y="405" font-size="13" fill="#fff" font-weight="700" text-anchor="end">L1</text>
 <text x="744" y="442" font-size="18" fill="#1e2a3b" font-weight="700" text-anchor="start">6 · Ledger lookup</text>
 <text x="744" y="467" font-size="14.5" fill="#566273" font-weight="400" text-anchor="start">Read-only, one merchant,</text>
 <text x="744" y="487" font-size="14.5" fill="#566273" font-weight="400" text-anchor="start">transaction or balance.</text>
@@ -114,7 +114,7 @@
 <rect x="1012" y="382" width="268" height="168" rx="12" fill="#fff" stroke="#a9dfd9" stroke-width="1.6"/>
 <path d="M1012,416 v-22 a12,12 0 0 1 12,-12 h244 a12,12 0 0 1 12,12 v22 z" fill="#0b7f78"/>
 <text x="1026" y="405" font-size="13" fill="#fff" font-weight="700" text-anchor="start">TOOL · RETRIEVAL</text>
-<text x="1266" y="405" font-size="13" fill="#fff" font-weight="700" text-anchor="end">L2</text>
+<text x="1266" y="405" font-size="13" fill="#fff" font-weight="700" text-anchor="end">L1</text>
 <text x="1026" y="442" font-size="18" fill="#1e2a3b" font-weight="700" text-anchor="start">7 · Knowledge search</text>
 <text x="1026" y="467" font-size="14.5" fill="#566273" font-weight="400" text-anchor="start">Approved docs and</text>
 <text x="1026" y="487" font-size="14.5" fill="#566273" font-weight="400" text-anchor="start">compliance rules by desk.</text>
@@ -156,7 +156,7 @@
 <rect x="1344" y="574" width="268" height="168" rx="12" fill="#fff" stroke="#d8c2f1" stroke-width="1.6"/>
 <path d="M1344,608 v-22 a12,12 0 0 1 12,-12 h244 a12,12 0 0 1 12,12 v22 z" fill="#7c34c9"/>
 <text x="1358" y="597" font-size="13" fill="#fff" font-weight="700" text-anchor="start">MODEL · NOT THE DRAFTER</text>
-<text x="1598" y="597" font-size="13" fill="#fff" font-weight="700" text-anchor="end">L3</text>
+<text x="1598" y="597" font-size="13" fill="#fff" font-weight="700" text-anchor="end">L1</text>
 <text x="1358" y="634" font-size="18" fill="#1e2a3b" font-weight="700" text-anchor="start">11 · Judge (optional)</text>
 <text x="1358" y="659" font-size="14.5" fill="#566273" font-weight="400" text-anchor="start">Closed rubric. Recommends,</text>
 <text x="1358" y="679" font-size="14.5" fill="#566273" font-weight="400" text-anchor="start">never approves.</text>
@@ -175,7 +175,7 @@
 <text x="1532" y="796" font-size="15" fill="#7c34c9" font-weight="800" text-anchor="start">REVISION BUDGET</text>
 <text x="1532" y="824" font-size="14.5" fill="#566273" font-weight="400" text-anchor="start">Policy blocks and Judge revisions share one counter:</text>
 <text x="1532" y="845" font-size="14.5" fill="#566273" font-weight="400" text-anchor="start">2 at most. The same objection twice stops the loop.</text>
-<text x="1532" y="866" font-size="14.5" fill="#566273" font-weight="400" text-anchor="start">LLM calls: 2 Judge off · 3 nominal · 7 worst case.</text>
+<text x="1532" y="866" font-size="14.5" fill="#566273" font-weight="400" text-anchor="start">LLM calls: 2 nominal, 4 with a redraft, 7 worst case.</text>
 <text x="1532" y="887" font-size="14.5" fill="#566273" font-weight="400" text-anchor="start">Remaining objections are shown to the Validator.</text>
 <rect x="2038" y="398" width="290" height="120" rx="16" fill="#fff" stroke="#33415a" stroke-width="2.4"/>
 <text x="2183.0" y="456.0" font-size="18" fill="#1e2a3b" font-weight="700" text-anchor="middle">Reply to the merchant</text>
@@ -333,9 +333,9 @@
 <text x="534" y="1412" font-size="14.5" fill="#566273" font-weight="400" text-anchor="start">Close: spam or thank-you, marked OTHER, logged.</text>
 <rect x="982" y="1270" width="446" height="178" rx="12" fill="#fff" stroke="#dfe4ea" stroke-width="1.5"/>
 <text x="1000" y="1300" font-size="15" fill="#d9730d" font-weight="800" text-anchor="start">OVERRIDE SWITCH</text>
-<text x="1000" y="1328" font-size="14.5" fill="#566273" font-weight="400" text-anchor="start">One action, one owner: Head of Support triggers,</text>
+<text x="1000" y="1328" font-size="14.5" fill="#566273" font-weight="400" text-anchor="start">One flag, one owner (and a backup): Head of Support,</text>
 <text x="1000" y="1349" font-size="14.5" fill="#566273" font-weight="400" text-anchor="start">NAVY executes, Compliance joins sensitive incidents.</text>
-<text x="1000" y="1370" font-size="14.5" fill="#566273" font-weight="400" text-anchor="start">Levels: Judge off, drafting off, copilot off.</text>
+<text x="1000" y="1370" font-size="14.5" fill="#566273" font-weight="400" text-anchor="start">Positions: Judge off, L1 (drafting off), routing off, copilot off.</text>
 <text x="1000" y="1391" font-size="14.5" fill="#566273" font-weight="400" text-anchor="start">Copilot off leaves a manual queue that still works.</text>
 <text x="1000" y="1412" font-size="14.5" fill="#566273" font-weight="400" text-anchor="start">The switch is tested before launch.</text>
 <rect x="1448" y="1270" width="446" height="178" rx="12" fill="#fff" stroke="#dfe4ea" stroke-width="1.5"/>
