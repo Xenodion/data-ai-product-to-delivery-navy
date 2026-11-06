@@ -9,6 +9,7 @@ Updated 6 November 2026. Read this first, then `agentic-workflow-subproject/LAYO
 - `flow/` runs a validation ticket through served D-q4, the Routing Node and a Mistral Nemo draft, then stops at the first human step. Spec: [012-flow-script](012-flow-script/spec.md).
 - Layout is frozen: `ml/` builds models, `flow/` uses them, `frontend/` shows them, and `.local/` holds everything generated. `tests/test_layout.py` enforces it.
 - Worker, leases, claims, LangChain and LangGraph are out of V1. The database comes with the API, not before.
+- The working tree also holds an uncommitted tidy of `assets/` and `docs/` made outside the agent sessions (19 entries, `docs/_archive/` and more). Leave it alone until the owner decides; do not sweep it into a commit.
 
 **Next steps, in order**
 1. Finish the check that is still open. The real flow with a valid Qualifier has not been rerun since the `ml/` and `.local/` moves, because the Qualifier was killed out of memory: Docker has 2.8 GiB and the `l07` Airflow stack takes about 1.3 GiB. Stop that stack or give Docker 5 to 6 GB, then run:
