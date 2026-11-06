@@ -1,7 +1,7 @@
 import pytest
 
-from src.dataset_build.cards import load_config
-from src.dataset_build.splits import SplitSizes, draw_pool, split_pool
+from research.qualifier.src.dataset_build.cards import load_config
+from research.qualifier.src.dataset_build.splits import SplitSizes, draw_pool, split_pool
 
 CONFIG = load_config()
 SIZES = SplitSizes(pool=4000, train=1500, val=100, test_natural=100, min_per_trap=8)
@@ -38,7 +38,7 @@ def test_split_pool_raises_when_the_pool_is_too_small():
 
 
 def test_split_pool_any_prefix_of_train_has_a_representative_trap_rate():
-    from src.dataset_build.cards import trap_rate
+    from research.qualifier.src.dataset_build.cards import trap_rate
 
     train = split_pool(draw_pool(CONFIG, SIZES, seed=5), SIZES, seed=5)["train"]
     assert 0.15 <= trap_rate(train[:100]) <= 0.55

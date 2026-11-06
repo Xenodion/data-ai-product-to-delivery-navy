@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from src.dataset_build.schema import TicketLabel
+from research.qualifier.src.dataset_build.schema import TicketLabel
 
 VALID = {
     "intent": "payment_status",

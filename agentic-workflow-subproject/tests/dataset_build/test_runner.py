@@ -2,10 +2,10 @@ import json
 
 import pytest
 
-from src.dataset_build.cards import draw_cards, load_config
-from src.dataset_build.checks import check_ticket
-from src.dataset_build.generation_prompt import load_prompt_config
-from src.dataset_build.openrouter import (
+from research.qualifier.src.dataset_build.cards import draw_cards, load_config
+from research.qualifier.src.dataset_build.checks import check_ticket
+from research.qualifier.src.dataset_build.generation_prompt import load_prompt_config
+from research.qualifier.src.dataset_build.openrouter import (
     ApiError,
     Budget,
     BudgetExhaustedError,
@@ -13,7 +13,7 @@ from src.dataset_build.openrouter import (
     load_run_config,
     parse_ticket_json,
 )
-from src.dataset_build.runner import read_log, write_tickets
+from research.qualifier.src.dataset_build.runner import read_log, write_tickets
 
 CARDS = draw_cards(load_config(), "train", 400, seed=21)
 PROMPTS = load_prompt_config()

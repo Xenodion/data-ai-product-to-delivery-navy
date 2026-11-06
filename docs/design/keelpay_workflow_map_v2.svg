@@ -1,0 +1,176 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 1130" width="1120" height="1130" font-family="Inter, 'Segoe UI', 'DejaVu Sans', Helvetica, Arial, sans-serif">
+  <title>Keelpay decision flow</title>
+  <defs>
+    <marker id="a-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2f55b5"/></marker>
+    <marker id="a-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0L10 5L0 10z" fill="#e65100"/></marker>
+    <marker id="a-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0L10 5L0 10z" fill="#00838f"/></marker>
+  </defs>
+  <style>
+    .t  { font-size: 15px; font-weight: 700; fill: #1f2a44; text-anchor: middle; }
+    .s  { font-size: 13px; fill: #4a5568; text-anchor: middle; }
+    .lane { font-size: 13px; font-weight: 800; letter-spacing: 0.8px; }
+    .gl { font-size: 11px; font-weight: 800; letter-spacing: 0.7px; fill: #7a5c00; text-anchor: middle; }
+    .gq { font-size: 15px; font-weight: 700; fill: #3f3000; text-anchor: middle; }
+    .gs { font-size: 12.5px; fill: #6b5300; text-anchor: middle; }
+    .p  { font-size: 12px; font-weight: 600; text-anchor: middle; }
+    .l  { font-size: 13px; fill: #33415c; }
+    .lb { font-size: 13px; font-weight: 600; fill: #2f55b5; }
+    .lo { font-size: 13px; font-weight: 600; fill: #c75b00; }
+    .step { fill: #fff; stroke: #33415c; stroke-width: 1.4; }
+    .hum  { fill: #fff; stroke: #ef8a17; stroke-width: 1.8; }
+    .gate { fill: #fdf0c4; stroke: #b8901a; stroke-width: 1.8; }
+    .main { fill: none; stroke: #2f55b5; stroke-width: 3; }
+    .fix  { fill: none; stroke: #e65100; stroke-width: 2.2; }
+    .tool { fill: none; stroke: #00838f; stroke-width: 1.6; stroke-dasharray: 6 4; }
+    .pv { fill: #e6defa; } .pvt { fill: #4a3596; }
+    .pb { fill: #dfe7f5; } .pbt { fill: #27488f; }
+    .pt { fill: #c5edf0; } .ptt { fill: #00626c; }
+    .po { fill: #ffe3c2; } .pot { fill: #a84b00; }
+    .pg { fill: #e7efe8; } .pgt { fill: #2e6b32; }
+  </style>
+
+  <rect width="1120" height="1130" fill="#fff"/>
+  <text x="24" y="38" font-size="22" font-weight="700" fill="#1f2a44">Keelpay · How a ticket gets answered</text>
+  <text x="24" y="62" font-size="14" fill="#4a5568">A small model reads the ticket, Python picks the desk, a second model drafts, and a person approves every reply.</text>
+
+  <!-- Lanes -->
+  <rect x="20" y="78" width="530" height="1000" rx="14" fill="#f1f5fb"/>
+  <text x="38" y="102" class="lane" fill="#2f55b5">AUTOMATIC</text>
+  <rect x="570" y="78" width="530" height="1000" rx="14" fill="#fff6e8"/>
+  <text x="588" y="102" class="lane" fill="#c75b00">SUPPORT AGENT</text>
+
+  <!-- 1 Ticket -->
+  <rect x="125" y="112" width="320" height="94" rx="10" class="step"/>
+  <text x="285" y="136" class="t">1. A ticket arrives</text>
+  <text x="285" y="157" class="s">A merchant writes in French or English.</text>
+  <rect x="207" y="170" width="156" height="23" rx="11" class="pg"/><text x="285" y="186" class="p pgt">Demo Injector script</text>
+
+  <!-- 2 Qualifier -->
+  <rect x="125" y="236" width="320" height="116" rx="10" fill="#fff" stroke="#6d4fc2" stroke-width="1.8"/>
+  <text x="285" y="260" class="t">2. Qualifier Model reads it</text>
+  <text x="285" y="281" class="s">Our fine-tuned LLM fills 7 fields: intent,</text>
+  <text x="285" y="299" class="s">urgency, amount... It decides nothing.</text>
+  <rect x="197" y="315" width="176" height="23" rx="11" class="pv"/><text x="285" y="331" class="p pvt">Our server, small LLM on CPU</text>
+
+  <!-- Gate 1 -->
+  <path d="M285 380L420 450L285 520L150 450z" class="gate"/>
+  <text x="285" y="432" class="gl">GATE 1 · ROUTING NODE</text>
+  <text x="285" y="454" class="gq">Is the desk known?</text>
+  <text x="285" y="474" class="gs">Python rules, no AI</text>
+  <text x="36" y="395" class="l" font-weight="600">Rules:</text>
+  <text x="36" y="413" class="l">intent → desk</text>
+  <text x="36" y="431" class="l">urgency → priority</text>
+
+  <!-- 3 Drafter -->
+  <rect x="125" y="572" width="320" height="118" rx="10" fill="#fff" stroke="#00838f" stroke-width="1.8"/>
+  <text x="285" y="596" class="t">3. Drafter Model writes a reply</text>
+  <text x="285" y="617" class="s">V1: from the ticket and its context. If it fails,</text>
+  <text x="285" y="635" class="s">the agent writes the reply by hand.</text>
+  <rect x="220" y="652" width="130" height="23" rx="11" class="pt"/><text x="285" y="668" class="p ptt">External LLM API</text>
+
+  <!-- V2 tools -->
+  <rect x="60" y="746" width="450" height="124" rx="10" fill="#f6fcfd" stroke="#00838f" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="76" y="768" font-size="13" font-weight="700" fill="#00838f">V2 only: tools the Drafter can call (read-only)</text>
+  <rect x="76" y="780" width="202" height="76" rx="9" fill="#fff" stroke="#00838f" stroke-width="1.4"/>
+  <text x="177" y="802" class="t">Lookup</text>
+  <text x="177" y="822" class="s">finds the payment in a</text>
+  <text x="177" y="840" class="s">fake transactions table</text>
+  <rect x="292" y="780" width="202" height="76" rx="9" fill="#fff" stroke="#00838f" stroke-width="1.4"/>
+  <text x="393" y="802" class="t">Retrieval</text>
+  <text x="393" y="822" class="s">finds the right passage</text>
+  <text x="393" y="840" class="s">in a fake help centre</text>
+
+  <!-- Re-router -->
+  <rect x="610" y="396" width="260" height="108" rx="10" class="hum"/>
+  <text x="740" y="420" class="t">Re-router</text>
+  <text x="740" y="441" class="s">Reads the ticket and picks</text>
+  <text x="740" y="459" class="s">the right desk.</text>
+  <rect x="660" y="471" width="160" height="23" rx="11" class="po"/><text x="740" y="487" class="p pot">Web app, Re-router tab</text>
+
+  <!-- Gate 2 -->
+  <path d="M740 530L850 590L740 650L630 590z" class="gate"/>
+  <text x="740" y="572" class="gl">GATE 2</text>
+  <text x="740" y="594" class="gq">First desk change?</text>
+  <text x="740" y="613" class="gs">Limits the loop</text>
+
+  <!-- Manual triage -->
+  <rect x="900" y="548" width="170" height="84" rx="10" class="hum"/>
+  <text x="985" y="573" class="t">Manual handling</text>
+  <text x="985" y="594" class="s">A person takes over,</text>
+  <text x="985" y="612" class="s">no more retries.</text>
+
+  <!-- Validator group -->
+  <rect x="590" y="664" width="490" height="312" rx="12" fill="none" stroke="#ef8a17" stroke-width="1.6" stroke-dasharray="7 5"/>
+  <text x="604" y="688" font-size="15" font-weight="700" fill="#1f2a44">Validator</text>
+  <text x="984" y="722" class="l" text-anchor="middle">Reads the ticket and the draft.</text>
+  <rect x="902" y="676" width="164" height="23" rx="11" class="po"/><text x="984" y="692" class="p pot">Web app, Validator tab</text>
+
+  <!-- Gate 3 -->
+  <path d="M740 690L850 750L740 810L630 750z" class="gate"/>
+  <text x="740" y="733" class="gl">GATE 3</text>
+  <text x="740" y="756" class="gq">Right desk?</text>
+
+  <!-- Gate 4 -->
+  <path d="M740 842L850 902L740 962L630 902z" class="gate"/>
+  <text x="740" y="885" class="gl">GATE 4</text>
+  <text x="740" y="908" class="gq">Is the draft good?</text>
+
+  <!-- Edit -->
+  <rect x="900" y="868" width="168" height="68" rx="10" class="hum"/>
+  <text x="984" y="894" class="t">Agent edits it</text>
+  <text x="984" y="915" class="s">directly in the draft</text>
+
+  <!-- Send -->
+  <rect x="620" y="1006" width="240" height="60" rx="10" fill="#fff" stroke="#2e7d32" stroke-width="2"/>
+  <text x="740" y="1030" class="t">Reply sent (simulated)</text>
+  <text x="740" y="1051" class="s">Only after a human click</text>
+
+  <!-- Main path -->
+  <path class="main" d="M285 206V234" marker-end="url(#a-blue)"/>
+  <path class="main" d="M285 352V378" marker-end="url(#a-blue)"/>
+  <path class="main" d="M285 520V570" marker-end="url(#a-blue)"/>
+  <text x="274" y="549" class="lb" text-anchor="end">Yes: desk assigned</text>
+  <path class="main" d="M445 660H540V750H628" marker-end="url(#a-blue)"/>
+  <text x="456" y="651" class="lb">draft ready</text>
+  <path class="main" d="M740 810V840" marker-end="url(#a-blue)"/>
+  <text x="750" y="831" class="lb">Yes</text>
+  <path class="main" d="M740 962V1004" marker-end="url(#a-blue)"/>
+  <text x="750" y="992" class="lb">Yes: agent approves</text>
+  <path class="main" d="M850 902H898" marker-end="url(#a-blue)"/>
+  <text x="874" y="893" class="lb" text-anchor="middle">No</text>
+  <path class="main" d="M984 936V1036H862" marker-end="url(#a-blue)"/>
+  <text x="994" y="1000" class="lb">then approves</text>
+
+  <!-- Corrections -->
+  <path class="fix" d="M420 450H608" marker-end="url(#a-orange)"/>
+  <text x="430" y="441" class="lo">No: a person must pick it</text>
+  <path class="fix" d="M500 450V545H400V570" stroke-dasharray="7 5" marker-end="url(#a-orange)"/>
+  <circle cx="500" cy="450" r="4.5" fill="#e65100"/>
+  <text x="490" y="486" class="lo" text-anchor="end">a draft is still</text>
+  <text x="490" y="504" class="lo" text-anchor="end">written anyway</text>
+  <path class="fix" d="M740 504V528" marker-end="url(#a-orange)"/>
+  <path class="fix" d="M630 590H447" marker-end="url(#a-orange)"/>
+  <text x="456" y="612" class="lo">Yes: one new draft</text>
+  <path class="fix" d="M850 590H898" marker-end="url(#a-orange)"/>
+  <text x="874" y="581" class="lo" text-anchor="middle">No</text>
+  <path class="fix" d="M850 750H1092V450H872" marker-end="url(#a-orange)"/>
+  <text x="862" y="741" class="lo">No: wrong desk</text>
+
+  <!-- Tools link -->
+  <path class="tool" d="M285 690V744" marker-end="url(#a-teal)"/>
+  <text x="295" y="722" font-size="13" fill="#00838f">V2: asks for facts</text>
+
+  <!-- Notes -->
+  <text x="60" y="908" class="l" font-weight="700">Good to know</text>
+  <text x="60" y="932" class="l">Urgency never changes the path: it is shown to the agent.</text>
+  <text x="60" y="954" class="l">No model can send a reply or pick a queue.</text>
+  <text x="60" y="976" class="l">All of this runs inside our Python backend,</text>
+  <text x="60" y="994" class="l">which remembers each ticket and where it stands.</text>
+  <text x="60" y="1016" class="l">The web app has a third tab, Overview, to watch the flow live.</text>
+
+  <!-- Legend -->
+  <path d="M38 1102L50 1094L62 1102L50 1110z" class="gate"/><text x="70" y="1107" class="l">decision</text>
+  <path class="main" d="M150 1102H186"/><text x="194" y="1107" class="l">normal path</text>
+  <path class="fix" d="M296 1102H332"/><text x="340" y="1107" class="l">correction or fallback</text>
+  <path class="tool" d="M494 1102H530"/><text x="538" y="1107" class="l">V2 only</text>
+</svg>

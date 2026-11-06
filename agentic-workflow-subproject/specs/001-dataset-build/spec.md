@@ -6,7 +6,7 @@
 
 ## Decisions (invariants)
 
-- **Contract**: `src/dataset_build/schema.py` (`TicketLabel`) and `docs/label_definitions.md`. Seven string fields; `UNDEFINED`/`OTHER` uppercase sentinels; `""` = absent, only on `transaction_id`, `amount`, `currency`.
+- **Contract**: `research/qualifier/src/dataset_build/schema.py` (`TicketLabel`) and `docs/label_definitions.md`. Seven string fields; `UNDEFINED`/`OTHER` uppercase sentinels; `""` = absent, only on `transaction_id`, `amount`, `currency`.
 - **Labels come from the scenario card, not from an LLM**: a seeded sampler draws a card, tables derive the label, the LLM only writes the ticket. Rejected: one LLM writing and labelling (label noise).
 - **LoRA SFT only.** No reward model, no RL. Confidence and the deterministic-vs-ML methodology are a separate parked sub-project; the dataset metadata is its base.
 - **Only Chinese-family models** (Vincent's rule: American models are too expensive for a fictional course project). Roles and models (OpenRouter ids of 2026-10-31, to confirm at gate 1):

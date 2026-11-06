@@ -25,9 +25,13 @@ The canonical names are **Qualifier Model** (seven-field extractor), **Routing N
 
 ## Reference flow
 
-Demo Injector → Qualifier Model → Routing Node → Lookup Node / Retrieval Node → Drafter Model → Validator → simulated send. An unclear or wrong desk goes to the Re-router while the draft is still prepared. An unidentified payment may require selection or clarification; unknown sentiment does not block routing. Priority alone does not block draft preparation.
+![Keelpay target flow: deterministic rules and tools on top, the two LLMs in the middle, the human app at the bottom](docs/design/keelpay_workflow_map.png)
 
-Bounded L3 assignment, assisted lookup/context, L2 reply, human send. The first desk correction triggers one re-preparation; a second reroute requires manual triage. Do not automatically split multi-intent tickets.
+This is the target flow; it is not built yet. Steps are grouped by what they are, because that tells you how far you can trust them: deterministic Python rules and tools give the same result every time, the LLMs can be wrong so they only propose, and the Support Agent has the last word in the app. The Qualifier Model only extracts fields. Only the Drafter Model calls tools, and the first version drafts without them.
+
+Demo Injector → Qualifier Model → Routing Node → Drafter Model (calling the Lookup Node for SQL and the Retrieval Node for RAG) → Validator → simulated send. An unclear or wrong desk goes to the Re-router while the draft is still prepared. An unidentified payment may require selection or clarification; unknown sentiment does not block routing. Priority alone does not block draft preparation.
+
+Bounded L3 assignment, assisted lookup/context, L2 reply, human send. The first desk correction triggers one new draft; after a second change, the Support Agent fixes the draft or writes the reply by hand. Do not automatically split multi-intent tickets.
 
 Three target tabs: **Overview**, **Re-router**, and **Validator**. Clicking a human node opens an eligible task. Waiting time and oldest-first are MUST for the demo; advanced urgency and multi-agent are SHOULD. Overview reflects backend events; Langfuse observes processing but does not store operational queues.
 

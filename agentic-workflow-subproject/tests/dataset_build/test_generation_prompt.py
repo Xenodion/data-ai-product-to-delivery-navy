@@ -1,12 +1,12 @@
 import re
 
-from src.dataset_build.cards import draw_cards, load_config
-from src.dataset_build.generation_prompt import (
+from research.qualifier.src.dataset_build.cards import draw_cards, load_config
+from research.qualifier.src.dataset_build.generation_prompt import (
     format_ticket,
     load_prompt_config,
     render_prompt,
 )
-from src.dataset_build.schema import SUB_INTENTS
+from research.qualifier.src.dataset_build.schema import SUB_INTENTS
 
 CARDS = load_config()
 PROMPTS = load_prompt_config()

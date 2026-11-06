@@ -1,8 +1,8 @@
 import json
 
-from src.dataset_build.cards import draw_cards, load_config
-from src.dataset_build.openrouter import Budget, Completion, load_run_config
-from src.dataset_build.review import (
+from research.qualifier.src.dataset_build.cards import draw_cards, load_config
+from research.qualifier.src.dataset_build.openrouter import Budget, Completion, load_run_config
+from research.qualifier.src.dataset_build.review import (
     differing_fields,
     judge_prompts,
     load_definitions,
@@ -11,7 +11,7 @@ from src.dataset_build.review import (
     uses_voter_b,
     voter_prompts,
 )
-from src.dataset_build.runner import TicketRecord
+from research.qualifier.src.dataset_build.runner import TicketRecord
 
 RUN = load_run_config()
 DEFINITIONS = load_definitions()
@@ -198,7 +198,7 @@ def test_review_tickets_asks_the_judge_again_when_its_first_answer_is_unusable(
 
 
 def test_rejudge_rejected_recovers_a_ticket_the_new_judge_reads_as_labelled(tmp_path):
-    from src.dataset_build.review import rejudge_rejected
+    from research.qualifier.src.dataset_build.review import rejudge_rejected
 
     card = CARDS[4]
     wrong = {

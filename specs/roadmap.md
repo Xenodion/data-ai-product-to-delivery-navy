@@ -1,5 +1,7 @@
 # NAVY Delivery Roadmap
 
+Implementation planning update, 5 November 2026: see [integrated technical plan](005-010-demo-delivery/plan.md), [execution checklist](005-010-demo-delivery/tasks.md), and parallel [confidence study](011-confidence-signals/spec.md). These refine the V1/V2 sequence below: direct drafting is V1; agentic tools and retrieval are V2; confidence research does not block V1. The local [flow script](012-flow-script/spec.md) comes before the runtime lots below.
+
 Date: 3 November 2026. Status: proposed product and delivery roadmap; implementation remains future work unless stated in the project documents.
 
 ## Frame
@@ -11,7 +13,7 @@ Shared references: workflow `docs/design/copilot-workflow.md`, terminology `docs
 | Planned lot | Verifiable outcome | Dependencies | Plan focus |
 |---|---|---|---|
 | 004-routing-node | Same input yields the same Routing Node decisions and reasons; ambiguity isolated by dependency | Product specification and existing seven-field contract | State, desk/priority/payment/draft tables, reason codes, versioning, edge cases; see `specs/004-routing-node/` |
-| 005-ticket-runtime | Injected ticket survives and is retrievable after reconnect/restart | 004 contracts | CPU GGUF serving, API, durable storage, async execution, idempotency, versions/errors; evaluate LangGraph/LangChain or plain Python for orchestration |
+| 005-ticket-runtime | Injected ticket survives and is retrievable after reconnect/restart | 004 contracts | CPU GGUF serving, API, durable storage, async execution, idempotency, versions/errors; plain Python orchestration, as decided in feature 012 |
 | 006-grounded-drafting | Reply or clarification uses the correct synthetic context | 004, 005 interfaces | Tenant-scoped fixtures, KB, candidates, synthetic-only external Drafter Model, typed allowlisted read tools, checks/recovery |
 | 007-agent-workspaces | One English-language V1 support experience resolves, reviews, corrects, reroutes, edits, and sends through gates | Product workflow; 004–006 interfaces | Two human workspaces, FIFO/wait, persistence, history, accessibility, UX acceptance |
 | 008-live-overview | The same V1 experience shows injected flow/counts; a human node opens a real task | 005 events, 007 navigation | Python Demo Injector, Overview, queues, actual presence, defined ratios, drill-down/animation |

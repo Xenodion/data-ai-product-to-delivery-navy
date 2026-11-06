@@ -1,6 +1,6 @@
 import pytest
 
-from src.dataset_build.cards import draw_cards, load_config, trap_rate
+from research.qualifier.src.dataset_build.cards import draw_cards, load_config, trap_rate
 
 CONFIG = load_config()
 

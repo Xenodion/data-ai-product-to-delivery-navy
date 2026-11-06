@@ -1,14 +1,14 @@
 import json
 
-from src.baselines import (
+from research.qualifier.src.baselines import (
     extract_references,
     fit_tfidf,
     predict_majority,
     predict_rules,
     predict_tfidf,
 )
-from src.dataset_build.schema import TicketLabel
-from src.scoring import parse_output
+from research.qualifier.src.dataset_build.schema import TicketLabel
+from research.qualifier.src.scoring import parse_output
 
 LABEL = TicketLabel(
     intent="dispute",

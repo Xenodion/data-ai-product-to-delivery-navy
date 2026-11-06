@@ -2,8 +2,8 @@ import json
 
 import pytest
 
-from src.dataset_build.schema import TicketLabel
-from src.scoring import (
+from research.qualifier.src.dataset_build.schema import TicketLabel
+from research.qualifier.src.scoring import (
     by_trap,
     macro_f1,
     mean_interval,

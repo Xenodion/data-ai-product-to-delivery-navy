@@ -4,17 +4,17 @@ import re
 
 import pytest
 
-from src.dataset_build.cards import load_config
-from src.dataset_build.export import export_dataset, jaccard, shingles
-from src.dataset_build.generation_prompt import load_prompt_config, render_prompt
-from src.dataset_build.openrouter import Budget, Completion, load_run_config
-from src.dataset_build.production import (
+from research.qualifier.src.dataset_build.cards import load_config
+from research.qualifier.src.dataset_build.export import export_dataset, jaccard, shingles
+from research.qualifier.src.dataset_build.generation_prompt import load_prompt_config, render_prompt
+from research.qualifier.src.dataset_build.openrouter import Budget, Completion, load_run_config
+from research.qualifier.src.dataset_build.production import (
     ProductionStoppedError,
     run_split,
     split_reserves,
 )
-from src.dataset_build.review import load_definitions
-from src.dataset_build.splits import SplitSizes, draw_pool, split_pool
+from research.qualifier.src.dataset_build.review import load_definitions
+from research.qualifier.src.dataset_build.splits import SplitSizes, draw_pool, split_pool
 
 CARD_CONFIG, RUN, PROMPTS, DEFINITIONS = (
     load_config(),
