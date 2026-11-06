@@ -21,3 +21,6 @@ mlartifacts/
 mlruns/
 # Figures live inside the executed notebooks; local exports are not committed
 docs/figures/
+
+# Flow script run logs
+flow/runs/

@@ -1,0 +1,19 @@
+# Endpoints, models and versions of the flow. Secrets stay in .env.
+# Model file: gs://navy-team-llmops-bucket/pipeline_root/158407666882/keelpay-router-compact-variants-pipeline-20261102155447/compact-variants-component_-2725338443608489984/gguf_q4/model-q4.gguf
+# MD5 b23b4f3092c9083c1c741551ec351dc8, copied to agentic-workflow-subproject/models/
+qualifier_url = "http://127.0.0.1:8081/completion"
+qualifier_model_version = "d-q4"
+qualifier_max_tokens = 160       # same value as the D-q4 evaluation
+qualifier_timeout_seconds = 120
+
+drafter_url = "https://openrouter.ai/api/v1/chat/completions"
+drafter_model = "mistralai/mistral-nemo"
+drafter_prompt_version = "drafter-v1"
+drafter_temperature = 0.2
+drafter_max_tokens = 500
+drafter_timeout_seconds = 60
+
+policy_version = "demo-policy-v1"
+transient_retries = 3            # attempts on network errors, 429 and 5xx
+retry_wait_seconds = 1.0
+merchant_id = "M-DEMO"           # val.csv has no merchant column
