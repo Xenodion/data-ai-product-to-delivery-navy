@@ -6,7 +6,7 @@ Detailed scope and gates: [plan.md](plan.md), [spec.md](spec.md). Items are unim
 
 Feature [012](../012-flow-script/tasks.md) comes first and delivers the routing, Qualifier and direct Drafter steps as local functions (T05–T07).
 
-- [ ] T01 — Specify state transitions, event and HTTP schemas, idempotency and queue order (#30).
+- [x] T01 — Specify state transitions, event and HTTP schemas, idempotency and queue order (#30). See [runtime contract](runtime-contract.md).
 - [ ] T02 — Define seed scenarios, session reset fence, cumulative metrics and recovery acceptance cases (#30, #32, #38).
 - [ ] T03 — Provision local PostgreSQL, migrations, API and flow loop (#31).
 - [ ] T04 — Implement ingress, restart recovery, reset and event persistence; exercise restarts and duplicate requests (#31, #32).
