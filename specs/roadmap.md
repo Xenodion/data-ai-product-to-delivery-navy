@@ -1,5 +1,30 @@
 # NAVY Delivery Roadmap
 
+## Current state and next steps
+
+Updated 6 November 2026. Read this first, then `agentic-workflow-subproject/LAYOUT.md`.
+
+**State**
+- Work sits on the local branch `refactor/subproject-layout`, stacked on `feat/llmops-platform-improvements`. Neither is pushed or merged.
+- `flow/` runs a validation ticket through served D-q4, the Routing Node and a Mistral Nemo draft, then stops at the first human step. Spec: [012-flow-script](012-flow-script/spec.md).
+- Layout is frozen: `ml/` builds models, `flow/` uses them, `frontend/` shows them, and `.local/` holds everything generated. `tests/test_layout.py` enforces it.
+- Worker, leases, claims, LangChain and LangGraph are out of V1. The database comes with the API, not before.
+
+**Next steps, in order**
+1. Finish the check that is still open. The real flow with a valid Qualifier has not been rerun since the `ml/` and `.local/` moves, because the Qualifier was killed out of memory: Docker has 2.8 GiB and the `l07` Airflow stack takes about 1.3 GiB. Stop that stack or give Docker 5 to 6 GB, then run:
+   ```bash
+   cd agentic-workflow-subproject
+   docker compose -f flow/docker-compose.yml up -d
+   uv run python -m flow.runner --n 1 --seed 9
+   docker compose -f flow/docker-compose.yml down
+   ```
+   Expected in `.local/runs/`: `qualifier.status` is `valid`, and a draft exists.
+2. Owner decisions: merge `refactor/subproject-layout` into `feat/llmops-platform-improvements`, push, and open the pull request to `main`.
+3. Owner decision: remove the claim wording from `docs/design/copilot-workflow.md` and `docs/design/architecture.md`. Until then, the 005-010 spec overrides them on this point.
+4. Build the API and PostgreSQL around `process()` and `reroute()`, with one background loop inside the API (#30, #31). Then connect the front end (#37, #38).
+5. Bring the course requirements forward: confirm them with the lecturers (#16, #44), then CI evaluation (#19), model cascade and semantic cache (#21), and the readiness checklist (#22).
+6. Review draft quality. Nemo left a `[Your Name]` signature in one trial and a stray quotation mark in another. Then add the read-only tools (#35).
+
 Implementation planning update, 5 November 2026: see [integrated technical plan](005-010-demo-delivery/plan.md), [execution checklist](005-010-demo-delivery/tasks.md), and parallel [confidence study](011-confidence-signals/spec.md). These refine the V1/V2 sequence below: direct drafting is V1; agentic tools and retrieval are V2; confidence research does not block V1. The local [flow script](012-flow-script/spec.md) comes before the runtime lots below.
 
 Date: 3 November 2026. Status: proposed product and delivery roadmap; implementation remains future work unless stated in the project documents.
