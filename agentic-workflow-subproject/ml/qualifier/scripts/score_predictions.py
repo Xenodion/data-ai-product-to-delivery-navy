@@ -12,6 +12,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
+from ml.qualifier.src.local_paths import LOGS_DIR
 from ml.qualifier.scripts.run_baselines import DATASET, SHOWN, show
 from ml.qualifier.src.scoring import by_trap, load_split, score
 from ml.qualifier.src.router_evaluation import evaluate_router
@@ -77,7 +78,7 @@ def main() -> None:
     if args.mlflow:
         extra = {f"router.{key}": value for key, value in router["counts"].items()}
         extra.update({f"router.{key}": value for key, value in router["rates"].items() if value is not None})
-        matrix_path = DATASET.parent.parent / "logs" / "mlflow" / "router_matrices" / f"{args.system_id}-{args.split}-action-matrix.json"
+        matrix_path = LOGS_DIR / "mlflow" / "router_matrices" / f"{args.system_id}-{args.split}-action-matrix.json"
         matrix_path.parent.mkdir(parents=True, exist_ok=True)
         matrix_path.write_text(json.dumps(router["action_matrix"], indent=2) + "\n", encoding="utf-8")
         run_id, created = log_evaluation(

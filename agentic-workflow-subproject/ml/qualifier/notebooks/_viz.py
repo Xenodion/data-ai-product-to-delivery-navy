@@ -1,6 +1,6 @@
 """Shared chart theme for the five journals: one palette, one look, figures exported for the slides.
 
-Every figure is saved twice (SVG for slides, PNG for quick previews) in ``docs/figures/``.
+Every figure is saved twice (SVG for slides, PNG for quick previews) in ``.local/figures/``.
 """
 
 from pathlib import Path
@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
-FIGURES = Path(__file__).resolve().parents[3] / "docs" / "figures"
+FIGURES = Path(__file__).resolve().parents[3] / ".local" / "figures"
 
 INK = "#3B2F2A"  # text, dark brown
 MUTED = "#8A7A6E"  # secondary text

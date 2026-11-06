@@ -15,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 from google.cloud import aiplatform
 from kfp import compiler
 
+from ml.qualifier.src.local_paths import LOGS_DIR, PIPELINES_DIR
 from ml.qualifier.src.constants import GCP_PROJECT_ID, GCP_REGION, DATASET_URI, PIPELINE_ROOT
 from ml.qualifier.src.pipelines.base_model_pipeline import base_model_pipeline
 from ml.qualifier.src.pipelines.compact_variants_pipeline import compact_variants_pipeline
@@ -66,7 +67,8 @@ if not args.confirm_billable_run:
 if args.pipeline == "compact" and not args.adapter_uri:
     parser.error("--adapter-uri is required by the compact pipeline")
 
-template_path = f"{args.pipeline}_pipeline.yaml"
+PIPELINES_DIR.mkdir(parents=True, exist_ok=True)
+template_path = str(PIPELINES_DIR / f"{args.pipeline}_pipeline.yaml")
 compiler.Compiler().compile(PIPELINES[args.pipeline], template_path)
 
 extra = {} if args.pipeline == "sweep" else {"test_file": args.test_file}
@@ -128,7 +130,7 @@ submission = {
         ["git", "status", "--porcelain"], text=True
     ).strip()),
 }
-receipt_dir = Path("logs") / "vertex_submissions"
+receipt_dir = LOGS_DIR / "vertex_submissions"
 receipt_dir.mkdir(parents=True, exist_ok=True)
 receipt_path = receipt_dir / f"{tracking_id}.json"
 receipt_path.write_text(json.dumps(submission, indent=2, default=str) + "\n", encoding="utf-8")

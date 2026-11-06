@@ -20,11 +20,11 @@ EXPECTED_ROWS = {"val": 293, "test_natural": 610, "test_traps": 380}
 SPLIT_FILES = {name: ROOT / "data" / "dataset" / f"{name}.csv" for name in EXPECTED_ROWS}
 TRAIN_FILE = ROOT / "data" / "dataset" / "train.csv"
 SOURCE_FILES = {
-    "prompt": ROOT / "research" / "qualifier" / "src" / "prompt.py",
-    "inference_component": ROOT / "research" / "qualifier" / "src" / "pipeline_components" / "inference_component.py",
-    "base_pipeline": ROOT / "research" / "qualifier" / "src" / "pipelines" / "base_model_pipeline.py",
-    "data_transformation": ROOT / "research" / "qualifier" / "src" / "pipeline_components" / "data_transformation_component.py",
-    "compiled_template": ROOT / "base_pipeline.yaml",
+    "prompt": ROOT / "ml" / "qualifier" / "src" / "prompt.py",
+    "inference_component": ROOT / "ml" / "qualifier" / "src" / "pipeline_components" / "inference_component.py",
+    "base_pipeline": ROOT / "ml" / "qualifier" / "src" / "pipelines" / "base_model_pipeline.py",
+    "data_transformation": ROOT / "ml" / "qualifier" / "src" / "pipeline_components" / "data_transformation_component.py",
+    "compiled_template": ROOT / ".local" / "pipelines" / "base_pipeline.yaml",
 }
 
 

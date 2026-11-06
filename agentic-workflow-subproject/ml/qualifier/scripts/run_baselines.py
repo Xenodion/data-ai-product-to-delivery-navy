@@ -12,6 +12,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
+from ml.qualifier.src.local_paths import LOGS_DIR
 from ml.qualifier.src.baselines import fit_tfidf, predict_majority, predict_rules, predict_tfidf
 from ml.qualifier.src.scoring import by_trap, load_split, paired_bootstrap, score, severities
 from ml.qualifier.src.tracking import log_evaluation
@@ -69,7 +70,7 @@ def main() -> None:
     def track(split: str, features, labels, trap_tags, predictions) -> None:
         if not args.mlflow:
             return
-        out_dir = Path("logs/mlflow/baseline_predictions")
+        out_dir = LOGS_DIR / "mlflow" / "baseline_predictions"
         out_dir.mkdir(parents=True, exist_ok=True)
         out_path = out_dir / f"{split}.csv"
         with out_path.open("w", encoding="utf-8", newline="") as handle:

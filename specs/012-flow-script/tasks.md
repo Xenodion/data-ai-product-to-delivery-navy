@@ -5,7 +5,7 @@ Status: done on 5 November 2026. Each task lists its check.
 ## Setup
 
 - [x] T001 Find the GCS path of `model-q4.gguf`. Check: recorded in `flow/config.toml`.
-- [x] T002 Add `langfuse`, `flow/config.toml`, and `flow/runs/` to `.gitignore`. Check: `uv sync` passes, `git status` ignores the runs folder, and `@observe` works on the installed version.
+- [x] T002 Add `langfuse`, `flow/config.toml`, and the runs folder to `.gitignore`. Check: `uv sync` passes, `git status` ignores the runs folder, and `@observe` works on the installed version.
 - [x] T003 Add `flow/docker-compose.yml`, fetch the GGUF, start the service. Check: health endpoint is OK; cold start and memory recorded (SC-006).
 
 ## Core, tests first

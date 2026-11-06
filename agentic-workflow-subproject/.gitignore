@@ -11,16 +11,5 @@ data/*
 !data/_gate2*/
 !data/runs/
 ml/*/notebooks/outputs/
-logs/
-models/
-*_pipeline.yaml
-mlflow.db
-mlflow.db-shm
-mlflow.db-wal
-mlartifacts/
-mlruns/
-# Figures live inside the executed notebooks; local exports are not committed
-docs/figures/
+.local/
 
-# Flow script run logs
-flow/runs/

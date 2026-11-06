@@ -1,4 +1,4 @@
-# D-q4 Qualifier on CPU. The model file stays outside Git, in agentic-workflow-subproject/models/.
+# D-q4 Qualifier on CPU. `uv run python -m flow.setup_local` fetches the model into .local/models/.
 services:
   qualifier:
     image: ghcr.io/ggml-org/llama.cpp:server-b5974
@@ -16,4 +16,4 @@ services:
     ports:
       - "127.0.0.1:8081:8080"
     volumes:
-      - ../models:/models:ro
+      - ../.local/models:/models:ro

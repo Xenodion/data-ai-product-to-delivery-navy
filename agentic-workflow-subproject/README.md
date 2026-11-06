@@ -58,14 +58,15 @@ The plan, with its gates, is `docs/roadmap.md`; the day-by-day account is in `ml
 cd agentic-workflow-subproject
 uv lock --python 3.11
 uv sync
-cp .env.example .env   # fill in GCP_PROJECT_ID, GCP_REGION, GCP_BUCKET_NAME (never commit .env)
+cp .env.example .env   # fill in the values (never commit .env)
+uv run python -m flow.setup_local   # creates .local/ and fetches the Qualifier model, about 2 GB
 uv run python ml/qualifier/scripts/validate_gcp_setup.py
 ```
 
 Start the local MLflow tracking server in a second terminal (localhost only; no cloud resources):
 
 ```bash
-uv run mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./mlartifacts --host 127.0.0.1 --port 5000
+uv run mlflow server --backend-store-uri sqlite:///.local/mlflow/mlflow.db --default-artifact-root ./.local/mlflow/artifacts --host 127.0.0.1 --port 5000
 ```
 
 The project dependency now includes MLflow. Regenerate `uv.lock` with `uv lock --python 3.11` before syncing dependencies.
@@ -92,7 +93,7 @@ The B3 import does not access Vertex or GCS. Inspect Vertex Pipelines/ML Metadat
 
 `flow/` takes a validation ticket through the Qualifier Model, the Routing Node and the Drafter Model, and stops at the first human step. Spec: [`specs/012-flow-script`](../specs/012-flow-script/spec.md).
 
-Needs `models/model-q4.gguf` (source in `flow/config.toml`), Docker, `OPENROUTER_API_KEY` and the Langfuse keys in `.env`. Without Langfuse keys, the flow still runs.
+Needs the setup above, Docker, `OPENROUTER_API_KEY` and the Langfuse keys in `.env`. The Qualifier needs about 2 GB of free Docker memory: when it runs out, the container stops and tickets go to the Re-router with status `unavailable`. Without Langfuse keys, the flow still runs.
 
 ```bash
 docker compose -f flow/docker-compose.yml up -d    # about 40 s to load the model
@@ -100,7 +101,7 @@ uv run python -m flow.runner --n 5 --seed 7 --every 30
 docker compose -f flow/docker-compose.yml down
 ```
 
-Each run appends to `flow/runs/<run_id>.jsonl`, which Git ignores. It sends nothing, and it reads the validation split only.
+Each run writes to `.local/runs/<run_id>.jsonl`. It sends nothing, and it reads the validation split only.
 
 ## Training settings
 
@@ -137,6 +138,7 @@ ml/qualifier/
   scripts/                 # GCP, baselines, scoring and MLflow entry points
   notebooks/               # the five Qualifier journals and their helpers
 data/dataset/              # frozen synthetic dataset; see .gitignore for other artifacts
+.local/                    # untracked: models, MLflow, logs, compiled pipelines, runs, figures
 docs/                      # protocol, roadmap, methodology, results (see the table above)
 tests/                     # same folders as the code: flow/, qualifier/
 ```

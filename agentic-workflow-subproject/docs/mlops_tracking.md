@@ -10,7 +10,7 @@ The subproject dependency list includes MLflow. Regenerate the lock with the pro
 cd agentic-workflow-subproject
 Copy-Item .env.example .env  # set only the local values needed for your task
 uv sync
-uv run mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./mlartifacts --host 127.0.0.1 --port 5000
+uv run mlflow server --backend-store-uri sqlite:///.local/mlflow/mlflow.db --default-artifact-root ./.local/mlflow/artifacts --host 127.0.0.1 --port 5000
 ```
 
 Open `http://127.0.0.1:5000`. Stop the local process with Ctrl+C. The local database and artifact directory are ignored by Git. This store is per-machine and is not the team's shared system of record. Before using a shared MLflow server, decide the backend database, artifact storage, access control, backup, and retention.

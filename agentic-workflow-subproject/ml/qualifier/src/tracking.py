@@ -16,6 +16,8 @@ from typing import Any
 
 from dotenv import load_dotenv
 
+from ml.qualifier.src.local_paths import LOGS_DIR
+
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 load_dotenv(PROJECT_ROOT / ".env", override=False)
 
@@ -111,7 +113,7 @@ def _safe_prediction_artifact(source_path: Path) -> Path:
     })
     if "valid_json" in frame:
         safe["valid_json"] = frame["valid_json"]
-    destination_dir = PROJECT_ROOT / "logs" / "mlflow" / "sanitized_predictions"
+    destination_dir = LOGS_DIR / "mlflow" / "sanitized_predictions"
     destination_dir.mkdir(parents=True, exist_ok=True)
     destination = destination_dir / f"{source_path.stem}-{sha256_file(source_path)[:12]}.csv"
     safe.to_csv(destination, index=False)

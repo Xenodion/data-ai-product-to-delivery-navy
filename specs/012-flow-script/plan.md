@@ -11,7 +11,7 @@ Plain Python functions chain the steps, Pydantic types their inputs and outputs,
 - **Language**: Python 3.11, in the `agentic-workflow-subproject` environment.
 - **Already installed**: `httpx`, `pydantic`, `tenacity`, `python-dotenv`.
 - **New dependency**: `langfuse` only.
-- **Storage**: JSONL under `flow/runs/`, ignored by Git.
+- **Storage**: JSONL under `.local/runs/`, ignored by Git.
 - **Testing**: pytest with fake adapters; one manual real-model smoke test.
 - **Constitution**: `.specify/memory/constitution.md` is still the blank template, so there is no gate to check. Repository rules apply.
 
@@ -29,7 +29,6 @@ agentic-workflow-subproject/
     runner.py            # CLI: ticket selection, cadence, JSONL
     config.toml          # endpoints, models, timeouts, budget, versions
     docker-compose.yml   # Qualifier only
-    runs/                # ignored
   tests/flow/
     test_router.py
     test_pipeline.py

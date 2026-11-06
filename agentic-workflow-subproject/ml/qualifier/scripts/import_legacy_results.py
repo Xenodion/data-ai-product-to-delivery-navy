@@ -14,6 +14,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
+from ml.qualifier.src.local_paths import LOGS_DIR
 from ml.qualifier.src.scoring import load_split, score
 from ml.qualifier.src.router_evaluation import evaluate_router
 from ml.qualifier.src.tracking import (
@@ -212,7 +213,7 @@ def main() -> None:
         if args.dry_run:
             completed.append({"system_id": system_id, "split": split, "source": str(source.relative_to(ROOT)), "n": context["evaluation_n"]})
             continue
-        matrix_dir = ROOT / "logs" / "mlflow" / "router_matrices"
+        matrix_dir = LOGS_DIR / "mlflow" / "router_matrices"
         matrix_dir.mkdir(parents=True, exist_ok=True)
         matrix_path = matrix_dir / f"{system_id}-{split}-action-matrix.json"
         matrix_path.write_text(json.dumps(context["router_matrix"], indent=2) + "\n", encoding="utf-8")

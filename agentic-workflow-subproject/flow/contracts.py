@@ -38,6 +38,8 @@ class FlowConfig(BaseModel):
 
     model_config = FROZEN
 
+    qualifier_model_uri: str
+    qualifier_model_md5: str
     qualifier_url: str
     qualifier_model_version: str
     qualifier_max_tokens: int

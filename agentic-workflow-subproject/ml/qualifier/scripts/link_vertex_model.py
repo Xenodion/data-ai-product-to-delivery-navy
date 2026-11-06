@@ -13,6 +13,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
+from ml.qualifier.src.local_paths import LOGS_DIR
 from ml.qualifier.src.tracking import _mlflow, git_provenance, log_record
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -47,7 +48,7 @@ def main() -> None:
         "scorer_version": source.data.tags.get("scorer_version", "unknown"),
         "vertex_pipeline_job_id": source.data.tags.get("vertex_pipeline_job_id", "unknown"),
     }
-    receipt_dir = ROOT / "logs" / "vertex_registry_links"
+    receipt_dir = LOGS_DIR / "vertex_registry_links"
     receipt_dir.mkdir(parents=True, exist_ok=True)
     receipt_key = hashlib.sha256(f"{args.run_id}:{args.model_resource}:{args.alias}".encode()).hexdigest()[:16]
     receipt_path = receipt_dir / f"{args.system_id}-{receipt_key}.json"

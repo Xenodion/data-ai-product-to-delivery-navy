@@ -1,6 +1,6 @@
 # Endpoints, models and versions of the flow. Secrets stay in .env.
-# Model file: gs://navy-team-llmops-bucket/pipeline_root/158407666882/keelpay-router-compact-variants-pipeline-20261102155447/compact-variants-component_-2725338443608489984/gguf_q4/model-q4.gguf
-# MD5 b23b4f3092c9083c1c741551ec351dc8, copied to agentic-workflow-subproject/models/
+qualifier_model_uri = "gs://navy-team-llmops-bucket/pipeline_root/158407666882/keelpay-router-compact-variants-pipeline-20261102155447/compact-variants-component_-2725338443608489984/gguf_q4/model-q4.gguf"
+qualifier_model_md5 = "b23b4f3092c9083c1c741551ec351dc8"
 qualifier_url = "http://127.0.0.1:8081/completion"
 qualifier_model_version = "d-q4"
 qualifier_max_tokens = 160       # same value as the D-q4 evaluation

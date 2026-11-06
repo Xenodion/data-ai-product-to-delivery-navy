@@ -20,11 +20,11 @@ from flow.contracts import FlowConfig, FlowDeps, Ticket, TicketRun, load_config
 from flow.drafter import write_draft
 from flow.pipeline import process
 from flow.qualifier import qualify
+from ml.qualifier.src.local_paths import RUNS_DIR
 
 logger = logging.getLogger(__name__)
 
 VAL_PATH = Path(__file__).parent.parent / "data" / "dataset" / "val.csv"
-RUNS_DIR = Path(__file__).parent / "runs"
 
 
 def select_tickets(path: Path, n: int, seed: int, merchant_id: str) -> list[Ticket]:
