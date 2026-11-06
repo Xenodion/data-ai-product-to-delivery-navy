@@ -1,10 +1,10 @@
 # Methodology: how we test, control and choose without wasting money
 
-Short guide to the process of this sub-project and the habits that kept it cheap and honest. It is written for a student team working alone on a fine-tuning project with a limited budget. The journal of what was actually done, step by step, is in `notebooks/`; the scoring rules are in `docs/scoring_protocol.md`; the plan is in `docs/roadmap.md`.
+Short guide to the process of this sub-project and the habits that kept it cheap and honest. It is written for a student team working alone on a fine-tuning project with a limited budget. The journal of what was actually done, step by step, is in `ml/qualifier/notebooks/`; the scoring rules are in `docs/scoring_protocol.md`; the plan is in `docs/roadmap.md`.
 
 ## 1. The order of work
 
-1. **Fix the output contract** (closed lists of values, `research/qualifier/src/dataset_build/schema.py`). Dataset, scoring and prompt all read from it.
+1. **Fix the output contract** (closed lists of values, `ml/qualifier/src/dataset_build/schema.py`). Dataset, scoring and prompt all read from it.
 2. **Write the scoring protocol before scoring**: the metrics, the severity matrix, the acceptance bars taken from the product brief, the systems compared and the selection rule. The protocol is one current document; its history is in git.
 3. **Build the dataset with gates**, then freeze it.
 4. **Score cheap baselines first** (majority, rules, TF-IDF + logistic regression). They are the bar the model must clear, and the strongest one is often close to free.
@@ -16,12 +16,12 @@ Short guide to the process of this sub-project and the habits that kept it cheap
 
 | Habit | Why | Where |
 |---|---|---|
-| Labels come from the scenario card; the language model only writes the text | no label noise from the generator, labels are known by construction | `research/qualifier/src/dataset_build/cards.py` |
+| Labels come from the scenario card; the language model only writes the text | no label noise from the generator, labels are known by construction | `ml/qualifier/src/dataset_build/cards.py` |
 | Two blind voters, a stronger judge only when they disagree | cheap review, expensive model used where it matters | `review.py` |
 | A ticket that fails is quarantined, never fixed, retried or reused | no hidden tuning of the data toward what passes | `data/dataset/*_quarantine.csv` |
 | Tests written by another model than train and val | the model is not scored on the style of its own writer | `config/run.toml` |
 | Stop rules (non-conformity, failing trap type, API cost per ticket) and a hard budget | the run stops by itself and is diagnosed, instead of burning money | `production.py` |
-| Same tickets for every system, paired bootstrap on the differences | a difference is believed only if its interval excludes 0 | `research/qualifier/src/scoring.py` |
+| Same tickets for every system, paired bootstrap on the differences | a difference is believed only if its interval excludes 0 | `ml/qualifier/src/scoring.py` |
 | Test sets read once; settings chosen on val only | prevents choosing the winner on the test set | `docs/roadmap.md` rules |
 | Counts with their denominator below 20 tickets, no interval | small groups are shown, not over-interpreted | `docs/scoring_protocol.md` |
 | Check the scorer on trivial systems (perfect, everything to a human) | a scorer bug is found before it ruins a comparison | notebook 2 |

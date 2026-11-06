@@ -10,7 +10,7 @@ data/*
 !data/gate2/
 !data/_gate2*/
 !data/runs/
-notebooks/outputs/
+ml/*/notebooks/outputs/
 logs/
 models/
 *_pipeline.yaml

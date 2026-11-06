@@ -43,7 +43,7 @@ Three target tabs: **Overview**, **Re-router**, and **Validator**. Clicking a hu
 | Course demo | Static front end, Cloud Run CPU backend, synthetic ledger/KB, external Drafter Model and Langfuse permitted only on non-critical synthetic data; simulated sends |
 | Fictional production | Real tickets, models, and traces remain in Keelpay cloud under the scenario's internal policy; architecture, compliance, and value require validation before any pilot |
 
-The Qualifier Model schema is [schema.py](agentic-workflow-subproject/src/dataset_build/schema.py), with semantics in [label_definitions.md](agentic-workflow-subproject/docs/label_definitions.md). All seven values are strings; an absent reference/amount/currency is empty string, ambiguity is `UNDEFINED`, and out-of-taxonomy intent/sub-intent is `OTHER`. The contract has no confidence score or `critical` urgency. `UNDEFINED` blocks only decisions that depend on that field.
+The Qualifier Model schema is [schema.py](agentic-workflow-subproject/ml/qualifier/src/dataset_build/schema.py), with semantics in [label_definitions.md](agentic-workflow-subproject/docs/label_definitions.md). All seven values are strings; an absent reference/amount/currency is empty string, ambiguity is `UNDEFINED`, and out-of-taxonomy intent/sub-intent is `OTHER`. The contract has no confidence score or `critical` urgency. `UNDEFINED` blocks only decisions that depend on that field.
 
 ## Current state and evidence
 

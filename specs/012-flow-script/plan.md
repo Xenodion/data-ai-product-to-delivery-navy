@@ -41,10 +41,10 @@ agentic-workflow-subproject/
 
 | Need | Existing code | Note |
 |---|---|---|
-| Seven-field contract | `research/qualifier/src/dataset_build/schema.py` | `TicketLabel` is imported, never copied |
-| Validation | `research/qualifier/src/scoring.py` | `parse_output` |
-| Desk mapping | `research/qualifier/src/scoring.py` | `desk_of`, `TRIAGE` |
-| Qualifier instruction | `research/qualifier/src/prompt.py` | `build_user_message` |
+| Seven-field contract | `ml/qualifier/src/dataset_build/schema.py` | `TicketLabel` is imported, never copied |
+| Validation | `ml/qualifier/src/scoring.py` | `parse_output` |
+| Desk mapping | `ml/qualifier/src/scoring.py` | `desk_of`, `TRIAGE` |
+| Qualifier instruction | `ml/qualifier/src/prompt.py` | `build_user_message` |
 
 ## Core functions
 
@@ -111,7 +111,7 @@ None for this feature.
 | Served Qualifier differs from evaluated D-q4 | SC-003 comparison before use |
 | Container thread count differs from the evaluation | Compare outputs; latency measured separately |
 | Drafter asserts unverified facts | FR-005 prompt rules, human review remains mandatory; no automated quality claim |
-| `research` imports pull heavy dependencies into a future image | Only `schema`, `scoring`, `prompt` are imported; check this at containerization |
+| `ml` imports pull heavy dependencies into a future image | Only `schema`, `scoring`, `prompt` are imported; check this at containerization |
 
 ## Measured results
 

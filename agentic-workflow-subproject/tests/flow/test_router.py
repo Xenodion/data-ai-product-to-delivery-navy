@@ -2,7 +2,7 @@ import pytest
 
 from flow.contracts import QualifierResult
 from flow.router import decide_route
-from research.qualifier.src.dataset_build.schema import TicketLabel
+from ml.qualifier.src.dataset_build.schema import TicketLabel
 
 
 def _label(**changes: str) -> TicketLabel:

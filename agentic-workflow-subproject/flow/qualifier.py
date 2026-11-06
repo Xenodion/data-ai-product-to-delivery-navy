@@ -9,8 +9,8 @@ from langfuse import observe
 
 from flow.contracts import FlowConfig, QualifierResult, Ticket
 from flow.llm import LLMError, post_json
-from research.qualifier.src.prompt import build_user_message
-from research.qualifier.src.scoring import parse_output
+from ml.qualifier.src.prompt import build_user_message
+from ml.qualifier.src.scoring import parse_output
 
 logger = logging.getLogger(__name__)
 

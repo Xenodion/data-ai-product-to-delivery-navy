@@ -1,6 +1,6 @@
 # Label definitions
 
-Reference for labelling rules of the **Qualifier Model**. It feeds the generation prompt, reviewer prompt and scoring. The machine-checkable part lives in `research/qualifier/src/dataset_build/schema.py` (`TicketLabel`); this file gives the meaning. If they disagree, fix the one that is wrong in the same commit. Product consequences are decided by the deterministic **Routing Node**, not by the model.
+Reference for labelling rules of the **Qualifier Model**. It feeds the generation prompt, reviewer prompt and scoring. The machine-checkable part lives in `ml/qualifier/src/dataset_build/schema.py` (`TicketLabel`); this file gives the meaning. If they disagree, fix the one that is wrong in the same commit. Product consequences are decided by the deterministic **Routing Node**, not by the model.
 
 ## 1. Format
 

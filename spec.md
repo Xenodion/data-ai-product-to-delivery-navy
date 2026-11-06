@@ -16,7 +16,7 @@ The only human workflow nodes are **Re-router** and **Validator**. There is no p
 
 Input: `{ticket_id, merchant_id, text, created_at}`. The injector supplies IDs and timestamps; they are not inferred from text.
 
-The `Qualifier Model` follows the existing schema at `agentic-workflow-subproject/src/dataset_build/schema.py`, with exactly seven string values:
+The `Qualifier Model` follows the existing schema at `agentic-workflow-subproject/ml/qualifier/src/dataset_build/schema.py`, with exactly seven string values:
 
 ```json
 {"intent":"payment_status","sub_intent":"delayed_credit","transaction_id":"TX-992100","amount":"4850.00","currency":"EUR","urgency":"high","sentiment":"negative"}

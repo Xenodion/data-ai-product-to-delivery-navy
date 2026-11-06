@@ -14,7 +14,7 @@ from flow.contracts import (
 )
 from flow.llm import LLMError
 from flow.pipeline import process, reroute
-from research.qualifier.src.dataset_build.schema import TicketLabel
+from ml.qualifier.src.dataset_build.schema import TicketLabel
 
 TICKET = Ticket(ticket_id="t1", merchant_id="m1", text="hello", created_at=datetime(2026, 11, 5, tzinfo=UTC))
 LABEL = TicketLabel(

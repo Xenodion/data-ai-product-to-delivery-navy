@@ -9,7 +9,7 @@ Implement the Routing Node as a pure, typed Python decision module in the shared
 ## Technical context
 
 - Runtime: Python backend, aligned with the confirmed Cloud Run target.
-- Model boundary: preserve `agentic-workflow-subproject/src/dataset_build/schema.py`; adapt it into a typed validated result without changing stored historical labels.
+- Model boundary: preserve `agentic-workflow-subproject/ml/qualifier/src/dataset_build/schema.py`; adapt it into a typed validated result without changing stored historical labels.
 - Decision state: immutable input envelope and output contract in `contracts.md`; persistent orchestration and event writing remain in later runtime features.
 - Decision cases: `decision-cases.md` are product acceptance cases, not benchmark labels or human-validated business policy.
 - Observability: emit reason codes and version references; Langfuse may trace the synthetic demo but is not the state store.

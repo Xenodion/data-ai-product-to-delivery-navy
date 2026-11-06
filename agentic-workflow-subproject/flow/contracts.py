@@ -9,7 +9,7 @@ from typing import Literal, Protocol
 
 from pydantic import BaseModel, ConfigDict
 
-from research.qualifier.src.dataset_build.schema import TicketLabel
+from ml.qualifier.src.dataset_build.schema import TicketLabel
 
 CONFIG_PATH = Path(__file__).parent / "config.toml"
 FROZEN = ConfigDict(extra="forbid", frozen=True)

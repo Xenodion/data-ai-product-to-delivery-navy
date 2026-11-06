@@ -3,8 +3,8 @@
 from typing import Final
 
 from flow.contracts import Priority, QualifierResult, ReasonCode, Route, RoutingDecision
-from research.qualifier.src.dataset_build.schema import OTHER, UNDEFINED
-from research.qualifier.src.scoring import desk_of
+from ml.qualifier.src.dataset_build.schema import OTHER, UNDEFINED
+from ml.qualifier.src.scoring import desk_of
 
 DECISION_VERSION: Final = "routing-node-v1"
 # The historical scorer says "technical"; the routing contract says "technical_api".

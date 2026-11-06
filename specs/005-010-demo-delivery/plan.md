@@ -2,7 +2,7 @@
 
 Status: proposed implementation choices, 5 November 2026, simplified after the [flow script](../012-flow-script/plan.md) decision. V1 has no separate worker, no leases, no claims and no optimistic versions. Product requirements and acceptance criteria: [spec.md](spec.md); execution checklist: [tasks.md](tasks.md); router: [feature 004](../004-routing-node/plan.md); parallel study: [feature 011](../011-confidence-signals/plan.md). No service is implemented or deployed by this plan.
 
-All runtime, frontend, demo and research code belongs inside `agentic-workflow-subproject/`. Pipeline steps live in `flow/`; the API and persistence wrap them when the front end needs shared state. The front end stays in `frontend/`. The empty `backend/` and `demo/` scaffolds are not a commitment. Organize notebooks by research topic and use `research/{qualifier,drafter,confidence}` for topic-specific research code. Qualifier research code lives in `research/qualifier/`. Maintain one authoritative seven-field contract; do not silently duplicate it.
+All runtime, frontend, demo and research code belongs inside `agentic-workflow-subproject/`. Pipeline steps live in `flow/`; the API and persistence wrap them when the front end needs shared state. The front end stays in `frontend/`. The layout rules are in `agentic-workflow-subproject/LAYOUT.md`. Model work is organized by topic under `ml/`. Maintain one authoritative seven-field contract; do not silently duplicate it.
 
 ## Proposed stack and choices
 
