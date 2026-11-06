@@ -49,7 +49,7 @@ The Qualifier Model schema is [schema.py](agentic-workflow-subproject/ml/qualifi
 
 The [LLMOps sub-project](agentic-workflow-subproject/README.md) has 3,205 accepted tickets (1,922 train, 293 validation, 610 natural test, 380 traps). D-q4 has four silent errors on 610 and one wrong-desk case among 167 urgent tickets in the historical scorer. That scorer derives desk from intent; it does not yet measure the full product policy. The prompted base model B3 (same Qwen 3B, no fine-tuning) is scored on validation and both test splits: 10.5 silent errors per 100 on test_natural, but only 60 % valid JSON and 43 % of tickets routed by itself, so fine-tuning is what makes the Qualifier Model usable. Recovery status is tracked in [LLMOps tasks](agentic-workflow-subproject/docs/llmops_recovery_tasks.md). Vertex registration is reported in the logs; no current cloud state is certified here.
 
-The original V0 is the clickable static mock-up in [prototype/copilot_panel/index.html](prototype/copilot_panel/index.html), with its [screenshot](assets/prototype_K-24121.png). It uses synthetic tickets and does not represent a live integrated service. The functional V1 experience, Routing Node, persistent backend, three-tab workflow, and demo deployment remain to be built. Ticket messages stay in their authored languages.
+The original V0 is the clickable static mock-up in [prototype/copilot_panel/index.html](prototype/copilot_panel/index.html), with its [screenshot](prototype/prototype_K-24121.png). It uses synthetic tickets and does not represent a live integrated service. The functional V1 experience, Routing Node, persistent backend, three-tab workflow, and demo deployment remain to be built. Ticket messages stay in their authored languages.
 
 ## Current documents
 
@@ -57,6 +57,6 @@ The original V0 is the clickable static mock-up in [prototype/copilot_panel/inde
 - [Simulated user feedback and validation plan](03_user_research.md), [original V0 mock-up and V1 target](03_prototype_link.md), [governance](governance.md).
 - [Product specification](spec.md), [architecture reference](docs/design/architecture.md), [workflow and detailed UX](docs/design/copilot-workflow.md), [terminology](docs/design/terminology.md), [synthetic evaluation cases](evals/README_eval_set.md).
 - [Delivery roadmap](specs/roadmap.md) and the future [Routing Node contract](specs/004-routing-node/spec.md).
-- Original course briefs and supplied materials are preserved under `docs/assignment*`.
+- Original course briefs and supplied materials are preserved under `docs/assignment*`, `docs/project` and `docs/_archive`.
 
 Deliverables 05 metrics, 06 A/B, 07 operations, 08 launch, and final synthesis remain to be produced from their course instructions. The course asks for at least four numbered files per member and a final v1.0 tag before the oral presentation.

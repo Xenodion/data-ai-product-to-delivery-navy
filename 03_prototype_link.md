@@ -31,4 +31,4 @@ Deterministic rules route clear tickets automatically (L3); ambiguous or low-con
 
 ## Screenshot
 
-![Keelpay Support Copilot V0 Prototype showing ticket K-24121](assets/prototype_K-24121.png)
+![Keelpay Support Copilot V0 Prototype showing ticket K-24121](prototype/prototype_K-24121.png)
