@@ -2,18 +2,16 @@
 
 ## Current state and next steps
 
-Updated 6 November 2026. Read this first, then `agentic-workflow-subproject/LAYOUT.md`.
+Updated 6 November 2026. Read this first, then `LAYOUT.md`. The repository root is the AI Product course deliverable and follows the course template; everything technical lives in this sub-project.
 
 **State**
-- Work sits on the local branch `refactor/subproject-layout`, stacked on `feat/llmops-platform-improvements`. Neither is pushed or merged.
 - `flow/` runs a validation ticket through served D-q4, the Routing Node and a Mistral Nemo draft, then stops at the first human step. Spec: [012-flow-script](012-flow-script/spec.md).
 - Layout is frozen: `ml/` builds models, `flow/` uses them, `frontend/` shows them, and `.local/` holds everything generated. `tests/test_layout.py` enforces it.
 - Worker, leases, claims, LangChain and LangGraph are out of V1. The database comes with the API, not before.
-- The working tree also holds an uncommitted tidy of `assets/` and `docs/` made outside the agent sessions (19 entries, `docs/_archive/` and more). Leave it alone until the owner decides; do not sweep it into a commit.
 
 **Next steps, in order**
 1. Done 6 November 2026: the real flow with a valid Qualifier was rerun after the `ml/` and `.local/` moves, with the `l07` Airflow stack stopped. `flow.runner --n 1 --seed 9` wrote `.local/runs/20261106T125250Z.jsonl`: `qualifier.status` is `valid`, the Routing Node sent the ticket to `triage`, and a draft exists. Docker has 2.8 GiB and `l07` takes about 1.6 GiB idle, so stop that stack before starting the Qualifier (1.8 GiB).
-2. Owner decisions: merge `refactor/subproject-layout` into `feat/llmops-platform-improvements`, push, and open the pull request to `main`.
+2. Done 6 November 2026: repository reorganised around the course template and merged to `main`.
 3. Owner decision: remove the claim wording from `docs/design/copilot-workflow.md` and `docs/design/architecture.md`. Until then, the 005-010 spec overrides them on this point.
 4. Build the API and PostgreSQL around `process()` and `reroute()`, with one background loop inside the API (#30, #31). Then connect the front end (#37, #38).
 5. Bring the course requirements forward: confirm them with the lecturers (#16, #44), then CI evaluation (#19), model cascade and semantic cache (#21), and the readiness checklist (#22).

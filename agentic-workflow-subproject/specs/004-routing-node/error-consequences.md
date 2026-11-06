@@ -1,6 +1,6 @@
 # Routing Node decision tree
 
-This tree describes the Router's initial decision: desk, Re-router and priority. The historical Qualifier protocol and the governance thresholds remain defined in [`scoring_protocol.md`](../../agentic-workflow-subproject/docs/scoring_protocol.md) and [`governance.md`](../../governance.md).
+This tree describes the Router's initial decision: desk, Re-router and priority. The historical Qualifier protocol and the governance thresholds remain defined in [`scoring_protocol.md`](../../docs/scoring_protocol.md) and [`governance.md`](../../../governance.md).
 
 ```mermaid
 flowchart TD

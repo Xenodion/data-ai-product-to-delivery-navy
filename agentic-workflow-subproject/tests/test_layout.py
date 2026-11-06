@@ -2,7 +2,7 @@ import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-ALLOWED_FOLDERS = {".claude", ".specify", "data", "docs", "flow", "frontend", "ml", "tests"}
+ALLOWED_FOLDERS = {".claude", ".specify", "data", "docs", "flow", "frontend", "ml", "specs", "tests"}
 
 
 def _tracked_files() -> list[str]:

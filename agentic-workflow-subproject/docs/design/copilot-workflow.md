@@ -1,6 +1,6 @@
 # Keelpay Workflow and Demo Experience
 
-Status: agreed target behavior, 3 November 2026. Read with [Product Specification](../../spec.md) and [NAVY Reference Terminology](terminology.md). The original V0 mock-up illustrates a sample interface; it does not implement this flow.
+Status: agreed target behavior, 3 November 2026. Read with [Product Specification](../../../spec.md) and [NAVY Reference Terminology](terminology.md). The original V0 mock-up illustrates a sample interface; it does not implement this flow.
 
 ## 1. Demo outcome
 

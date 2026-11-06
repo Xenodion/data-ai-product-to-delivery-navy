@@ -3,7 +3,7 @@
 **Feature**: 012-flow-script<br>
 **Created**: 5 November 2026<br>
 **Status**: Implemented locally on 5 November 2026; results in the [plan](plan.md#measured-results)<br>
-**Authority**: [Root product spec](../../spec.md), [workflow](../../docs/design/copilot-workflow.md), [Routing Node spec](../004-routing-node/spec.md). This feature comes first in the [integrated demo delivery](../005-010-demo-delivery/spec.md).
+**Authority**: [Root product spec](../../../spec.md), [workflow](../../docs/design/copilot-workflow.md), [Routing Node spec](../004-routing-node/spec.md). This feature comes first in the [integrated demo delivery](../005-010-demo-delivery/spec.md).
 
 ## Outcome
 

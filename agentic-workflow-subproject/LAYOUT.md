@@ -13,7 +13,7 @@ This layout is frozen. `tests/test_layout.py` enforces it.
 
 Inside `ml/<topic>/`, code goes in `src/`, entry points in `scripts/` and journals in `notebooks/`. A topic stays in one folder. Notebooks live nowhere else.
 
-Code gets the `.local/` folders from `ml/qualifier/src/local_paths.py`. Create a folder when its first real file arrives, never as an empty placeholder. Specifications live in `specs/` at the repository root.
+Code gets the `.local/` folders from `ml/qualifier/src/local_paths.py`. Create a folder when its first real file arrives, never as an empty placeholder. Specifications live in `specs/` here, and design references in `docs/design/`. The repository root belongs to the AI Product course: it follows the course template and holds no code or technical specification.
 
 `flow/` may import from `ml/`. `ml/` never imports from `flow/`.
 

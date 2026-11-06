@@ -8,7 +8,7 @@ It is an isolated uv project (own `pyproject.toml`, Python 3.11.6, `uv.lock`, `.
 
 ## Target flow
 
-![Keelpay target flow: deterministic rules and tools on top, the two LLMs in the middle, the human app at the bottom](../docs/design/keelpay_workflow_map.png)
+![Keelpay target flow: deterministic rules and tools on top, the two LLMs in the middle, the human app at the bottom](docs/design/keelpay_workflow_map.png)
 
 This is the target flow; only the Qualifier Model exists today. A ticket is read by the Qualifier Model, the Routing Node picks a desk with Python rules, and the Drafter Model always writes a reply, calling read-only tools for facts (SQL lookup, RAG search; the first version drafts without them). A Support Agent corrects the desk in the Re-router when needed and approves every reply in the Validator. The first desk change triggers one new draft; after a second change, the agent fixes the draft or writes the reply by hand.
 
@@ -49,7 +49,7 @@ The plan, with its gates, is `docs/roadmap.md`; the day-by-day account is in `ml
 | `ml/qualifier/scripts/import_legacy_results.py`, `sync_vertex_run.py`, `link_vertex_model.py` | local historical import, offline pipeline sync, and registry linkage |
 | `ml/qualifier/notebooks/01_dataset_build.ipynb`, `02_scoring_and_baselines.ipynb`, `03_finetuning_vertex.ipynb`, `04_compact_variants.ipynb`, `05_final_evaluation.ipynb` | the experiment logbook (G1 to G8); B0-B3 and D variants compared on every split; open work in `docs/llmops_recovery_tasks.md` |
 | `docs/data_science_masterclass.md` | metric choice, use-case error matrices, charts, model tagging, lineage, historical recovery, and experiment method |
-| `../specs/004-routing-node/error-consequences.md` | pending review of the deterministic routing tree and business consequences; gates product-level error metrics |
+| `specs/004-routing-node/error-consequences.md` | pending review of the deterministic routing tree and business consequences; gates product-level error metrics |
 | `docs/llmops_recovery_tasks.md` | recovered unfinished LLM fine-tuning/MLflow work and completion checklist |
 
 ## Setup
@@ -91,7 +91,7 @@ The B3 import does not access Vertex or GCS. Inspect Vertex Pipelines/ML Metadat
 
 ## Run the ticket flow locally
 
-`flow/` takes a validation ticket through the Qualifier Model, the Routing Node and the Drafter Model, and stops at the first human step. Spec: [`specs/012-flow-script`](../specs/012-flow-script/spec.md).
+`flow/` takes a validation ticket through the Qualifier Model, the Routing Node and the Drafter Model, and stops at the first human step. Spec: [`specs/012-flow-script`](specs/012-flow-script/spec.md).
 
 Needs the setup above, Docker, `OPENROUTER_API_KEY` and the Langfuse keys in `.env`. The Qualifier needs about 2 GB of free Docker memory: when it runs out, the container stops and tickets go to the Re-router with status `unavailable`. Without Langfuse keys, the flow still runs.
 

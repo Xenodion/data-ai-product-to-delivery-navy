@@ -3,9 +3,9 @@
 **Feature**: 004-routing-node<br>
 **Created**: 3 November 2026<br>
 **Status**: Router tree and evaluation contract specified; production policy values and integrated acceptance remain open<br>
-**Authority**: [Root product spec](../../spec.md), [workflow decision tree](../../docs/design/copilot-workflow.md), and [canonical terminology](../../docs/design/terminology.md).
+**Authority**: [Root product spec](../../../spec.md), [workflow decision tree](../../docs/design/copilot-workflow.md), and [canonical terminology](../../docs/design/terminology.md).
 
-**Router decision tree and metrics**: [`error-consequences.md`](error-consequences.md) defines the initial desk/priority mapping, Re-router handoff, offline model comparison and post-deployment monitoring. Historical Qualifier gates remain in its [`scoring_protocol.md`](../../agentic-workflow-subproject/docs/scoring_protocol.md); product ownership remains in [`governance.md`](../../governance.md).
+**Router decision tree and metrics**: [`error-consequences.md`](error-consequences.md) defines the initial desk/priority mapping, Re-router handoff, offline model comparison and post-deployment monitoring. Historical Qualifier gates remain in its [`scoring_protocol.md`](../../docs/scoring_protocol.md); product ownership remains in [`governance.md`](../../../governance.md).
 
 ## Decision boundary
 

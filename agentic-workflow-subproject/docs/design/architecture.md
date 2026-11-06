@@ -1,6 +1,6 @@
 # Target Architecture — Keelpay Demo
 
-**Status: proposed, not implemented.** Canonical component names: [NAVY Reference Terminology](terminology.md). Target behavior: [Product Specification](../../spec.md) and [Workflow / UX](copilot-workflow.md).
+**Status: proposed, not implemented.** Canonical component names: [NAVY Reference Terminology](terminology.md). Target behavior: [Product Specification](../../../spec.md) and [Workflow / UX](copilot-workflow.md).
 
 ## Flow
 

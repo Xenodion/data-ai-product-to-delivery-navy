@@ -1,6 +1,6 @@
 # Product Specification — NAVY / Keelpay Support Copilot
 
-**Status: agreed functional target; not implemented.** Behavioral reference: [Workflow and demo experience](docs/design/copilot-workflow.md). Canonical actor and component names: [NAVY Reference Terminology](docs/design/terminology.md). Routing Node implementation contract and cases: [Feature 004](specs/004-routing-node/spec.md). Delivery work is organized in `specs/roadmap.md`.
+**Status: agreed functional target; not implemented.** Behavioral reference: [Workflow and demo experience](agentic-workflow-subproject/docs/design/copilot-workflow.md). Canonical actor and component names: [NAVY Reference Terminology](agentic-workflow-subproject/docs/design/terminology.md). Routing Node implementation contract and cases: [Feature 004](agentic-workflow-subproject/specs/004-routing-node/spec.md). Delivery work is organized in `specs/roadmap.md`.
 
 ## 1. Problem and decision
 
@@ -10,7 +10,7 @@ Keelpay is a fictional B2B fintech scenario with about 36,000 monthly tickets. T
 
 `Demo Injector` → `Qualifier Model` → `Routing Node` → `Drafter Model` → **Validator** → explicit simulated send. Drafting proceeds even when the initial desk may need correction. The **Re-router** corrects that desk and triggers a fresh draft; Validator sends routing problems there when found.
 
-The only human workflow nodes are **Re-router** and **Validator**. There is no pre-draft qualification hold. The `Routing Node` is deterministic Python, never a model. The component order and relationships are canonical; see [architecture](docs/design/architecture.md).
+The only human workflow nodes are **Re-router** and **Validator**. There is no pre-draft qualification hold. The `Routing Node` is deterministic Python, never a model. The component order and relationships are canonical; see [architecture](agentic-workflow-subproject/docs/design/architecture.md).
 
 ## 3. Input and Qualifier Model contract
 

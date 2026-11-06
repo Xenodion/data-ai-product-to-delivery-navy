@@ -21,11 +21,11 @@ Keelpay is a fictional B2B fintech with about 2,500 merchants in France and Belg
 
 Ten minutes per ticket, 46 agents, costs, growth, adoption, and savings are assumptions in [the sizing workbook](02_sizing.xlsx). Active handling time excludes queue wait, which is measured separately.
 
-The canonical names are **Qualifier Model** (seven-field extractor), **Routing Node** (deterministic Python decision), **Lookup Node**, **Retrieval Node**, **Drafter Model**, **Support Agent** (human), **Demo Injector** (Python script), and **Langfuse** (observability). See [the terminology reference](docs/design/terminology.md).
+The canonical names are **Qualifier Model** (seven-field extractor), **Routing Node** (deterministic Python decision), **Lookup Node**, **Retrieval Node**, **Drafter Model**, **Support Agent** (human), **Demo Injector** (Python script), and **Langfuse** (observability). See [the terminology reference](agentic-workflow-subproject/docs/design/terminology.md).
 
 ## Reference flow
 
-![Keelpay target flow: deterministic rules and tools on top, the two LLMs in the middle, the human app at the bottom](docs/design/keelpay_workflow_map.png)
+![Keelpay target flow: deterministic rules and tools on top, the two LLMs in the middle, the human app at the bottom](agentic-workflow-subproject/docs/design/keelpay_workflow_map.png)
 
 This is the target flow; it is not built yet. Steps are grouped by what they are, because that tells you how far you can trust them: deterministic Python rules and tools give the same result every time, the LLMs can be wrong so they only propose, and the Support Agent has the last word in the app. The Qualifier Model only extracts fields. Only the Drafter Model calls tools, and the first version drafts without them.
 
@@ -55,8 +55,8 @@ The original V0 is the clickable static mock-up in [prototype/copilot_panel/inde
 
 - [Pitch](00_pitch.md), [problem statement](01_problem_statement.md), [investment memo](02_investment_memo.md), [product brief](03_product_brief.md), [lean canvas](03_ai_lean_canvas.md).
 - [Simulated user feedback and validation plan](03_user_research.md), [original V0 mock-up and V1 target](03_prototype_link.md), [governance](governance.md).
-- [Product specification](spec.md), [architecture reference](docs/design/architecture.md), [workflow and detailed UX](docs/design/copilot-workflow.md), [terminology](docs/design/terminology.md), [synthetic evaluation cases](evals/README_eval_set.md).
-- [Delivery roadmap](specs/roadmap.md) and the future [Routing Node contract](specs/004-routing-node/spec.md).
+- [Product specification](spec.md), [architecture reference](agentic-workflow-subproject/docs/design/architecture.md), [workflow and detailed UX](agentic-workflow-subproject/docs/design/copilot-workflow.md), [terminology](agentic-workflow-subproject/docs/design/terminology.md), [synthetic evaluation cases](evals/README_eval_set.md).
+- [Delivery roadmap](agentic-workflow-subproject/specs/roadmap.md) and the future [Routing Node contract](agentic-workflow-subproject/specs/004-routing-node/spec.md).
 - Original course briefs and supplied materials are preserved under `docs/assignment*`, `docs/project` and `docs/_archive`.
 
 Deliverables 05 metrics, 06 A/B, 07 operations, 08 launch, and final synthesis remain to be produced from their course instructions. The course asks for at least four numbered files per member and a final v1.0 tag before the oral presentation.
