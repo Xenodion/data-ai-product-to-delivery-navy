@@ -19,7 +19,7 @@ Classification and obligations must be checked against the [AI Act](https://eur-
 
 A wrong desk costs time; an unhandled urgent ticket or reply about the wrong payment may cause financial, legal, and reputational harm. Sizing error costs are assumptions, not observed penalties. Head of Compliance owns sensitive exposure; Head of Support owns service quality and interruption of affected functions.
 
-Benchmark silent errors (wrong desk/reference under the scorer), errors after rules, serious errors sent to merchants, and their increment versus a control are four different measures. Average financial risk assumptions are not evidence. The proposed 0.1% threshold for incremental serious errors requires a defined denominator and rare-risk protocol; 20 or 200 cases cannot certify it.
+Benchmark silent errors (wrong desk/reference under the scorer), errors after rules, serious errors sent to merchants, and their increment versus a control are four different measures. Average financial risk assumptions are not evidence. Rare serious errors need a defined denominator and a dedicated protocol; 20 or 200 cases cannot certify their rate.
 
 ## Session 3 — Data audit
 
@@ -43,12 +43,12 @@ The tests include non-representative traps and languages. Pre-filter quotas do n
 | Step | Assurance level and rule |
 |---|---|
 | Qualifier Model | Reading assistance; seven fields and contract validation; no invented confidence |
-| Routing Node | Deterministic Python, bounded L3 for supported intents; unknown/invalid intent goes to Human Qualification |
+| Routing Node | Deterministic Python, bounded L3 for supported intents; unknown/invalid intent creates a Re-router task while drafting continues |
 | Lookup Node | Read-only, merchant-scoped; an incorrect lookup remains a real risk |
 | Priority | Surface urgency while preparation continues; handling/escalation configured separately |
 | Retrieval Node | Read-only approved sources; grounded facts or clarification; automated checks are imperfect |
 | Drafter Model | L2; prepares factual, documentary, or clarification draft; automated checks are imperfect |
-| Human Review/send | Support Agent only; editing optional, checking required, unchanged draft needs confirmation |
+| Validator/send | Support Agent only; editing optional, checking required, unchanged draft needs confirmation |
 | History | Automatic actor/version record; traceability is not a quality guarantee |
 
 An absent/ambiguous payment reference blocks claims about that payment, not a known desk or a clarification. Unknown sentiment uses neutral tone. Unknown sub-intent blocks only its dependent procedure. Urgency alone never pauses draft preparation.

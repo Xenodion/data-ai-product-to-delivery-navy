@@ -64,7 +64,6 @@ The first three rows are component bars carried by the historical benchmark. The
 | First-pass routing | desk accuracy of at least 90 % | sizing flip point (about 90 %); today about 86 % (scenario) |
 | Automatic routing | auto-routed rate of at least 50 % | sizing base case 55 % |
 | Guardrail, urgent | no urgent ticket routed automatically to a wrong desk | brief |
-| Post-deployment risk proposal | incremental serious errors reaching merchants below 0.1 % of tickets versus control; denominator and protocol still to approve | governance; not measurable by the model-only scorer |
 
 Only the first three rows can be inspected in this model-only benchmark. Current product behavior permits draft preparation for high-priority tickets while surfacing priority; every draft still receives Human Review. A model-level miss does not establish full-flow failure, and a model-level pass would not prove the integrated flow is safe. The end-to-end demo evaluation is future work and requires separate fixtures/oracles; it is not an already executed S4 result.
 
@@ -85,7 +84,7 @@ All run on the same inputs and the same output contract.
 | B0 | Majority class (floor) | CPU | scored |
 | B1 | Rules: keywords and regular expressions (the "cheap" option) | CPU | scored |
 | B2 | TF-IDF + logistic regression, one model per field (classical ML) | CPU | scored |
-| B3 | Base Qwen2.5-3B, prompted, no fine-tuning | T4 (Vertex) | historical inference run; local val export available and row-order validated; test exports and job provenance still missing |
+| B3 | Base Qwen2.5-3B, prompted, no fine-tuning | T4 (Vertex) | scored on val, test_natural and test_traps (test inference runs of 2026-11-04, provenance in `data/runs/b3-2026-11-04-a_manifest.json`) |
 | D | Qwen2.5-3B + LoRA, float16 | T4 (Vertex) | scored |
 | D-q8, D-q4 | D merged, then GGUF 8 and 4 bits | CPU | scored |
 | S-1.5B, S-0.5B | the same recipe on Qwen2.5-1.5B and 0.5B | CPU after GGUF | cancelled (`docs/compact_variants.md`) |
@@ -116,6 +115,7 @@ Reported next to the quality; the result is a front, not a ranking.
 | B0 majority | 78.5 | 77.8 % | 0.0 | 100.0 % | 23.6 % | 3.890 | 100.0 % |
 | B1 rules | 40.3 | 33.5 % | 24.1 | 68.5 % | 44.6 % | 2.274 | 100.0 % |
 | B2 TF-IDF + LR | 33.9 | 6.6 % (11) | 0.3 | 90.5 % | 91.6 % | 1.666 | 100.0 % |
+| B3 base prompted | 10.5 | 6.0 % (10) | 43.1 | 43.0 % | 53.3 % | 0.998 | 60.3 % |
 | D (GPU) | 2.0 | 1.2 % (2) | 1.0 | 83.9 % | 98.0 % | 0.111 | 98.9 % |
 | D-q8 | 1.0 | 0.6 % (1) | 1.6 | 82.8 % | 97.9 % | 0.067 | 98.2 % |
 | **D-q4 (champion)** | **0.7** | **0.6 % (1)** | 2.0 | 82.5 % | 97.5 % | **0.054** | 97.9 % |
@@ -129,6 +129,7 @@ Paired bootstrap against B2, difference per ticket and 95 % interval: silent err
 | B0 majority | 92.6 | 88.4 % | 0.0 | 100.0 % | 12.6 % | 5.261 | 100.0 % |
 | B1 rules | 44.7 | 28.8 % | 35.8 | 62.4 % | 37.9 % | 2.842 | 100.0 % |
 | B2 TF-IDF + LR | 58.7 | 5.5 % | 1.1 | 95.8 % | 92.9 % | 2.971 | 100.0 % |
+| B3 base prompted | 15.0 | 4.1 % | 58.4 | 36.1 % | 37.4 % | 1.361 | 46.3 % |
 | D (GPU) | 1.3 | 0.7 % | 1.1 | 91.8 % | 98.7 % | 0.089 | 98.2 % |
 | D-q8 | 1.3 | 0.0 % | 3.7 | 88.9 % | 96.3 % | 0.103 | 95.5 % |
 | D-q4 | 1.3 | 0.7 % | 3.9 | 88.9 % | 95.8 % | 0.118 | 95.3 % |
@@ -142,9 +143,9 @@ On the traps D is a little better than D-q4 (fewer tickets sent to a human, more
 | Desk accuracy | at least 90 % | 97.5 %: met | 91.6 %: met |
 | Auto-routed | at least 50 % | 82.5 %: met | 90.5 %: met |
 | Urgent in a wrong desk | none | 1 of 167 (0.6 %): not met on the model alone | 11 of 167 (6.6 %) |
-| Model-only silent errors (diagnostic, no 0.1 % gate) | lower than comparator under the selection rule | 0.7 % (4 tickets of 610) | 33.9 % |
+| Model-only silent errors (diagnostic) | lower than comparator under the selection rule | 0.7 % (4 tickets of 610) | 33.9 % |
 
-The two first bars do not separate B2 from the fine-tuned models; silent errors do. The urgent guardrail fails on the model alone. The proposed 0.1 % limit concerns incremental serious errors after the complete flow versus a control, so this synthetic test cannot score it. The 0.075 % of uncaught serious errors in the investment memo is an assumption, not a measured reviewer catch rate.
+The two first bars do not separate B2 from the fine-tuned models; silent errors do. The urgent guardrail fails on the model alone. The 0.075 % of uncaught serious errors in the investment memo is an assumption, not a measured reviewer catch rate.
 
 ### Registration
 

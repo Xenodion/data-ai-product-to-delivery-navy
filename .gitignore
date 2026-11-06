@@ -46,3 +46,5 @@ finetuned_llm_classifier/specs/
 AGENTS.md
 CLAUDE.md
 GEMINI.md
+
+mlflow.db

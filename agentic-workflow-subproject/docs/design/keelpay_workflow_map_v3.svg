@@ -1,0 +1,178 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 720" width="1800" height="720" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif">
+<title>Keelpay decision flow</title>
+<defs>
+  <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.2" fill="#dde2ea"/></pattern>
+  <filter id="sh" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#1f2a44" flood-opacity="0.10"/></filter>
+  <marker id="a-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2f55b5"/></marker>
+  <marker id="a-o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0L10 5L0 10z" fill="#e65100"/></marker>
+  <marker id="a-t" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0L10 5L0 10z" fill="#00838f"/></marker>
+</defs>
+<style>
+  .t { font-size: 15px; font-weight: 700; fill: #1f2a44; }
+  .w { font-size: 12px; font-weight: 600; }
+  .d { font-size: 12.5px; fill: #4a5568; }
+  .st { font-size: 12.5px; font-weight: 700; letter-spacing: 0.3px; }
+  .lb, .lo, .lt { font-size: 13px; font-weight: 600; paint-order: stroke; stroke: #fbfcfd; stroke-width: 4px; }
+  .lb { fill: #2f55b5; } .lo { fill: #c75b00; } .lt { fill: #00707a; }
+  .n { font-size: 13px; fill: #4a5568; }
+  .m { fill: none; stroke: #2f55b5; stroke-width: 2.6; }
+  .f { fill: none; stroke: #e65100; stroke-width: 2.2; }
+  .fd { fill: none; stroke: #e65100; stroke-width: 2.2; stroke-dasharray: 7 5; }
+  .t2 { fill: none; stroke: #00838f; stroke-width: 1.8; stroke-dasharray: 6 4; }
+</style>
+<rect width="1800" height="720" fill="#fbfcfd"/>
+<rect width="1800" height="720" fill="url(#dots)"/>
+<text x="40" y="52" font-size="26" font-weight="700" fill="#1f2a44">Keelpay · How a ticket gets answered</text>
+<text x="40" y="80" font-size="15" fill="#4a5568">A small model reads the ticket, Python picks the desk,</text>
+<text x="40" y="100" font-size="15" fill="#4a5568">a second model drafts, and a person approves every reply.</text>
+<rect x="730" y="72" width="350" height="122" rx="16" fill="#eefafb" stroke="#bfe4e8" stroke-width="1.2"/><text x="746" y="92" class="st" fill="#00707a">V2 only · read-only tools</text>
+<rect x="530" y="448" width="488" height="164" rx="16" fill="#fff5e8" stroke="#f6dcb8" stroke-width="1.2"/><text x="744" y="470" class="st" fill="#c75b00">Web app · Re-router tab</text>
+<rect x="1056" y="200" width="474" height="412" rx="16" fill="#fff5e8" stroke="#f6dcb8" stroke-width="1.2"/><text x="1072" y="224" class="st" fill="#c75b00">Web app · Validator tab</text>
+<path class="m" d="M220 295H278" marker-end="url(#a-b)"/>
+<path class="m" d="M490 295H548" marker-end="url(#a-b)"/>
+<path class="m" d="M736 295H798" marker-end="url(#a-b)"/>
+<path class="m" d="M1010 295H1072" marker-end="url(#a-b)"/>
+<path class="m" d="M1260 295H1322" marker-end="url(#a-b)"/>
+<path class="m" d="M1510 295H1572" marker-end="url(#a-b)"/>
+<path class="m" d="M1510 535H1644Q1664 535 1664 515V352" marker-end="url(#a-b)"/>
+<path class="f" d="M643 350V478" marker-end="url(#a-o)"/>
+<path class="f" d="M736 535H810" marker-end="url(#a-o)"/>
+<path class="f" d="M905 480V352" marker-end="url(#a-o)"/>
+<path class="f" d="M998 535H1322" marker-end="url(#a-o)"/>
+<path class="f" d="M1417 350V478" marker-end="url(#a-o)"/>
+<path class="f" d="M1167 350V620Q1167 640 1147 640H663Q643 640 643 620V592" marker-end="url(#a-o)"/>
+<path class="fd" d="M643 415H830Q850 415 850 395V352" marker-end="url(#a-o)"/>
+<circle cx="643" cy="415" r="4.5" fill="#e65100"/>
+<path class="t2" d="M905 240V196" marker-end="url(#a-t)"/>
+<g transform="translate(40 240)">
+  <rect width="180" height="110" rx="14" fill="#fff" stroke="#d9dfe8" stroke-width="1.5" filter="url(#sh)"/>
+  <g transform="translate(14 14)"><rect width="36" height="36" rx="10" fill="#5a6b86"/><svg x="8" y="8" width="20" height="20" viewBox="0 0 20 20"><path d="M2 3H18V14H9L4 18V14H2z" fill="#fff"/></svg></g>
+  <text x="60" y="30" class="t">Ticket arrives</text>
+  <text x="60" y="47" class="w" fill="#4a5875">Demo Injector</text>
+  <text x="14" y="74" class="d">A merchant writes in</text>
+  <text x="14" y="92" class="d">French or English.</text>
+</g>
+<g transform="translate(280 240)">
+  <rect width="210" height="110" rx="14" fill="#fff" stroke="#d9d0f2" stroke-width="1.5" filter="url(#sh)"/>
+  <g transform="translate(14 14)"><rect width="36" height="36" rx="10" fill="#6d4fc2"/><svg x="8" y="8" width="20" height="20" viewBox="0 0 20 20"><path d="M4 5L16 10M4 15L16 10M4 5V15" fill="none" stroke="#fff" stroke-width="1.6"/><circle cx="4" cy="5" r="3" fill="#fff"/><circle cx="4" cy="15" r="3" fill="#fff"/><circle cx="16" cy="10" r="3" fill="#fff"/></svg></g>
+  <text x="60" y="30" class="t">Qualifier Model</text>
+  <text x="60" y="47" class="w" fill="#5a3fb0">Our server, CPU</text>
+  <text x="14" y="74" class="d">Fine-tuned LLM fills 7 fields.</text>
+  <text x="14" y="92" class="d">It decides nothing.</text>
+</g>
+<g transform="translate(550 240)">
+  <rect width="186" height="110" rx="14" fill="#fffaf0" stroke="#e8cf85" stroke-width="1.5" filter="url(#sh)"/>
+  <g transform="translate(14 14)"><rect width="36" height="36" rx="10" fill="#d19a00"/><text x="18" y="25" text-anchor="middle" font-size="23" font-weight="800" fill="#fff">?</text></g>
+  <text x="60" y="30" class="t">Desk known?</text>
+  <text x="60" y="47" class="w" fill="#8a6a00">Routing Node</text>
+  <text x="14" y="74" class="d">Python rules, no AI:</text>
+  <text x="14" y="92" class="d">intent → desk</text>
+</g>
+<g transform="translate(800 240)">
+  <rect width="210" height="110" rx="14" fill="#fff" stroke="#bfe4e8" stroke-width="1.5" filter="url(#sh)"/>
+  <g transform="translate(14 14)"><rect width="36" height="36" rx="10" fill="#00838f"/><svg x="8" y="8" width="20" height="20" viewBox="0 0 20 20"><path d="M3 17L4 12.5L13.5 3L17 6.5L7.5 16z" fill="#fff"/></svg></g>
+  <text x="60" y="30" class="t">Drafter Model</text>
+  <text x="60" y="47" class="w" fill="#00707a">External LLM API</text>
+  <text x="14" y="74" class="d">Writes a reply from the</text>
+  <text x="14" y="92" class="d">ticket and its context.</text>
+</g>
+<g transform="translate(1074 240)">
+  <rect width="186" height="110" rx="14" fill="#fffaf0" stroke="#e8cf85" stroke-width="1.5" filter="url(#sh)"/>
+  <g transform="translate(14 14)"><rect width="36" height="36" rx="10" fill="#d19a00"/><text x="18" y="25" text-anchor="middle" font-size="23" font-weight="800" fill="#fff">?</text></g>
+  <text x="60" y="30" class="t">Right desk?</text>
+  <text x="60" y="47" class="w" fill="#8a6a00">Validator</text>
+  <text x="14" y="74" class="d">The agent reads the</text>
+  <text x="14" y="92" class="d">ticket and the draft.</text>
+</g>
+<g transform="translate(1324 240)">
+  <rect width="186" height="110" rx="14" fill="#fffaf0" stroke="#e8cf85" stroke-width="1.5" filter="url(#sh)"/>
+  <g transform="translate(14 14)"><rect width="36" height="36" rx="10" fill="#d19a00"/><text x="18" y="25" text-anchor="middle" font-size="23" font-weight="800" fill="#fff">?</text></g>
+  <text x="60" y="30" class="t">Draft good?</text>
+  <text x="60" y="47" class="w" fill="#8a6a00">Validator</text>
+  <text x="14" y="74" class="d">The agent checks the</text>
+  <text x="14" y="92" class="d">facts and the tone.</text>
+</g>
+<g transform="translate(1574 240)">
+  <rect width="180" height="110" rx="14" fill="#fff" stroke="#b7dcb9" stroke-width="1.5" filter="url(#sh)"/>
+  <g transform="translate(14 14)"><rect width="36" height="36" rx="10" fill="#2e7d32"/><svg x="8" y="8" width="20" height="20" viewBox="0 0 20 20"><path d="M1 10L19 2L13 18L9.5 11.5z" fill="#fff"/></svg></g>
+  <text x="60" y="30" class="t">Reply sent</text>
+  <text x="60" y="47" class="w" fill="#2e7d32">Simulated</text>
+  <text x="14" y="74" class="d">Only after a</text>
+  <text x="14" y="92" class="d">human click.</text>
+</g>
+<g transform="translate(550 480)">
+  <rect width="186" height="110" rx="14" fill="#fff" stroke="#f6cf9f" stroke-width="1.5" filter="url(#sh)"/>
+  <g transform="translate(14 14)"><rect width="36" height="36" rx="10" fill="#ef6c00"/><svg x="8" y="8" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="6" r="4" fill="#fff"/><path d="M2 19C2 13 6 11.5 10 11.5S18 13 18 19z" fill="#fff"/></svg></g>
+  <text x="60" y="30" class="t">Re-router</text>
+  <text x="60" y="47" class="w" fill="#c75b00">Support agent</text>
+  <text x="14" y="74" class="d">Reads the ticket and</text>
+  <text x="14" y="92" class="d">picks the right desk.</text>
+</g>
+<g transform="translate(812 480)">
+  <rect width="186" height="110" rx="14" fill="#fffaf0" stroke="#e8cf85" stroke-width="1.5" filter="url(#sh)"/>
+  <g transform="translate(14 14)"><rect width="36" height="36" rx="10" fill="#d19a00"/><text x="18" y="25" text-anchor="middle" font-size="23" font-weight="800" fill="#fff">?</text></g>
+  <text x="60" y="30" class="t">First change?</text>
+  <text x="60" y="47" class="w" fill="#8a6a00">Limits the loop</text>
+  <text x="14" y="74" class="d">Has the desk already</text>
+  <text x="14" y="92" class="d">been corrected once?</text>
+</g>
+<g transform="translate(1324 480)">
+  <rect width="186" height="110" rx="14" fill="#fff" stroke="#f6cf9f" stroke-width="1.5" filter="url(#sh)"/>
+  <g transform="translate(14 14)"><rect width="36" height="36" rx="10" fill="#ef6c00"/><svg x="8" y="8" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="6" r="4" fill="#fff"/><path d="M2 19C2 13 6 11.5 10 11.5S18 13 18 19z" fill="#fff"/></svg></g>
+  <text x="60" y="30" class="t">Agent edits it</text>
+  <text x="60" y="47" class="w" fill="#c75b00">Support agent</text>
+  <text x="14" y="74" class="d">Fixes the draft, or writes</text>
+  <text x="14" y="92" class="d">the reply by hand.</text>
+</g>
+<g transform="translate(745 102)">
+  <rect width="150" height="78" rx="11" fill="#fff" stroke="#bfe4e8" stroke-width="1.4"/>
+  <text x="14" y="23" class="t" style="font-size:14px">Lookup</text>
+  <text x="14" y="43" class="d" style="font-size:12px">Finds the payment in</text>
+  <text x="14" y="60" class="d" style="font-size:12px">a fake transactions table</text>
+</g>
+<g transform="translate(915 102)">
+  <rect width="150" height="78" rx="11" fill="#fff" stroke="#bfe4e8" stroke-width="1.4"/>
+  <text x="14" y="23" class="t" style="font-size:14px">Retrieval</text>
+  <text x="14" y="43" class="d" style="font-size:12px">Finds the right passage</text>
+  <text x="14" y="60" class="d" style="font-size:12px">in a fake help centre</text>
+</g>
+<circle cx="220" cy="295" r="4.5" fill="#fff" stroke="#2f55b5" stroke-width="2"/>
+<circle cx="280" cy="295" r="4.5" fill="#fff" stroke="#2f55b5" stroke-width="2"/>
+<circle cx="490" cy="295" r="4.5" fill="#fff" stroke="#2f55b5" stroke-width="2"/>
+<circle cx="550" cy="295" r="4.5" fill="#fff" stroke="#2f55b5" stroke-width="2"/>
+<circle cx="736" cy="295" r="4.5" fill="#fff" stroke="#2f55b5" stroke-width="2"/>
+<circle cx="800" cy="295" r="4.5" fill="#fff" stroke="#2f55b5" stroke-width="2"/>
+<circle cx="1010" cy="295" r="4.5" fill="#fff" stroke="#2f55b5" stroke-width="2"/>
+<circle cx="1074" cy="295" r="4.5" fill="#fff" stroke="#2f55b5" stroke-width="2"/>
+<circle cx="1260" cy="295" r="4.5" fill="#fff" stroke="#2f55b5" stroke-width="2"/>
+<circle cx="1324" cy="295" r="4.5" fill="#fff" stroke="#2f55b5" stroke-width="2"/>
+<circle cx="1510" cy="295" r="4.5" fill="#fff" stroke="#2f55b5" stroke-width="2"/>
+<circle cx="1574" cy="295" r="4.5" fill="#fff" stroke="#2f55b5" stroke-width="2"/>
+<circle cx="1510" cy="535" r="4.5" fill="#fff" stroke="#2f55b5" stroke-width="2"/>
+<circle cx="643" cy="350" r="4.5" fill="#fff" stroke="#e65100" stroke-width="2"/>
+<circle cx="736" cy="535" r="4.5" fill="#fff" stroke="#e65100" stroke-width="2"/>
+<circle cx="812" cy="535" r="4.5" fill="#fff" stroke="#e65100" stroke-width="2"/>
+<circle cx="905" cy="480" r="4.5" fill="#fff" stroke="#e65100" stroke-width="2"/>
+<circle cx="998" cy="535" r="4.5" fill="#fff" stroke="#e65100" stroke-width="2"/>
+<circle cx="1324" cy="535" r="4.5" fill="#fff" stroke="#e65100" stroke-width="2"/>
+<circle cx="1417" cy="350" r="4.5" fill="#fff" stroke="#e65100" stroke-width="2"/>
+<circle cx="1167" cy="350" r="4.5" fill="#fff" stroke="#e65100" stroke-width="2"/>
+<text x="767" y="285" class="lb" text-anchor="middle">Yes</text>
+<text x="1041" y="285" class="lb" text-anchor="middle">Draft</text>
+<text x="1291" y="285" class="lb" text-anchor="middle">Yes</text>
+<text x="1541" y="285" class="lb" text-anchor="middle">Yes</text>
+<text x="1530" y="525" class="lb" text-anchor="start">then approves</text>
+<text x="653" y="388" class="lo" text-anchor="start">No</text>
+<text x="655" y="406" class="lo" text-anchor="start">a draft is still written</text>
+<text x="915" y="415" class="lo" text-anchor="start">Yes: one new draft</text>
+<text x="1010" y="525" class="lo" text-anchor="start">No: agent takes over</text>
+<text x="1427" y="415" class="lo" text-anchor="start">No</text>
+<text x="1177" y="415" class="lo" text-anchor="start">No: wrong desk</text>
+<text x="915" y="222" class="lt" text-anchor="start">V2: asks for facts</text>
+<path class="m" d="M40 684H76"/><text x="84" y="689" class="n">normal path</text>
+<path class="f" d="M190 684H226"/><text x="234" y="689" class="n">correction</text>
+<path class="t2" d="M326 684H362"/><text x="370" y="689" class="n">V2 only</text>
+<rect x="450" y="675" width="18" height="18" rx="5" fill="#d19a00"/><text x="476" y="689" class="n">decision</text>
+<rect x="560" y="675" width="18" height="18" rx="5" fill="#ef6c00"/><text x="586" y="689" class="n">human</text>
+<text x="1754" y="689" class="n" text-anchor="end">Urgency never changes the path: it is shown to the agent. No model can send a reply or pick a queue.</text>
+</svg>

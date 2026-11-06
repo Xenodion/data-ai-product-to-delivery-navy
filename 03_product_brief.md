@@ -22,7 +22,7 @@ Handling time baseline ≈ 10 min/ticket. Minutes per step derived from scenario
 | # | Step | Who today | Minutes | Error rate | Cost of an error | Automate / augment / keep human | Trust level | Minutes after | Metric for this step |
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | **Read ticket** | Support agent | 1.5 (with step 2) | Feeds step 2 misrouting | Included in step 2 | **Automate** (Classifier): extract fields; ambiguous/trap tickets go to `UNDEFINED` | L1 (rules verify output) | ≈ 0.8 (steps 1–2) | JSON validity; extraction accuracy on intent/urgency |
-| 2 | **Route to desk** | Support agent | (in step 1) | 1 in 7 misrouted (~14.3 %) | ~€3 reroute rework; €150–€400 if urgent deadline missed | **Automate with rules** on clear tickets; **Keep human** for triage (`UNDEFINED`) | L3 (sampled audit); human triage on flag | (in step 1) | First-pass desk accuracy; share auto-routed (~50 %); urgent misroutes |
+| 2 | **Route to desk** | Support agent | (in step 1) | 1 in 7 misrouted (~14.3 %) | ~€3 reroute rework; €150–€400 if urgent deadline missed | **Automate with rules** on clear tickets; **Keep human** (Re-router) for `UNDEFINED` | L3 (sampled audit); human triage on flag | (in step 1) | First-pass desk accuracy; share auto-routed (~50 %); urgent misroutes |
 | 3 | **Find payment & history** | Support agent | 4.5 (with step 4) | Unmatched / wrong transaction | €150–€400 (reputation / dispute penalty) | **Automate** (Lookup Node): exact merchant-scoped ledger query | L1 (read-only, merchant-scoped) | ≈ 3.1 (steps 3–4) | Matching transaction attached; candidate disambiguation |
 | 4 | **Draft reply** | Support agent | (in step 3) | Unsupported commitments | Legal & regulatory risk if wrong status/amount quoted | **Augment** (Drafter): cited draft grounded in policy fixtures & transaction context | L2 (human approves every draft) | (in step 3) | Agent edit rate; drafts on wrong payment caught |
 | 5 | **Review, edit & send** | Support agent | 4.0 | Human review errors | — | **Keep human**: accountability and customer trust require human approval | Human only (no autonomous send) | 4.0 (unchanged) | QA score; end-to-end active handling time |
@@ -57,7 +57,7 @@ Handling time baseline ≈ 10 min/ticket. Minutes per step derived from scenario
   3. Automatic splitting of multi-intent tickets.
   4. Customer-facing voice or real-time chat interface.
   5. Sending real customer tickets to external unapproved APIs.
-- **The feature that tests our flip assumption, and why it is a MUST:** *Grounded context & cited draft.* It directly targets the 45 % drafting slice to deliver the net handling time savings required to hit our 13.5 % economic flip point.
+- **The feature that tests our flip assumption, and why it is a MUST:** *Grounded context & cited draft.* It directly targets the 45 % drafting slice to deliver the net handling time savings required to hit our 13.32 % economic flip point.
 - **The cut that hurt the most:** Autonomous replies for simple payment-status tickets. It had high reach, but was cut because an autonomous reply on a mismatched payment destroys customer trust.
 
 ---
@@ -96,7 +96,7 @@ Handling time baseline ≈ 10 min/ticket. Minutes per step derived from scenario
 
 ## 7. Success criterion — one sentence
 
-> By Session 4 prototype evaluation, on our 20-case eval-set (and scaling to ≥ 200 tickets), the copilot is on track for our **13.5 % net time-saved flip point**: routing at least **50 % of tickets automatically** with misrouting significantly below the 14 % manual baseline, while **0 urgent tickets** are auto-routed to the wrong desk.
+> By Session 4 prototype evaluation, on our 20-case eval-set (and scaling to ≥ 200 tickets), the copilot is on track for our **13.32 % net time-saved flip point**: routing at least **50 % of tickets automatically** with misrouting significantly below the 14 % manual baseline, while **0 urgent tickets** are auto-routed to the wrong desk.
 
 ---
 
@@ -105,8 +105,8 @@ Handling time baseline ≈ 10 min/ticket. Minutes per step derived from scenario
 - **Top risks:**
   1. An urgent chargeback misrouted silently, missing its regulatory defense deadline.
   2. Automation bias: an agent validating a draft grounded in the wrong transaction without reading.
-  3. Net handling time saved falling short of the 13.5 % economic flip point due to triage overhead.
-- **Rollback trigger (one line):** Instantly revert to manual routing if weekly QA finds urgent tickets auto-routed to the wrong desk, or if post-review serious error rate exceeds 0.1 % — owned by Head of Support.
+  3. Net handling time saved falling short of the 13.32 % economic flip point due to triage overhead.
+- **Rollback trigger (one line):** Instantly revert to manual routing if weekly QA finds to urgent tickets auto-routed to the wrong desk.
 
 ---
 
@@ -122,6 +122,6 @@ Handling time baseline ≈ 10 min/ticket. Minutes per step derived from scenario
 
 ## 10. What they could not decide
 
-- **Acceptable error cost threshold:** Support agents could not determine the exact dollar liability Keelpay can tolerate for a mismatched transaction; this threshold is decided by Finance and Compliance in `02_sizing.xlsx` (€150–€400/error, capped at ≤ 0.1 % serious errors).
+- **Acceptable error cost threshold:** Support agents could not determine the exact dollar liability Keelpay can tolerate for a mismatched transaction; this threshold is decided by Finance and Compliance in `02_sizing.xlsx`.
 - **Model architecture selection:** Users care about interface latency and routing correctness, not whether the extractor is fine-tuned or prompted; this technical trade-off is evaluated in Session 4.
 - **Log data retention period:** Support leads wanted indefinite history for training, but GDPR storage limitation (Art. 5) restricts operational retention; Legal/DPO determines the 90-day retention schedule.

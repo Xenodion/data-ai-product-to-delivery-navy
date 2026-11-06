@@ -17,13 +17,13 @@ Base year-one cash illustration is **€137,631**, distinct from €194,298 annu
 
 ## How sure?
 
-The 20.262% saving and 0.0745% weighted serious-error input are assumptions, not measured full-flow or post-review outcomes. Base annualized costs include €41.4k assumed serious-error cost, €1.3k processing, and €74.3k fixed/semi-fixed costs. D-q4 has a useful synthetic component benchmark, but does not validate routing policy, reply quality, human review, or time saved; comparison with prompting is still open.
+The 20.262% saving and 0.0745% weighted serious-error input are assumptions, not measured full-flow or post-review outcomes. Base annualized costs include €41.4k assumed serious-error cost, €1.3k processing, and €74.3k fixed/semi-fixed costs. D-q4 has a useful synthetic component benchmark, but does not validate routing policy, reply quality, human review, or time saved; it also beats the prompted base model (10.5 silent errors per 100 for B3 against 0.7).
 
 Under fixed base assumptions, total active-time savings must reach 5.93% to break even, 13.32% to beat the base next-best, and 12.79% to beat base do-nothing. These thresholds move when assumptions change; they are not accuracy targets.
 
 ## What if we’re wrong?
 
-The Low case loses €78,444 and misses the Base next-best hurdle. A one-variable sensitivity gives €55.1k net at 10% saving and €326.4k at 30%. A roughly 200-case exploration cannot certify a rare error rate below 0.1%; twenty cases check the contract only. Do not pilot unless comparable full-flow tasks show value at constant QA and the serious-error controls are validated.
+The Low case loses €78,444 and misses the Base next-best hurdle. A one-variable sensitivity gives €55.1k net at 10% saving and €326.4k at 30%. A roughly 200-case exploration cannot certify a rare error rate; twenty cases check the contract only. Do not pilot unless comparable full-flow tasks show value at constant QA and the serious-error controls are validated.
 
 ## Compared to what?
 

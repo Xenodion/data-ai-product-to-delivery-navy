@@ -10,7 +10,7 @@ The subproject dependency list includes MLflow. Regenerate the lock with the pro
 cd agentic-workflow-subproject
 Copy-Item .env.example .env  # set only the local values needed for your task
 uv sync
-uv run mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./mlartifacts --host 127.0.0.1 --port 5000
+uv run mlflow server --backend-store-uri sqlite:///.local/mlflow/mlflow.db --default-artifact-root ./.local/mlflow/artifacts --host 127.0.0.1 --port 5000
 ```
 
 Open `http://127.0.0.1:5000`. Stop the local process with Ctrl+C. The local database and artifact directory are ignored by Git. This store is per-machine and is not the team's shared system of record. Before using a shared MLflow server, decide the backend database, artifact storage, access control, backup, and retention.
@@ -20,7 +20,7 @@ The tracking helpers default to `MLFLOW_TRACKING_URI=http://127.0.0.1:5000` and 
 ## Track local baseline runs
 
 ```powershell
-uv run python scripts/run_baselines.py --mlflow
+uv run python ml/qualifier/scripts/run_baselines.py --mlflow
 ```
 
 This scores `val` and logs B0–B2 results and privacy-filtered prediction artifacts (row hash and model output, without ticket text or reference labels) to MLflow. Adding `--final` explicitly evaluates and tracks the final test sets; do not use it while tuning.
@@ -28,7 +28,7 @@ This scores `val` and logs B0–B2 results and privacy-filtered prediction artif
 To score a prediction export such as a recovered B3 CSV:
 
 ```powershell
-uv run python scripts/score_predictions.py path\to\predictions.csv val --mlflow --system-id B3 --model-id Qwen/Qwen2.5-3B-Instruct --tracking-origin historical_import
+uv run python ml/qualifier/scripts/score_predictions.py path\to\predictions.csv val --mlflow --system-id B3 --model-id Qwen/Qwen2.5-3B-Instruct --tracking-origin historical_import
 ```
 
 The scorer checks that ticket text and row order match the selected committed split; logged artifacts keep only row hashes and model outputs. It reports a failure rather than importing mismatched predictions.
@@ -38,14 +38,14 @@ The scorer checks that ticket text and row order match the selected committed sp
 First validate which local files match each committed split without contacting MLflow:
 
 ```powershell
-uv run python scripts/import_legacy_results.py --dry-run
-uv run python scripts/import_legacy_results.py --dry-run --include-b3 --system-id B3 --split val
+uv run python ml/qualifier/scripts/import_legacy_results.py --dry-run
+uv run python ml/qualifier/scripts/import_legacy_results.py --dry-run --include-b3 --system-id B3 --split val
 ```
 
 When the B3 prediction export is local and passes the exact split checks, import existing results:
 
 ```powershell
-uv run python scripts/import_legacy_results.py --include-b3 --system-id B3 --split val
+uv run python ml/qualifier/scripts/import_legacy_results.py --include-b3 --system-id B3 --split val
 ```
 
 This command never queries Vertex or GCS. It imports locally available B0–B3, D, D-q8, and D-q4 prediction results, creates `docs/results/dataset_manifest.json`, records timing artifacts and explicitly marks cost assumptions as estimates. Missing or invalid files are skipped and reported. Use the local B3 export only after its cloud job/split provenance has been verified; do not rerun the pipeline to fill missing metadata.
@@ -54,7 +54,7 @@ The v2 evaluation record additionally logs initial Router counts/rates under `ro
 
 ## Synchronize an already completed Vertex pipeline
 
-`scripts/sync_vertex_run.py` accepts a local JSON export manifest and local artifact paths. It does not query Vertex or download GCS objects. Any remote lookup/download must first pass the project's cost and access approval.
+`ml/qualifier/scripts/sync_vertex_run.py` accepts a local JSON export manifest and local artifact paths. It does not query Vertex or download GCS objects. Any remote lookup/download must first pass the project's cost and access approval.
 
 Minimal manifest shape:
 
@@ -90,7 +90,7 @@ Minimal manifest shape:
 Paths in the manifest are resolved relative to the manifest file. Results are grouped under an MLflow parent run for the Vertex job. The sync key includes job resource, task, system, split, and run type. Repeating an identical manifest is a no-op; changed data under the same key is rejected rather than appended as duplicate metric history.
 
 ```powershell
-uv run python scripts/sync_vertex_run.py path\to\vertex-export.json
+uv run python ml/qualifier/scripts/sync_vertex_run.py path\to\vertex-export.json
 ```
 
 The script logs local files to MLflow; for large files already in GCS, use approved local retrieval or extend the manifest/artifact strategy to immutable cloud references before syncing. It does not create, list, or download cloud resources.
@@ -100,7 +100,7 @@ The script logs local files to MLflow; for large files already in GCS, use appro
 After a model has been registered through the approved Vertex workflow, record its immutable resource/version and alias snapshot against the source MLflow run:
 
 ```powershell
-uv run python scripts/link_vertex_model.py `
+uv run python ml/qualifier/scripts/link_vertex_model.py `
   --run-id <mlflow-run-id> `
   --system-id D-q4 `
   --model-resource projects/<project>/locations/europe-west2/models/<model-id>@<version> `
@@ -112,15 +112,9 @@ uv run python scripts/link_vertex_model.py `
 The command writes a lineage event to MLflow and an ignored local receipt. It does not call Vertex, register a model, move an alias, or change a deployment. A changed alias/version is a new event.
 The resource argument must contain an immutable model version. The receipt also copies the source run's dataset/scorer/prediction hashes and Vertex pipeline job reference when known; `unknown` is retained when historical provenance cannot be recovered. A local link is only one side of synchronization: inspect the Vertex model version/labels and KFP execution lineage separately before declaring the crosswalk verified.
 
-## Rebuild slide figures
+## Figures
 
-Once legacy runs or later pipeline results are present in the configured MLflow experiment:
-
-```powershell
-uv run python scripts/build_tracking_figures.py
-```
-
-It writes SVG and PNG charts to `docs/figures/` and logs the exports with their source run IDs. Available views include quality versus monthly inference cost, silent and urgent error rates, quality versus measured latency, trap-family severity, and training loss when the training history artifact is present. A chart is omitted if the required source metrics are unavailable; test-trap results remain diagnostic and do not become headline quality.
+Charts live in the executed notebooks (`ml/qualifier/notebooks/0*.ipynb`), built with the shared theme in `ml/qualifier/notebooks/_viz.py`. MLflow keeps metrics, loss curves, sanitized predictions and provenance; it holds no separate figure set.
 
 ## Recovery and safeguards
 

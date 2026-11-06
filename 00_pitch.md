@@ -8,7 +8,7 @@ At **10 minutes per ticket** and **130 productive hours per agent/month** (assum
 
 **Copilot flow:** the Qualifier Model extracts seven fields; the Python Routing Node selects the desk and allowed steps; Lookup Node / Retrieval Node / Drafter Model prepare a sourced reply or clarification. The Support Agent resolves necessary ambiguities, reviews, and sends.
 
-**Control:** bounded L3 routing, targeted qualification, L2 reply, human send. Urgency raises attention without blocking draft preparation. No autonomous sending or ledger writes. Missing information blocks only decisions that depend on it.
+**Control:** bounded L3 routing, human desk correction (Re-router), L2 reply, human send. Urgency raises attention without blocking draft preparation. No autonomous sending or ledger writes. Missing information blocks only decisions that depend on it.
 
 **Decision:** GO to build/evaluate the demo; pilot remains conditional on Support and Compliance review after active-time, constant-QA, and residual-risk measurement. The Qualifier Model benchmark does not prove this gain. The key failure is a request that appears handled but has the wrong desk, payment, or urgency response.
 

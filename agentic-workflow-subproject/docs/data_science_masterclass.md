@@ -1,6 +1,6 @@
 # NAVY Qualifier: data science and LLMOps masterclass
 
-This is the working handbook for experiments, model comparison, diagnostics, tracking, and model lifecycle in the Qualifier project. It complements the fixed historical model-metric definitions in [`scoring_protocol.md`](scoring_protocol.md), the Router-specific decision tree and derived metrics in [`error-consequences.md`](../../specs/004-routing-node/error-consequences.md), and the recovered execution checklist in [`llmops_recovery_tasks.md`](llmops_recovery_tasks.md).
+This is the working handbook for experiments, model comparison, diagnostics, tracking, and model lifecycle in the Qualifier project. It complements the fixed historical model-metric definitions in [`scoring_protocol.md`](scoring_protocol.md), the Router-specific decision tree and derived metrics in [`error-consequences.md`](../specs/004-routing-node/error-consequences.md), and the recovered execution checklist in [`llmops_recovery_tasks.md`](llmops_recovery_tasks.md).
 
 ## 1. The question the model answers
 

@@ -1,6 +1,6 @@
 # Product Specification — NAVY / Keelpay Support Copilot
 
-**Status: agreed functional target; not implemented.** Behavioral reference: [Workflow and demo experience](docs/design/copilot-workflow.md). Canonical actor and component names: [NAVY Reference Terminology](docs/design/terminology.md). Routing Node implementation contract and cases: [Feature 004](specs/004-routing-node/spec.md). Delivery work is organized in `specs/roadmap.md`.
+**Status: agreed functional target; not implemented.** Behavioral reference: [Workflow and demo experience](agentic-workflow-subproject/docs/design/copilot-workflow.md). Canonical actor and component names: [NAVY Reference Terminology](agentic-workflow-subproject/docs/design/terminology.md). Routing Node implementation contract and cases: [Feature 004](agentic-workflow-subproject/specs/004-routing-node/spec.md). Delivery work is organized in `specs/roadmap.md`.
 
 ## 1. Problem and decision
 
@@ -10,13 +10,13 @@ Keelpay is a fictional B2B fintech scenario with about 36,000 monthly tickets. T
 
 `Demo Injector` → `Qualifier Model` → `Routing Node` → `Drafter Model` → **Validator** → explicit simulated send. Drafting proceeds even when the initial desk may need correction. The **Re-router** corrects that desk and triggers a fresh draft; Validator sends routing problems there when found.
 
-The only human workflow nodes are **Re-router** and **Validator**. There is no pre-draft qualification hold. The `Routing Node` is deterministic Python, never a model. The component order and relationships are canonical; see [architecture](docs/design/architecture.md).
+The only human workflow nodes are **Re-router** and **Validator**. There is no pre-draft qualification hold. The `Routing Node` is deterministic Python, never a model. The component order and relationships are canonical; see [architecture](agentic-workflow-subproject/docs/design/architecture.md).
 
 ## 3. Input and Qualifier Model contract
 
 Input: `{ticket_id, merchant_id, text, created_at}`. The injector supplies IDs and timestamps; they are not inferred from text.
 
-The `Qualifier Model` follows the existing schema at `agentic-workflow-subproject/src/dataset_build/schema.py`, with exactly seven string values:
+The `Qualifier Model` follows the existing schema at `agentic-workflow-subproject/ml/qualifier/src/dataset_build/schema.py`, with exactly seven string values:
 
 ```json
 {"intent":"payment_status","sub_intent":"delayed_credit","transaction_id":"TX-992100","amount":"4850.00","currency":"EUR","urgency":"high","sentiment":"negative"}
@@ -66,4 +66,4 @@ Each ticket shows age since receipt and time in its current step. Rerouting does
 
 ## 9. Evidence limits and deliverables
 
-D-q4 is a Qualifier Model candidate measured on a historical benchmark. That benchmark does not validate the complete `Routing Node`, `Drafter Model`, interface, or time saved. Prompted-model comparison, integration, user tasks, and production remain outstanding. Do not rewrite historical prototypes or measurements as target behavior.
+D-q4 is a Qualifier Model candidate measured on a historical benchmark. That benchmark does not validate the complete `Routing Node`, `Drafter Model`, interface, or time saved. Integration, user tasks, and production remain outstanding; the prompted base model (B3) was compared and does not meet the routing bars. Do not rewrite historical prototypes or measurements as target behavior.

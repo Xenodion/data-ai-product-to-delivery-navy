@@ -1,0 +1,185 @@
+{
+  "manifest_version": 1,
+  "splits": {
+    "test_natural.csv": {
+      "sha256": "a71b7b14f5c4b1d96d576e51f15c5459e55f5d74c9ef361c646abea2e1657e2c",
+      "rows": 610,
+      "columns": [
+        "card_id",
+        "ticket",
+        "target",
+        "traps",
+        "language",
+        "channel",
+        "length",
+        "persona",
+        "sector",
+        "noise",
+        "sentinel_kind",
+        "id_case",
+        "amount_case",
+        "writer_model",
+        "prompt_version",
+        "voter_b_checked"
+      ]
+    },
+    "test_natural_quarantine.csv": {
+      "sha256": "b393751c2f369fb7c9ea8cc0e57ceb599e5ff5800c73b75ffb362bcf67aef89b",
+      "rows": 340,
+      "columns": [
+        "reason",
+        "card_id",
+        "ticket",
+        "target",
+        "traps",
+        "language",
+        "channel",
+        "length",
+        "persona",
+        "sector",
+        "noise",
+        "sentinel_kind",
+        "id_case",
+        "amount_case",
+        "writer_model",
+        "prompt_version",
+        "voter_b_checked"
+      ]
+    },
+    "test_traps.csv": {
+      "sha256": "3bb153bc3bde7053634a2b174d6dcd9f5379a329cab6ccae0c3e819b256b2b4b",
+      "rows": 380,
+      "columns": [
+        "card_id",
+        "ticket",
+        "target",
+        "traps",
+        "language",
+        "channel",
+        "length",
+        "persona",
+        "sector",
+        "noise",
+        "sentinel_kind",
+        "id_case",
+        "amount_case",
+        "writer_model",
+        "prompt_version",
+        "voter_b_checked"
+      ]
+    },
+    "test_traps_quarantine.csv": {
+      "sha256": "e43f38ef6a8886d9ec1426056e15349fee9b31236ad21fe829f243bb754272c1",
+      "rows": 265,
+      "columns": [
+        "reason",
+        "card_id",
+        "ticket",
+        "target",
+        "traps",
+        "language",
+        "channel",
+        "length",
+        "persona",
+        "sector",
+        "noise",
+        "sentinel_kind",
+        "id_case",
+        "amount_case",
+        "writer_model",
+        "prompt_version",
+        "voter_b_checked"
+      ]
+    },
+    "train.csv": {
+      "sha256": "ad758b61b19ef6c41a4459a1013b1e0ed6dfdc753e01310a66ce222a62cc82d1",
+      "rows": 1922,
+      "columns": [
+        "card_id",
+        "ticket",
+        "target",
+        "traps",
+        "language",
+        "channel",
+        "length",
+        "persona",
+        "sector",
+        "noise",
+        "sentinel_kind",
+        "id_case",
+        "amount_case",
+        "writer_model",
+        "prompt_version",
+        "voter_b_checked"
+      ]
+    },
+    "train_quarantine.csv": {
+      "sha256": "f186219e22176a9541236307df1421761b0103697e9fe010ee6d051cafeb70ba",
+      "rows": 735,
+      "columns": [
+        "reason",
+        "card_id",
+        "ticket",
+        "target",
+        "traps",
+        "language",
+        "channel",
+        "length",
+        "persona",
+        "sector",
+        "noise",
+        "sentinel_kind",
+        "id_case",
+        "amount_case",
+        "writer_model",
+        "prompt_version",
+        "voter_b_checked"
+      ]
+    },
+    "val.csv": {
+      "sha256": "e33a1445911555300c43bc0cc3381033e6f6bd8f2376666dd834e726fce0b2ed",
+      "rows": 293,
+      "columns": [
+        "card_id",
+        "ticket",
+        "target",
+        "traps",
+        "language",
+        "channel",
+        "length",
+        "persona",
+        "sector",
+        "noise",
+        "sentinel_kind",
+        "id_case",
+        "amount_case",
+        "writer_model",
+        "prompt_version",
+        "voter_b_checked"
+      ]
+    },
+    "val_quarantine.csv": {
+      "sha256": "dee2b346b5ce540a0ff86d6dabc1467e07bc621f98b8d3cfa8ae395d8e11b85a",
+      "rows": 157,
+      "columns": [
+        "reason",
+        "card_id",
+        "ticket",
+        "target",
+        "traps",
+        "language",
+        "channel",
+        "length",
+        "persona",
+        "sector",
+        "noise",
+        "sentinel_kind",
+        "id_case",
+        "amount_case",
+        "writer_model",
+        "prompt_version",
+        "voter_b_checked"
+      ]
+    }
+  }
+}
