@@ -12,19 +12,12 @@ Updated 6 November 2026. Read this first, then `agentic-workflow-subproject/LAYO
 - The working tree also holds an uncommitted tidy of `assets/` and `docs/` made outside the agent sessions (19 entries, `docs/_archive/` and more). Leave it alone until the owner decides; do not sweep it into a commit.
 
 **Next steps, in order**
-1. Finish the check that is still open. The real flow with a valid Qualifier has not been rerun since the `ml/` and `.local/` moves, because the Qualifier was killed out of memory: Docker has 2.8 GiB and the `l07` Airflow stack takes about 1.3 GiB. Stop that stack or give Docker 5 to 6 GB, then run:
-   ```bash
-   cd agentic-workflow-subproject
-   docker compose -f flow/docker-compose.yml up -d
-   uv run python -m flow.runner --n 1 --seed 9
-   docker compose -f flow/docker-compose.yml down
-   ```
-   Expected in `.local/runs/`: `qualifier.status` is `valid`, and a draft exists.
+1. Done 6 November 2026: the real flow with a valid Qualifier was rerun after the `ml/` and `.local/` moves, with the `l07` Airflow stack stopped. `flow.runner --n 1 --seed 9` wrote `.local/runs/20261106T125250Z.jsonl`: `qualifier.status` is `valid`, the Routing Node sent the ticket to `triage`, and a draft exists. Docker has 2.8 GiB and `l07` takes about 1.6 GiB idle, so stop that stack before starting the Qualifier (1.8 GiB).
 2. Owner decisions: merge `refactor/subproject-layout` into `feat/llmops-platform-improvements`, push, and open the pull request to `main`.
 3. Owner decision: remove the claim wording from `docs/design/copilot-workflow.md` and `docs/design/architecture.md`. Until then, the 005-010 spec overrides them on this point.
 4. Build the API and PostgreSQL around `process()` and `reroute()`, with one background loop inside the API (#30, #31). Then connect the front end (#37, #38).
 5. Bring the course requirements forward: confirm them with the lecturers (#16, #44), then CI evaluation (#19), model cascade and semantic cache (#21), and the readiness checklist (#22).
-6. Review draft quality. Nemo left a `[Your Name]` signature in one trial and a stray quotation mark in another. Then add the read-only tools (#35).
+6. Review draft quality. Nemo left a `[Your Name]` signature in two trials and a stray quotation mark in another. Then add the read-only tools (#35).
 
 Implementation planning update, 5 November 2026: see [integrated technical plan](005-010-demo-delivery/plan.md), [execution checklist](005-010-demo-delivery/tasks.md), and parallel [confidence study](011-confidence-signals/spec.md). These refine the V1/V2 sequence below: direct drafting is V1; agentic tools and retrieval are V2; confidence research does not block V1. The local [flow script](012-flow-script/spec.md) comes before the runtime lots below.
 
