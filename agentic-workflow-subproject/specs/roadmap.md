@@ -12,10 +12,9 @@ Updated 6 November 2026. Read this first, then `LAYOUT.md`. The repository root 
 **Next steps, in order**
 1. Done 6 November 2026: the real flow with a valid Qualifier was rerun after the `ml/` and `.local/` moves, with the `l07` Airflow stack stopped. `flow.runner --n 1 --seed 9` wrote `.local/runs/20261106T125250Z.jsonl`: `qualifier.status` is `valid`, the Routing Node sent the ticket to `triage`, and a draft exists. Docker has 2.8 GiB and `l07` takes about 1.6 GiB idle, so stop that stack before starting the Qualifier (1.8 GiB).
 2. Done 6 November 2026: repository reorganised around the course template and merged to `main`.
-3. Owner decision: remove the claim wording from `docs/design/copilot-workflow.md` and `docs/design/architecture.md`. Until then, the 005-010 spec overrides them on this point.
-4. Build the API and PostgreSQL around `process()` and `reroute()`, with one background loop inside the API (#30, #31). Then connect the front end (#37, #38).
-5. Bring the course requirements forward: confirm them with the lecturers (#16, #44), then CI evaluation (#19), model cascade and semantic cache (#21), and the readiness checklist (#22).
-6. Review draft quality. Nemo left a `[Your Name]` signature in two trials and a stray quotation mark in another. Then add the read-only tools (#35).
+3. Done 6 November 2026: flow v2 target architecture validated, see [diagram](../docs/design/flow-v2/flow_v2.svg) and [node table](../docs/design/flow-v2/node_table_v1.md).
+4. Follow the [flow v2 task list](013-flow-v2/tasks.md). Dev tracker #67, AI Product trackers #53 and #68. It replaces the order of the sections below where they differ.
+5. Owner decision: remove the claim wording from `docs/design/copilot-workflow.md` and `docs/design/architecture.md` (#50). Until then, the 005-010 spec overrides them on this point.
 
 Implementation planning update, 5 November 2026: see [integrated technical plan](005-010-demo-delivery/plan.md), [execution checklist](005-010-demo-delivery/tasks.md), and parallel [confidence study](011-confidence-signals/spec.md). These refine the V1/V2 sequence below: direct drafting is V1; agentic tools and retrieval are V2; confidence research does not block V1. The local [flow script](012-flow-script/spec.md) comes before the runtime lots below.
 

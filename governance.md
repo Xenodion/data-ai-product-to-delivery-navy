@@ -43,19 +43,19 @@ The tests include non-representative traps and languages. Pre-filter quotas do n
 | Step | Assurance level and rule |
 |---|---|
 | Qualifier Model | Reading assistance; seven fields and contract validation; no invented confidence |
-| Routing Node | Deterministic Python, bounded L3 for supported intents; unknown/invalid intent creates a Re-router task while drafting continues |
+| Routing Node | Deterministic Python, L3 with a weekly QA sample for supported intents; unknown or invalid intent goes to the Re-router with no draft |
 | Lookup Node | Read-only, merchant-scoped; an incorrect lookup remains a real risk |
-| Priority | Surface urgency while preparation continues; handling/escalation configured separately |
+| Priority | Urgency is shown and never changes the path; an alert on queue age for urgent tickets |
 | Retrieval Node | Read-only approved sources; grounded facts or clarification; automated checks are imperfect |
 | Drafter Model | L2; prepares factual, documentary, or clarification draft; automated checks are imperfect |
-| Validator/send | Support Agent only; editing optional, checking required, unchanged draft needs confirmation |
+| Validator/send | Support Agent only; approval kind; editing optional, checking required, unchanged draft needs confirmation; every text passes the final compliance gate |
 | History | Automatic actor/version record; traceability is not a quality guarantee |
 
-An absent/ambiguous payment reference blocks claims about that payment, not a known desk or a clarification. Unknown sentiment uses neutral tone. Unknown sub-intent blocks only its dependent procedure. Urgency alone never pauses draft preparation.
+An absent/ambiguous payment reference blocks claims about that payment, not a known desk or a clarification. Unknown sentiment uses neutral tone. Unknown sub-intent blocks only its dependent procedure. Urgency alone never changes the path.
 
-**Recovery:** first desk correction → recalculate context and draft; second → manual triage, no automatic loop. “Copilot off” leaves manual writing usable. Receipt and total age remain preserved.
+**Recovery:** a person's first correction re-enters the flow once; a second means the person finishes, no automatic loop. “Copilot off” leaves manual writing usable. Receipt and total age remain preserved.
 
-**Separate rollback:** stop automatic assignment (suggestions/qualification), stop drafting (keep context plus human writing), or stop the whole copilot and use a manual queue. Head of Support triggers; NAVY executes; Compliance joins sensitive incidents. A serious incident triggers immediate review and tailored restriction, not just waiting for a weekly sample.
+**Separate rollback:** one flag, `copilot_mode`, with positions Judge off, L1 (drafting off, keep context and human writing), routing off (manual routing), copilot off (manual queue). Head of Support triggers, with a named backup; NAVY executes; Compliance joins sensitive incidents. Tested before any demo by running the evaluation set at L1 and checking that no draft is produced. A serious incident triggers immediate review and tailored restriction, not just waiting for a weekly sample.
 
 ## Open settings and S5–S7
 
