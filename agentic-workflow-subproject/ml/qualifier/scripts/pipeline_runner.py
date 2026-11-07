@@ -19,6 +19,7 @@ from ml.qualifier.src.local_paths import LOGS_DIR, PIPELINES_DIR
 from ml.qualifier.src.constants import GCP_PROJECT_ID, GCP_REGION, DATASET_URI, PIPELINE_ROOT
 from ml.qualifier.src.pipelines.base_model_pipeline import base_model_pipeline
 from ml.qualifier.src.pipelines.compact_variants_pipeline import compact_variants_pipeline
+from ml.qualifier.src.pipelines.confidence_signals_pipeline import confidence_signals_pipeline
 from ml.qualifier.src.pipelines.hyperparameter_sweep_pipeline import hyperparameter_sweep_pipeline
 from ml.qualifier.src.pipelines.inference_pipeline import inference_pipeline
 from ml.qualifier.src.pipelines.model_training_pipeline import model_training_pipeline
@@ -28,6 +29,7 @@ PIPELINES = {
     "sweep": hyperparameter_sweep_pipeline,
     "base": base_model_pipeline,  # B3: the base model prompted, no fine-tuning
     "compact": compact_variants_pipeline,  # D-q8 and D-q4: merge, GGUF, quantise, predict on CPU
+    "confidence": confidence_signals_pipeline,  # D-q4 replayed on CPU with token probabilities (#45)
     "inference": inference_pipeline,  # D unquantized (with adapter) or B3 (without adapter) on GPU
 }
 
@@ -61,11 +63,15 @@ parser.add_argument(
 parser.add_argument(
     "--adapter-uri", help="gs:// folder of the LoRA adapter (compact and inference pipelines)"
 )
+parser.add_argument("--gguf-uri", help="gs:// path of model-q4.gguf (confidence pipeline)")
 args = parser.parse_args()
 if not args.confirm_billable_run:
     parser.error("Vertex submission is billable; pass --confirm-billable-run after the campaign gates pass")
 if args.pipeline == "compact" and not args.adapter_uri:
     parser.error("--adapter-uri is required by the compact pipeline")
+
+if args.pipeline == "confidence" and not args.gguf_uri:
+    parser.error("--gguf-uri is required by the confidence pipeline")
 
 PIPELINES_DIR.mkdir(parents=True, exist_ok=True)
 template_path = str(PIPELINES_DIR / f"{args.pipeline}_pipeline.yaml")
@@ -78,6 +84,8 @@ if args.model_id and args.pipeline != "sweep":
     extra |= {"model_id": args.model_id}
 if args.adapter_uri and args.pipeline in ("compact", "inference"):
     extra |= {"adapter_uri": args.adapter_uri}
+if args.gguf_uri and args.pipeline == "confidence":
+    extra |= {"gguf_uri": args.gguf_uri}
 if args.fp16 and args.pipeline == "training":
     extra |= {"compute_dtype": "float16"}
 if args.smoke:
