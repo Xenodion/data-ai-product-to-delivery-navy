@@ -89,4 +89,4 @@ A person can take any ticket back at any time. Nothing is sent without a person,
 
 ## 8. Built today and target
 
-Built: the Qualifier (D-q4, measured), the routing rule, a first Drafter and part of the audit log. To build, in order: measures, the ticket envelope and turns, context plan and Evidence gate with stubs, policy check and final gate, the per-desk Drafter, the tier-2 tools, human actions and Send, the API and screens, then the optional Judge and the switch. No endpoint is deployed.
+Built: the Qualifier (D-q4, measured), the routing rule, a first Drafter and part of the audit log. To build, in order: measures, the ticket envelope and turns, context plan and Evidence gate with stubs, policy check and final gate, the per-desk Drafter, the tier-2 tools, human actions and Send, the API and screens, then the optional Judge and the switch. No endpoint is deployed. A threshold on the Qualifier's token probabilities is under study (issue #45, `agentic-workflow-subproject/ml/confidence/`); on the validation set the probability does not separate right from wrong answers for the desk and the urgency, so it is not part of the flow.
