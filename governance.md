@@ -68,3 +68,9 @@ An absent/ambiguous payment reference blocks claims about that payment, not a kn
 | Isolation and durable recovery | Tech lead; cross-merchant, reconnect, idempotency, and failure tests |
 
 The demo requires FIFO and visible waiting time. Advanced urgency and multi-agent are SHOULD for demo implementation; this neither validates nor waives pilot safety requirements. Metrics, A/B, and operations deliverables will use available course instructions and observations actually collected.
+
+## Session 5 — Counter-metrics, segments and the harm threshold
+
+Counter-metrics: repeat contact within 7 days; drafts on the wrong payment validated unread. Segments reported: language, desk, ticket difficulty, urgency, agent seniority (`05_metrics.md` §3).
+
+**Harm threshold:** if, for any language or desk, the repeat-contact rate within 7 days is higher in copilot-on weeks than in copilot-off weeks for two consecutive weeks, or the Re-router correction rate rises above today's misroute rate (1 in 7, `02_sizing.xlsx` `Flow!D26`), drafting drops to "context only" (no draft) on that segment until the gap is explained. Owner: Head of Support, with the Head of Compliance for disputes and compliance; reviewed monthly.
