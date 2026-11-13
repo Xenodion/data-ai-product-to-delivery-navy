@@ -1,4 +1,8 @@
-"""Feeds validation tickets to the flow and appends each finished run to a JSONL file."""
+"""Feeds tickets to the flow and appends each finished run to a JSONL file.
+
+By default it samples the validation split. With ``--tickets`` it runs a course eval-set
+(``evals/eval_set_v0.csv`` or ``evals/eval_set_v1.csv``) in file order.
+"""
 
 import argparse
 import csv
@@ -25,6 +29,9 @@ from ml.qualifier.src.local_paths import RUNS_DIR
 logger = logging.getLogger(__name__)
 
 VAL_PATH = Path(__file__).parent.parent / "data" / "dataset" / "val.csv"
+# Columns of the course eval-sets; every other column (labels, expected outputs) stays unread.
+EVAL_ID_COLUMN = "id"
+EVAL_TEXT_COLUMN = "input_the_agent_receives"
 
 
 def select_tickets(path: Path, n: int, seed: int, merchant_id: str) -> list[Ticket]:
@@ -35,6 +42,24 @@ def select_tickets(path: Path, n: int, seed: int, merchant_id: str) -> list[Tick
     return [
         Ticket(ticket_id=card_id, merchant_id=merchant_id, text=text, created_at=datetime.now(UTC))
         for card_id, text in chosen
+    ]
+
+
+def load_eval_tickets(path: Path, merchant_id: str, ids: frozenset[str] | None = None) -> list[Ticket]:
+    """Read a course eval-set in file order. Only the ID and the text leave the file, never the labels.
+
+    ``utf-8-sig`` because the eval-sets carry a byte-order mark for Excel.
+    """
+    with path.open(encoding="utf-8-sig", newline="") as handle:
+        rows = [(row[EVAL_ID_COLUMN], row[EVAL_TEXT_COLUMN]) for row in csv.DictReader(handle)]
+    if ids is not None:
+        unknown = ids - {ticket_id for ticket_id, _ in rows}
+        if unknown:
+            raise ValueError(f"IDs not in {path.name}: {sorted(unknown)}")
+        rows = [(ticket_id, text) for ticket_id, text in rows if ticket_id in ids]
+    return [
+        Ticket(ticket_id=ticket_id, merchant_id=merchant_id, text=text, created_at=datetime.now(UTC))
+        for ticket_id, text in rows
     ]
 
 
@@ -77,10 +102,14 @@ def _flush_traces() -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--n", type=int, default=1)
+    parser.add_argument("--n", type=int, default=1, help="validation tickets to sample (ignored with --tickets)")
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--every", type=float, default=0.0, help="seconds between tickets")
+    parser.add_argument("--tickets", type=Path, help="run a course eval-set instead of sampling val.csv")
+    parser.add_argument("--ids", help="with --tickets: comma-separated IDs to run, e.g. NAVY-EV-01,NAVY-EV-14")
     args = parser.parse_args()
+    if args.ids and not args.tickets:
+        parser.error("--ids needs --tickets")
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     load_dotenv(Path(__file__).parent.parent / ".env")
@@ -91,7 +120,13 @@ def main() -> int:
 
     config = load_config()
     run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
-    output = RUNS_DIR / f"{run_id}.jsonl"
+    if args.tickets:
+        ids = frozenset(i.strip() for i in args.ids.split(",")) if args.ids else None
+        tickets = load_eval_tickets(args.tickets, config.merchant_id, ids)
+        output = RUNS_DIR / f"{run_id}_{args.tickets.stem}.jsonl"
+    else:
+        tickets = select_tickets(VAL_PATH, args.n, args.seed, config.merchant_id)
+        output = RUNS_DIR / f"{run_id}.jsonl"
     # Separate clients: the local Qualifier never receives the OpenRouter key.
     with (
         httpx.Client() as qualifier_client,
@@ -99,7 +134,7 @@ def main() -> int:
     ):
         try:
             run_tickets(
-                select_tickets(VAL_PATH, args.n, args.seed, config.merchant_id),
+                tickets,
                 build_deps(qualifier_client, drafter_client, config),
                 output,
                 args.every,

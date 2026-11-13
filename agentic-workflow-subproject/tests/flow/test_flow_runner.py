@@ -7,7 +7,7 @@ from pydantic import ValidationError
 from flow.contracts import Draft, FlowDeps, QualifierResult, Route, Ticket, TicketRun
 from flow.llm import LLMError
 from flow.pipeline import process
-from flow.runner import VAL_PATH, run_tickets, select_tickets
+from flow.runner import VAL_PATH, load_eval_tickets, run_tickets, select_tickets
 
 
 def _unavailable(_: Ticket) -> QualifierResult:
@@ -64,3 +64,34 @@ def test_run_tickets_keeps_finished_lines_when_a_ticket_crashes(tmp_path: Path) 
     lines = output.read_text(encoding="utf-8").splitlines()
     assert len(lines) == 1
     assert json.loads(lines[0])["ticket"]["ticket_id"] == tickets[0].ticket_id
+
+
+def _eval_csv(path: Path) -> Path:
+    """An eval-set as the course template writes it: byte-order mark, labels in other columns."""
+    lines = [
+        "id,input_the_agent_receives,expected_output_or_action,label_intent",
+        'NAVY-EV-02,"Subject: b\n\nsecond",SECRET,dispute',
+        "NAVY-EV-01,Subject: a,SECRET,payment_status",
+        "NAVY-EV-03,Subject: c,SECRET,OTHER",
+    ]
+    path.write_text("﻿" + "\n".join(lines), encoding="utf-8")
+    return path
+
+
+def test_load_eval_tickets_keeps_file_order_and_reads_through_the_bom(tmp_path: Path) -> None:
+    tickets = load_eval_tickets(_eval_csv(tmp_path / "eval_set_v0.csv"), "m")
+    assert [t.ticket_id for t in tickets] == ["NAVY-EV-02", "NAVY-EV-01", "NAVY-EV-03"]
+    assert tickets[0].text.endswith("second")
+
+
+def test_load_eval_tickets_never_carries_expected_labels(tmp_path: Path) -> None:
+    for ticket in load_eval_tickets(_eval_csv(tmp_path / "eval_set_v0.csv"), "m"):
+        dumped = ticket.model_dump_json()
+        assert "SECRET" not in dumped and "payment_status" not in dumped
+
+
+def test_load_eval_tickets_filters_by_id_and_refuses_unknown_ids(tmp_path: Path) -> None:
+    source = _eval_csv(tmp_path / "eval_set_v0.csv")
+    assert [t.ticket_id for t in load_eval_tickets(source, "m", frozenset({"NAVY-EV-03"}))] == ["NAVY-EV-03"]
+    with pytest.raises(ValueError, match="NAVY-EV-99"):
+        load_eval_tickets(source, "m", frozenset({"NAVY-EV-99"}))
