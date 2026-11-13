@@ -51,7 +51,7 @@ The original V0 is the clickable static mock-up in [prototype/copilot_panel/inde
 
 - [Pitch](00_pitch.md), [problem statement](01_problem_statement.md), [investment memo](02_investment_memo.md), [product brief](03_product_brief.md), [lean canvas](03_ai_lean_canvas.md).
 - [Simulated user feedback and validation plan](03_user_research.md), [original V0 mock-up and V1 target](03_prototype_link.md), [governance](governance.md).
-- [Product specification](spec.md), [architecture reference](agentic-workflow-subproject/docs/design/architecture.md), [workflow and detailed UX](agentic-workflow-subproject/docs/design/copilot-workflow.md), [terminology](agentic-workflow-subproject/docs/design/terminology.md), [synthetic evaluation cases](evals/README_eval_set.md).
+- [Product specification](spec.md), [architecture reference](agentic-workflow-subproject/docs/design/architecture.md), [workflow and detailed UX](agentic-workflow-subproject/docs/design/copilot-workflow.md), [terminology](agentic-workflow-subproject/docs/design/terminology.md), [evaluation cases and grading guideline](evals/README.md).
 - [Delivery roadmap](agentic-workflow-subproject/specs/roadmap.md) and the future [Routing Node contract](agentic-workflow-subproject/specs/004-routing-node/spec.md).
 - Original course briefs and supplied materials are preserved under `docs/assignment*`, `docs/project` and `docs/_archive`.
 
