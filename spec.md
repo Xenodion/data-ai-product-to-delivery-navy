@@ -1,6 +1,6 @@
 # Product Specification — NAVY / Keelpay Support Copilot
 
-**Status: agreed functional target; not implemented.** Behavioral reference: [Workflow and demo experience](agentic-workflow-subproject/docs/design/copilot-workflow.md). Canonical actor and component names: [NAVY Reference Terminology](agentic-workflow-subproject/docs/design/terminology.md). Routing Node implementation contract and cases: [Feature 004](agentic-workflow-subproject/specs/004-routing-node/spec.md). Delivery work is organized in `specs/roadmap.md`.
+**Status: agreed functional target; not implemented. v2 (13 November 2026): three lines from the S4 eval (`evals/report_v0.md`), marked *(v2)* and listed in §10.** Behavioral reference: [Workflow and demo experience](agentic-workflow-subproject/docs/design/copilot-workflow.md). Canonical actor and component names: [NAVY Reference Terminology](agentic-workflow-subproject/docs/design/terminology.md). Routing Node implementation contract and cases: [Feature 004](agentic-workflow-subproject/specs/004-routing-node/spec.md). Delivery work is organized in `specs/roadmap.md`.
 
 ## 1. Problem and decision
 
@@ -8,9 +8,9 @@ Keelpay is a fictional B2B fintech scenario with about 36,000 monthly tickets. T
 
 ## 2. Actors and flow
 
-`Demo Injector` → `Qualifier Model` → `Routing Node` → `Drafter Model` → **Validator** → explicit simulated send. Drafting proceeds even when the initial desk may need correction. The **Re-router** corrects that desk and triggers a fresh draft; Validator sends routing problems there when found.
+`Demo Injector` → `Qualifier Model` → `Routing Node` → `Drafter Model` → **Validator** → explicit simulated send. *(v2)* A ticket the Routing Node cannot assign goes to the **Re-router with no draft**; the draft is written once a person confirms the desk, as in flow v2 (`copilot-workflow.md`). The **Re-router** corrects the desk and triggers the draft; Validator sends routing problems there when found.
 
-The only human workflow nodes are **Re-router** and **Validator**. There is no pre-draft qualification hold. The `Routing Node` is deterministic Python, never a model. The component order and relationships are canonical; see [architecture](agentic-workflow-subproject/docs/design/architecture.md).
+The only human workflow nodes are **Re-router** and **Validator**. *(v2)* The only pre-draft hold is the Re-router, for tickets the Routing Node cannot assign; a routed ticket is drafted without waiting. The `Routing Node` is deterministic Python, never a model. The component order and relationships are canonical; see [architecture](agentic-workflow-subproject/docs/design/architecture.md).
 
 ## 3. Input and Qualifier Model contract
 
@@ -22,11 +22,13 @@ The `Qualifier Model` follows the existing schema at `agentic-workflow-subprojec
 {"intent":"payment_status","sub_intent":"delayed_credit","transaction_id":"TX-992100","amount":"4850.00","currency":"EUR","urgency":"high","sentiment":"negative"}
 ```
 
+*(v2)* **Field check before routing** (node 3): the contract is unchanged, but an output that breaks it on one field is repaired into it instead of being rejected whole — a malformed `transaction_id` (for example `TX-712O44`) becomes `UNDEFINED`; a valid `intent` with a `sub_intent` that belongs to another intent keeps its intent for routing and shows the sub-intent as `UNDEFINED`. A missing key, an unknown intent or non-JSON output is still invalid and goes to the Re-router. On the S4 eval, 6 of 50 outputs were rejected whole, two of them urgent disputes (`evals/report_v0.md`, miss 1).
+
 Taxonomy, empty fields, and sentinels are defined in `agentic-workflow-subproject/docs/label_definitions.md`. `UNDEFINED` does not mean “send everything to triage”: each Python decision uses only fields required for that decision. The current contract has neither a confidence score nor a `critical` urgency value. Any change requires a versioned migration, compatibility plan, and re-evaluation. Historical model/artifact names are preserved.
 
 ## 4. Product decision rules
 
-- `intent=UNDEFINED`, `OTHER`, invalid output, or model unavailability: create Re-router work while the Drafter Model still attempts a draft from the ticket. An unknown sub-intent may be corrected there if it changes the desk.
+- `intent=UNDEFINED`, `OTHER`, invalid output, or model unavailability: create Re-router work. *(v2)* No draft is written until a person confirms the desk; the S4 eval drafted all 13 tickets sent to the Re-router (`evals/report_v0.md`, miss 3). An unknown sub-intent may be corrected there if it changes the desk.
 - Known intents: `payment_status` → payments; `dispute` → disputes; `technical_api` → technical/API; `compliance` → compliance. Do not automatically split multi-intent tickets.
 - The Routing Node does not perform payment matching. Payment lookup and source-grounding remain separate downstream capabilities; their details do not create another human node in the route.
 - `sentiment=UNDEFINED` uses a neutral tone and does not block routing. `urgency=UNDEFINED` is shown as unknown; rules may still detect an explicit signal from the text or authorized context.
@@ -41,7 +43,7 @@ The `Validator` handles every generated draft, including clarifications. Draft p
 ## 6. Demo interface
 
 1. **Overview**: event-driven animated flow, real queue/processing/error counts, waiting times, priorities, ratios with periods and denominators, and real/simulated presence distinguished. Re-router and Validator nodes open their space with an available task.
-2. **Re-router**: desk-correction queue sorted oldest first; right dossier with ticket, proposed desk/priority, reasons, and correction action. Drafting continues in parallel.
+2. **Re-router**: desk-correction queue sorted oldest first; right dossier with ticket, proposed desk/priority, reasons, and correction action. *(v2)* The draft starts once the desk is confirmed.
 3. **Validator**: generated drafts, details, sources, history, editor, and explicit approval/send action.
 
 Each ticket shows age since receipt and time in its current step. Rerouting does not reset total age. Default order is global FIFO, oldest to newest. Any priority-first mode must be explicit and sort by age within priority. Waiting time and FIFO are MUST; advanced urgency handling and multi-agent are SHOULD. New arrivals never overwrite the open ticket or edits. All views use one persistent backend state. Langfuse is not the authoritative queue store.
@@ -57,7 +59,8 @@ Each ticket shows age since receipt and time in its current step. Rerouting does
 ## 8. Target acceptance criteria
 
 - Validate the seven-field contract at inference boundary; model errors do not lose tickets.
-- Decision cases follow the simple Routing Node tree; unclear assignments go to Re-router while drafting continues, and draft problems go to Validator.
+- Decision cases follow the simple Routing Node tree; unclear assignments go to Re-router with no draft *(v2)*, and draft problems go to Validator.
+- *(v2)* The Qualifier is accepted on the hand-written eval-set (`evals/eval_set_v1.csv`), not only on the synthetic test sets: valid outputs at least 98.5 % (scoring protocol) and abstention (`UNDEFINED`) only on tickets labelled `UNDEFINED`. Dispute requests written without the word "chargeback", in French and English, are added to its training and evaluation data. On the S4 eval it abstained on 4 tickets with a clear desk (`evals/report_v0.md`, miss 2).
 - Merchant isolation, injection/send idempotency, persistence across reconnect, errors, and recovery are verifiable.
 - Views use the same backend state; arrivals, queues, times, and order reflect persisted tickets.
 - No send without a human action and no unsupported fact; ticket history covers qualification, routing, drafts, and actions.
@@ -67,3 +70,14 @@ Each ticket shows age since receipt and time in its current step. Rerouting does
 ## 9. Evidence limits and deliverables
 
 D-q4 is a Qualifier Model candidate measured on a historical benchmark. That benchmark does not validate the complete `Routing Node`, `Drafter Model`, interface, or time saved. Integration, user tasks, and production remain outstanding; the prompted base model (B3) was compared and does not meet the routing bars. Do not rewrite historical prototypes or measurements as target behavior.
+
+## 10. Changes in v2 (13 November 2026)
+
+Each miss of the S4 eval (`evals/report_v0.md` §2) is a line of this spec:
+
+| Miss | Component | Spec line |
+|---|---|---|
+| 1 · Qualifier output rejected whole (6 of 50) | Qualifier | §3: field check before routing — repair one bad field instead of rejecting the output |
+| 2 · Qualifier abstains on clear tickets (4 of 50) | Qualifier | §8: acceptance on the hand-written eval-set; dispute vocabulary without "chargeback" added to training and evaluation |
+| 3 · Drafts written on Re-router tickets (13 of 13) | Flow (`flow/pipeline.py`) | §2, §4, §6, §8: no draft until a person confirms the desk, aligned with flow v2 |
+

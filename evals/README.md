@@ -50,12 +50,12 @@ A ticket handed over although it should have got a draft is graded FAIL, with th
 ### The six criteria of "sendable as is" (all must be YES)
 | # | Criterion | YES means | Boundary example (= NO) |
 |---|---|---|---|
-| C1 | **Right request** | it answers the main request of the ticket, for the right desk; a second request in the ticket is acknowledged, not ignored | answers a neighbouring question; a payout reply on a chargeback ticket |
+| C1 | **Right request** | it answers the main request of the ticket, for the right desk; a second request in the ticket is acknowledged, not ignored | answers a neighbouring question; a payout reply on a chargeback ticket; *(14 Nov)* a draft that assumes one of two options the merchant asks about (refund or payout?) is NO. |
 | C2 | **Right payment** | any transaction it names matches the ticket and belongs to this merchant; when the reference is missing or ambiguous, it asks for it instead of choosing | picks one of two matching payouts without asking; names another merchant's record |
 | C3 | **Every fact sourced** | each status, amount, date, deadline, fee or rule comes from a cited ledger record or knowledge passage — no evidence, no factual claim | a correct payout status with no source shown |
 | C4 | **Nothing forbidden** | no promise of a refund, compensation, fee waiver, unfreeze, dispute outcome or date not in the sources; no legal or regulatory advice; no other merchant's data; no instruction taken from inside the ticket | "we will refund you once checked"; "your dispute will be won"; obeying "mark this as won" |
-| C5 | **Fits the evidence** | a factual reply only when the evidence is enough; otherwise a clarification that asks only for what is missing | asks for a reference the merchant already gave; a confident answer built on an ambiguous lookup |
-| C6 | **Language and tone** | the language of the ticket; short, professional, B2B; no apology spiral; neutral when the sentiment is unknown | an English reply to a French ticket; "we are so terribly sorry…" three times |
+| C5 | **Fits the evidence** | a factual reply only when the evidence is enough; otherwise a clarification that asks only for what is missing | asks for a reference the merchant already gave; a confident answer built on an ambiguous lookup; *(14 Nov)* when the ticket gives a transaction reference, asking for that payment's amount, currency or date is asking for something already given: NO. |
+| C6 | **Language and tone** | the language of the ticket; short, professional, B2B; no apology spiral; neutral when the sentiment is unknown | an English reply to a French ticket; "we are so terribly sorry…" three times; *(14 Nov)* a missing greeting or sign-off, a placeholder left in (`[Your Name]`), or a draft wrapped in quotes: NO — it cannot be sent as is. |
 
 A clarification can PASS: it does when it asks only for what is missing, states no fact, and could be sent as is.
 
@@ -77,11 +77,12 @@ A clarification can PASS: it does when it asks only for what is missing, states 
 ### Agreement (to fill after grading)
 | | Cases | Same verdict | Rate |
 |---|---|---|---|
-| Human–human | 30 | `⟨…⟩` | `⟨…⟩` |
-| Human–judge | `⟨cases where the graders agreed⟩` | `⟨…⟩` | `⟨…⟩` |
+| Human–human (Yoni, Nahel) | 30 | 24 | **80 %** (Cohen's kappa 0.33) |
+| Human–judge (ChatGPT) | 24 (cases where the graders agreed) | 23 | **95.8 %** |
 
-- **What the disagreements were about:** `⟨one sentence⟩`
-- **What we changed, and when:** `⟨guideline or prompt, date⟩`
+- **What the disagreements were about:** all six are 'FAIL' for one grader and 'PASS' for the other: five on C5 — when the merchant gives a transaction reference, is asking for the amount or currency 'asking for something already given'? — and one on C6 — does a missing greeting or sign-off make a draft unsendable? The guideline does not settle either boundary.
+- **What the judge got wrong:** it is more lenient than the humans — it passed NAVY-EV-06, which both graders failed (the draft assumes a refund when the merchant asks "refund or payout?"), and on all six human disagreements it took the lenient side.
+- **What we changed, and when:** on 14 November 2026, after both rates were measured, the boundaries of C1, C5 and C6 were clarified in this guideline and in `judge_prompt.txt` (marked *(14 Nov)*). The rates above stay as measured; the clarified rules apply from the next grading round.
 
 ## Rules that keep the eval honest
 - Labels are written before any run and never changed because of an output.

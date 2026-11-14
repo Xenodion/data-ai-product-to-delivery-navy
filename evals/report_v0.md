@@ -16,7 +16,7 @@ Command: `uv run python -m flow.runner --tickets ../evals/eval_set_v0.csv` — o
 | Drafts produced | 50 / 50; none grounded (lookup and retrieval are not built: the Drafter has no evidence) |
 | Drafts on tickets that belong to a person (labelled `OTHER` / `UNDEFINED`) | 4 of 4 (should be 0); and all 13 tickets sent to the Re-router also got a draft |
 | Policy blocks | not measurable: the policy check is not built |
-| Drafts two graders would send without editing | `⟨after grading — 30-case sample, evals/README.md⟩` |
+| Drafts two graders would send without editing | **2 / 30 = 7 %** (30-case sample of `evals/eval_set_v1.csv`; one grader passed 2, the other 8) |
 | Qualifier latency | median 6.8 s, max 18.8 s (first ticket, model warming up) |
 
 **Verdict:** the criterion of the brief is **met** — on 50 hand-written tickets, three quarters are routed automatically, misrouting among them is significantly below the manual baseline, and no urgent ticket reached a wrong desk; every Qualifier failure fell back to the Re-router. The sample is small: the upper end of the interval (13.8 %) sits just under the baseline. The **stage-2 gate of the memo is not met** (78 % right first time against 90 %; 88 % valid outputs against 98.5 %): the router is safe but hands over too much.
@@ -33,7 +33,7 @@ These tickets are hand-written and messier than the synthetic test sets of the s
 | 3 | A draft is written for every ticket, including the 13 sent to the Re-router and the 4 that belong to a person | NAVY-EV-14, EV-15, EV-18 (labelled `OTHER` / `UNDEFINED`) | Flow (`flow/pipeline.py`: "The Drafter attempts every ticket") | A ticket sent to the Re-router gets no draft until a person confirms its desk — `spec.md` §4 aligned with flow v2 and the grading guideline |
 
 ## 3. Who graded, and how
-`⟨to fill⟩` Two team members grade the drafts of the 30-case sample listed in `evals/README.md`, alone, with the verdicts PASS / FAIL / ESCALATE and the six criteria of the grading guideline; disagreements: `⟨n⟩` — resolved by `⟨…⟩`. The routing numbers in §1 need no grader: they compare the run with the hand labels.
+Two team members, Yoni and Nahel, graded the drafts of the 30-case sample listed in `evals/README.md`, alone, with the verdicts PASS / FAIL / ESCALATE and the six criteria of the grading guideline (`evals/grading/`). They agree on 24 of 30 verdicts (80 %, Cohen's kappa 0.33); the 6 disagreements are all FAIL against PASS, on two boundaries the guideline leaves open (C5 and C6, `evals/README.md`) — not resolved by discussion, so that the rate stays as measured; the guideline is clarified after the judge run. The routing numbers in §1 need no grader: they compare the run with the hand labels. The 15 sample cases beyond row 50 come from a second run on 13 November (`--tickets ../evals/eval_set_v1.csv --ids …`).
 
 ## 4. What is demo data and what is eval data
 No prompt, rule or threshold was tuned before or after the run; the labels were written before it (rows 1–20 on 2 November, rows 21–50 on 13 November) and not changed since. Tickets read in detail after the run: NAVY-EV-01 (first-line check while the run was going) and the six invalid outputs (EV-07, EV-26, EV-32, EV-38, EV-46, EV-47), to find the cause of the misses. They stay in the eval-set; if any change is tuned while looking at them, they become demo data and are named here.
