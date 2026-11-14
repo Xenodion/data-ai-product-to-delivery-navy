@@ -1,0 +1,133 @@
+# Configuration of the merchant world builder (design: docs/design/flow-v2/world-schema-and-generation-plan.md).
+# Every tunable value lives here.
+
+seed = 20261112
+reference_date = 2026-11-12   # injected "now"; the builder never reads the wall clock
+window_start = 2026-01-01
+window_end = 2026-11-10
+
+# Line ending of the ticket text in the world: lf is the committed form and the form of the generation
+# logs; crlf only if the Qualifier is shown to have been trained on CRLF text.
+text_newline = "lf"
+
+merchant_target = 60                # about 60 merchants overall
+transactions_per_merchant = 60      # filler rows; enough for "recent transactions" and weekly payouts
+
+# Exchange rates to EUR, used only to rank merchants by their largest ticket amount. Placeholder constants.
+[fx_to_eur]
+EUR = 1.0
+GBP = 1.15
+CHF = 1.05
+USD = 0.92
+SEK = 0.09
+NOK = 0.09
+DKK = 0.134
+PLN = 0.23
+CAD = 0.67
+
+[sample]
+current = 200
+history = 300
+dev = 100
+
+[dates]
+history_gap_days = 21       # history tickets end this long before the window end
+open_days = 10              # current and dev tickets fall in the last days of the window
+max_cited_age_days = 120    # a current or dev ticket may not cite a date older than this before the window end
+
+[merchants]
+ticket_count_alpha = 3.0                  # Pareto shape: many merchants with a few tickets, a few with many
+onboarding_days_before = [30, 720]        # onboarding precedes the earliest date cited by its tickets
+kyc_weights = { verified = 0.85, pending = 0.10, under_review = 0.05 }
+risk_weights = { low = 0.70, medium = 0.25, high = 0.05 }
+country_by_language = { fr = "FR", en = "GB", es = "ES", de = "DE", it = "IT" }
+name_first = ["Acorn", "Birch", "Cedar", "Delta", "Ember", "Fjord", "Garnet", "Harbor", "Indigo", "Juniper", "Kestrel", "Lumen", "Maple", "Nimbus", "Orchid", "Pebble", "Quartz", "Raven", "Sable", "Tidal", "Umber", "Vesper", "Willow", "Yarrow", "Zephyr", "Amber", "Basil", "Coral", "Dune"]
+name_second = ["Goods", "Studio", "Supply", "Labs", "Works", "Market", "Trade", "Cloud", "Ware", "Foods", "Tours", "Learning", "Freight", "Stays", "Print", "Shop"]
+
+[merchants.plans]
+small = { name = "starter", fee_bps = 290 }
+medium = { name = "growth", fee_bps = 240 }
+large = { name = "scale", fee_bps = 190 }
+
+[merchants.tier_weights_without_amount]   # tier of a merchant none of whose tickets carries an amount
+small = 0.70
+medium = 0.25
+large = 0.05
+
+[ledger]
+amount_mismatch_pct = 0.07          # ledger amount differs from the stated one by about this share (amount_mismatch tickets)
+duplicate_gap_minutes = 4           # second charge of a duplicate_charge ticket
+default_status = "settled"
+cited_age_days = [2, 14]            # a cited transaction is this old when its ticket opens (unless the text dates it)
+pending_max_days = 5                # filler older than this is no longer processing or under review
+partial_refund_share = 0.20         # share of refunds that are partial
+partial_refund_fraction = 0.50
+dispute_days = 14                   # response window of a dispute
+closed_dispute_rate = 0.01          # settled filler carrying a won or lost dispute
+dispute_reasons = ["fraudulent", "product_not_received", "duplicate", "subscription_cancelled"]
+payout_hold_reason = "account under review"
+
+[ledger.status_by_sub_intent]       # sub-intents not listed take default_status
+delayed_credit = "processing"
+missing_payment = "processing"
+refund_status = "refunded"
+chargeback = "disputed"
+
+[ledger.payment_methods]
+card = 0.70
+sepa = 0.15
+bank_transfer = 0.10
+wallet = 0.05
+
+[ledger.filler_status_weights]
+settled = 0.86
+processing = 0.04
+under_review = 0.02
+failed = 0.05
+refunded = 0.02
+disputed = 0.01
+
+[ledger.amount_range_minor]         # usual transaction amount by tier, in minor units
+small = [1500, 15000]
+medium = [3000, 60000]
+large = [10000, 250000]
+
+[threads]
+role = "writer_train"        # model role of ml/qualifier/src/dataset_build/config/run.toml
+max_tokens = 1400
+max_chars = 1500
+reply_hours = [1, 12]
+chase_days = [1, 3]
+resolution = "resolved"
+
+[threads.fallback_question]  # last agent line of a replaced thread that waits for the merchant
+fr = "Pouvez-vous nous confirmer ces informations afin que nous puissions poursuivre ?"
+en = "Could you confirm these details so that we can continue?"
+es = "Puede confirmarnos estos datos para que podamos continuar?"
+de = "Koennen Sie uns diese Angaben bestaetigen, damit wir fortfahren koennen?"
+it = "Puo confermarci questi dati in modo da poter proseguire?"
+
+[threads.exchange_weights]          # follow-up exchanges after the opening message, history tickets only
+0 = 0.55
+1 = 0.30
+2 = 0.15
+
+[threads.end_state_weights]
+closed = 0.75
+open_awaiting_merchant = 0.25
+
+[budget]
+cap_usd = 1.5                       # own cap, separate from the 8 USD of the dataset build
+pilot_cap_usd = 0.3
+calls_dir = "data/world/runs/calls" # alone in its folder: the budget guard sums every *.jsonl it finds
+
+[policies]
+language = "en"                     # the 22 knowledge documents are written in English
+owner = "support-operations"
+
+[paths]
+deck_dir = "data/dataset"
+knowledge_path = "flow/fixtures/knowledge.json"
+oracle_dir = "data/world/oracle"
+database_path = ".local/world/world.sqlite"
+artifacts_dir = "data/world"
