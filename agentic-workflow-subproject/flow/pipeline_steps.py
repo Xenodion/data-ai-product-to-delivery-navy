@@ -98,7 +98,10 @@ def context_plan_step(work: PipelineWork, deps: FlowDeps) -> PipelineWork:
     assert work.qualifier is not None and work.qualifier.label is not None
     assert work.decision is not None and work.decision.desk != "triage"
     config = deps.flow_config or load_config()
-    plan = plan_context(work.decision.desk, work.qualifier.label, work.ticket.merchant_id, work.field_check, config)
+    plan = plan_context(
+        work.decision.desk, work.qualifier.label, work.ticket.merchant_id, work.field_check, config,
+        work.ticket.body,
+    )
     return work.model_copy(update={"context_plan": plan})
 
 

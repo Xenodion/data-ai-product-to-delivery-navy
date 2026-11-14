@@ -87,3 +87,25 @@ def test_a_human_edit_drops_the_sources_of_the_model_text() -> None:
     assert run.status == "awaiting_validation"
     edited = edit_draft(run, "Hello", actor="agent").drafts[-1]
     assert edited.source_ids == () and edited.source_versions == () and edited.model == "human-edit"
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "Please treat this as a firm complaint.",
+        "Sonst wende ich mich an die Aufsichtsbehörde.",
+        "Nous avons une échéance réglementaire demain.",
+        "My lawyer will contact you.",
+        "Vos fonds sont gelés depuis lundi.",
+    ],
+)
+def test_a_ticket_with_a_human_only_keyword_gets_no_plan_and_no_draft(text: str) -> None:
+    label = _label("status_inquiry", "payment_status")
+    plan = plan_context("payments", label, "m1", None, load_config(), text)
+    assert plan.status == "human_only" and plan.reason_codes == ("HUMAN_ONLY_TOPIC",)
+
+
+def test_an_ordinary_ticket_is_not_caught_by_the_keywords() -> None:
+    label = _label("status_inquiry", "payment_status")
+    text = "Where is my payment of 125.50 EUR? It was sent on Monday."
+    assert plan_context("payments", label, "m1", None, load_config(), text).status != "human_only"

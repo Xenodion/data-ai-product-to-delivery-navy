@@ -39,6 +39,17 @@ metrics_db_path = "../.local/flow/metrics.sqlite"
 payment_fact_sub_intents = ["delayed_credit", "missing_payment", "status_inquiry", "refund_status"]
 # Sub-intents a person answers: no draft is written, the Validator sees HUMAN_ONLY_TOPIC.
 human_only_sub_intents = ["account_hold"]
+# Lowercase fragments: a ticket that contains one is answered by a person (complaint, regulator,
+# legal threat, fraud, data-protection request, frozen funds). A false match only costs a review.
+human_only_keywords = [
+  "complaint", "plainte", "réclamation", "beschwerde", "queja", "reclamo",
+  "regulator", "régulateur", "regulateur", "aufsichtsbehörde", "regulador", "regolatore",
+  "regulatory deadline", "échéance réglementaire", "echeance reglementaire",
+  "lawyer", "avocat", "legal action", "poursuites", "anwalt", "rechtliche schritte", "abogado", "avvocato",
+  "fraud", "fraude", "betrug", "hacked", "piraté", "account takeover",
+  "gdpr", "rgpd", "dsgvo", "compensation", "indemnisation", "entschädigung",
+  "frozen", "gelé", "gelés", "gesperrt", "congelad",
+]
 dispute_fact_sub_intents = ["unauthorised_fee", "chargeback", "duplicate_charge", "amount_mismatch"]
 
 [drafter_greeting]

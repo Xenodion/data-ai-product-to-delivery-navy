@@ -17,6 +17,7 @@ from flow.contracts import (
     load_config,
 )
 from flow.draft_render import (
+    LANGUAGE_SENTENCE,
     OUTPUT_CONTRACT,
     check_segments,
     parse_reply,
@@ -25,6 +26,7 @@ from flow.draft_render import (
     template_question,
 )
 from flow.llm import DraftRejected, LLMError, post_json
+from flow.policy import PolicyContext, check_draft
 from flow.prompt_management import PromptRelease, fetch_prompt, record_prompt_release
 
 logger = logging.getLogger(__name__)
@@ -154,6 +156,19 @@ def _reply_text(answer: dict[str, object]) -> tuple[str, float]:
 REPAIR_ATTEMPTS = 1  # one corrected answer is requested before falling back
 
 
+def _check_policy(text: str, ticket: Ticket, evidence: EvidenceDecision | None) -> None:
+    """Run the shared policy check inside the repair loop so that a blocked draft gets one retry."""
+    context = PolicyContext(
+        merchant_id=ticket.merchant_id,
+        allowed_figures=evidence.allowed_figures if evidence else (),
+        approved_source_ids=evidence.source_ids if evidence else (),
+        evidence_facts=evidence.facts if evidence else (),
+    )
+    result = check_draft(text, context)
+    if result.status == "blocked":
+        raise DraftRejected(f"the policy check blocks the reply: {', '.join(result.findings)}")
+
+
 def _request_body(cfg: FlowConfig, messages: list[dict[str, str]]) -> dict[str, object]:
     body: dict[str, object] = {
         "model": cfg.drafter_model,
@@ -169,9 +184,12 @@ def _request_body(cfg: FlowConfig, messages: list[dict[str, str]]) -> dict[str, 
     return body
 
 
-def _with_output_contract(messages: list[dict[str, str]]) -> list[dict[str, str]]:
+def _with_output_contract(
+    messages: list[dict[str, str]], language: str | None
+) -> list[dict[str, str]]:
     """The code states the output format in the last message, whatever the prompt version says."""
-    last = {**messages[-1], "content": f"{messages[-1]['content']}\n\n{OUTPUT_CONTRACT}"}
+    contract = OUTPUT_CONTRACT + (LANGUAGE_SENTENCE.format(language=language) if language else "")
+    last = {**messages[-1], "content": f"{messages[-1]['content']}\n\n{contract}"}
     return [*messages[:-1], last]
 
 
@@ -209,10 +227,11 @@ def write_draft(
         fallback=DRAFTER_FALLBACK_PROMPT,
     )
     record_prompt_release(prompt)
-    base = _with_output_contract(prompt.compile(**variables))
+    base = _with_output_contract(prompt.compile(**variables), ticket.language)
     mode = evidence.mode if evidence is not None else "clarification"
     facts = evidence.facts if evidence is not None else ()
     allowed = frozenset(fact.source_id for fact in facts) if mode in {"factual", "documentary"} else frozenset()
+    known_text = " ".join([ticket.body, *(f.value for f in facts), *(f.source_id for f in facts)])
     messages, cost = base, 0.0
     failure = "no attempt"
     for _ in range(1 + REPAIR_ATTEMPTS):
@@ -229,7 +248,10 @@ def write_draft(
         try:
             raw, _ = _reply_text(answer)
             declared, segments = parse_reply(raw)
-            sources = check_segments(segments, mode, allowed)
+            sources = check_segments(segments, mode, allowed, known_text)
+            language = pick_language(ticket.language, declared, cfg)
+            text = render(language, segments, cfg)
+            _check_policy(text, ticket, evidence)
         except DraftRejected as exc:
             failure = str(exc)
             logger.warning("Drafter answer rejected for %s: %s", ticket.ticket_id, failure)
@@ -239,14 +261,13 @@ def write_draft(
                 {"role": "user", "content": f"That answer was rejected: {failure}. Answer again with the corrected JSON only."},
             ]
             continue
-        language = pick_language(ticket.language, declared, cfg)
         source_versions = tuple(
             dict.fromkeys(
                 (fact.source_id, fact.source_version) for fact in facts if fact.source_id in sources
             )
         )
         return _draft(
-            version, desk, cfg, prompt, mode, cost, start, render(language, segments, cfg), sources,
+            version, desk, cfg, prompt, mode, cost, start, text, sources,
             source_versions, model=cfg.drafter_model,
         )
     if mode != "clarification":

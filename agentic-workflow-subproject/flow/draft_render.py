@@ -30,21 +30,23 @@ OUTPUT_CONTRACT = (
     "Write the body of the reply only: no greeting, no sign-off, no quotation marks, no placeholder. "
     "Put in source_ids the allowed source IDs that support the segment; use an empty list for a "
     "question or a neutral sentence. Never write a source ID inside the text. A segment without a "
-    "source must not state a figure, a reference or the state of an account. Write the text in the "
-    "language of the ticket and set language to its code."
+    "source must not state a figure, a reference or the state of an account. Do not repeat numbers "
+    "from the ticket; say \"your payment\" or \"this case\" instead."
 )
+LANGUAGE_SENTENCE = " The ticket language is {language}: write the text in it and set language to {language}."
 
 _FENCE = re.compile(r"^```(?:json)?\s*|\s*```$", re.IGNORECASE)
 _PLACEHOLDER = re.compile(r"[\[\]{}<>]|\b(?:your\s+name|xxx+|lorem)\b", re.IGNORECASE)
-_BARE_REFERENCE = re.compile(r"\b(?:TX|M)-\d+\b|\d{3,}", re.IGNORECASE)
-_GREETING_ONLY = re.compile(
-    r"^(?:hello|hi|dear\s[^,.!?]{0,40}|bonjour|bonsoir|hola|hallo|buongiorno|ciao)[^.?!]{0,30}[,.!]?$",
+_REFERENCE = re.compile(r"\b(?:TX|M)-\d+\b", re.IGNORECASE)
+_GREETING_PREFIX = re.compile(
+    r"^(?:hello|hi|dear|bonjour|bonsoir|cher|ch[èe]re|hola|estimad[oa]|hallo|guten\s+(?:tag|morgen|abend)|"
+    r"sehr\s+geehrte[rn]?|buongiorno|buonasera|gentile|ciao)\b[^,.!:?\n]{0,40}[,.!:]\s*",
     re.IGNORECASE,
 )
-_SIGN_OFF_ONLY = re.compile(
+_SIGN_OFF = re.compile(
     r"^(?:best\s+regards|kind\s+regards|regards|sincerely|cordialement|bien\s+cordialement|"
-    r"saludos|mit\s+freundlichen\s+gr[uü](?:ß|ss)en|cordiali\s+saluti)[^.?!]{0,30}[,.!]?$|"
-    r"^keelpay\s+support\.?$",
+    r"saludos|atentamente|un\s+saludo|mit\s+freundlichen\s+gr[üu](?:ß|ss)en|viele\s+gr[üu](?:ß|ss)e|"
+    r"cordiali\s+saluti|distinti\s+saluti|keelpay)\b[^.?!]{0,40}[,.!]?$",
     re.IGNORECASE,
 )
 _QUOTES = "\"'“”«»"
@@ -84,9 +86,11 @@ def parse_reply(raw: str) -> tuple[str, tuple[Segment, ...]]:
     except (ValueError, ValidationError) as exc:
         raise DraftRejected("Drafter answer is not the expected JSON") from exc
     segments = []
-    for segment in reply.segments:
+    for index, segment in enumerate(reply.segments):
         text = _strip_quotes(segment.text)
-        if not text or _GREETING_ONLY.match(text) or _SIGN_OFF_ONLY.match(text):
+        if index == 0:
+            text = _GREETING_PREFIX.sub("", text, count=1).strip()  # the code adds its own greeting
+        if not text or (index == len(reply.segments) - 1 and _SIGN_OFF.match(text)):
             continue
         segments.append(Segment(text=text, source_ids=segment.source_ids))
     if not segments:
@@ -95,7 +99,10 @@ def parse_reply(raw: str) -> tuple[str, tuple[Segment, ...]]:
 
 
 def check_segments(
-    segments: tuple[Segment, ...], mode: PreparationMode, allowed_source_ids: frozenset[str]
+    segments: tuple[Segment, ...],
+    mode: PreparationMode,
+    allowed_source_ids: frozenset[str],
+    known_text: str = "",
 ) -> tuple[str, ...]:
     """Rules of the output contract; returns the sources used, in order of first use.
 
@@ -111,8 +118,9 @@ def check_segments(
             raise DraftRejected("Drafter cited a source although none was supplied")
         if any(source not in allowed_source_ids for source in segment.source_ids):
             raise DraftRejected("Drafter cited an unknown source")
-        if not segment.source_ids and _BARE_REFERENCE.search(segment.text):
-            raise DraftRejected("Drafter wrote a figure or a reference without a source")
+        known = known_text.casefold()
+        if any(ref.casefold() not in known for ref in _REFERENCE.findall(segment.text)):
+            raise DraftRejected("Drafter wrote a reference that is neither in the ticket nor in the evidence")
         used.update(dict.fromkeys(segment.source_ids))
     if grounded and not used:
         raise DraftRejected("Drafter used no supplied source")

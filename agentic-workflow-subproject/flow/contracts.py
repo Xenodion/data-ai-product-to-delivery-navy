@@ -116,6 +116,7 @@ class FlowConfig(BaseModel):
     payment_fact_sub_intents: tuple[str, ...]
     dispute_fact_sub_intents: tuple[str, ...]
     human_only_sub_intents: tuple[str, ...] = ()
+    human_only_keywords: tuple[str, ...] = ()
     api_db_path: str
     api_checkpoint_db_path: str
     api_max_page_size: int

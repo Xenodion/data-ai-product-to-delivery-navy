@@ -93,8 +93,8 @@ def test_a_source_is_rejected_when_no_evidence_was_supplied() -> None:
         check_segments(_segments(("Fine.", (SOURCE,))), "clarification", frozenset())
 
 
-@pytest.mark.parametrize("text", ["Your payment TX-123456 is late.", "We received 12500 yesterday.", "See M-0007."])
-def test_a_reference_or_figure_without_a_source_is_rejected(text: str) -> None:
+@pytest.mark.parametrize("text", ["Your payment TX-123456 is late.", "See M-0007."])
+def test_a_reference_that_is_not_in_the_ticket_or_the_evidence_is_rejected(text: str) -> None:
     with pytest.raises(DraftRejected):
         check_segments(
             _segments(("Per the guidance.", (SOURCE,)), (text, ())), "documentary", frozenset({SOURCE})
@@ -155,3 +155,44 @@ def test_two_bad_answers_in_clarification_mode_fall_back_to_a_template_question(
     assert (draft.model, draft.prompt_version, draft.source_ids) == ("template", "template-v1", ())
     assert "TX-123456" in draft.text and draft.text.startswith("Bonjour,")
     assert draft.cost_usd == pytest.approx(0.002)
+
+
+def test_a_reference_copied_from_the_ticket_is_allowed() -> None:
+    segments = _segments(("Please check TX-123456.", ()))
+    assert check_segments(segments, "clarification", frozenset(), "ticket: TX-123456") == ()
+
+
+@pytest.mark.parametrize(
+    ("raw", "kept"),
+    [
+        ("Guten Tag,", None),
+        ("Estimado cliente,", None),
+        ("Gentile cliente,", None),
+        ("Bonjour, merci pour votre message.", "merci pour votre message."),
+        ("Hello Anna, we are looking into it.", "we are looking into it."),
+    ],
+)
+def test_a_greeting_prefix_is_removed_but_the_content_after_it_is_kept(raw: str, kept: str | None) -> None:
+    answer = _answer({"text": raw, "source_ids": []}, {"text": "Which payment?", "source_ids": []})
+    texts = [s.text for s in parse_reply(answer)[1]]
+    assert texts == ([kept, "Which payment?"] if kept else ["Which payment?"])
+
+
+@pytest.mark.parametrize("closing", ["Atentamente,", "Distinti saluti", "Mit freundlichen Grüßen", "Keelpay Support"])
+def test_a_final_sign_off_segment_is_removed(closing: str) -> None:
+    answer = _answer({"text": "Which payment?", "source_ids": []}, {"text": closing, "source_ids": []})
+    assert [s.text for s in parse_reply(answer)[1]] == ["Which payment?"]
+
+
+def test_a_figure_that_is_not_in_the_evidence_is_repaired_by_the_policy_check() -> None:
+    bad = _answer({"text": "Your payout of 98765 EUR is late.", "source_ids": [SOURCE]})
+    good = _answer({"text": "Send the KYC form.", "source_ids": [SOURCE]})
+    draft, bodies = _run([bad, good], DOCUMENTARY)
+    assert len(bodies) == 2 and "98765" not in draft.text
+    assert "policy check blocks" in bodies[1]["messages"][-1]["content"]
+
+
+def test_the_ticket_language_is_stated_to_the_model() -> None:
+    good = _answer({"text": "Send the KYC form.", "source_ids": [SOURCE]}, language="fr")
+    _, bodies = _run([good], DOCUMENTARY, language="fr")
+    assert "The ticket language is fr" in bodies[0]["messages"][-1]["content"]

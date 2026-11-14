@@ -203,7 +203,7 @@ def reroute(
             }
         )
 
-    plan = plan_context(desk, label, run.ticket.merchant_id, run.field_check, config)
+    plan = plan_context(desk, label, run.ticket.merchant_id, run.field_check, config, run.ticket.body)
     tool_results = (
         deps.gather_evidence(run.ticket, plan)
         if deps.gather_evidence is not None and plan.status == "planned"

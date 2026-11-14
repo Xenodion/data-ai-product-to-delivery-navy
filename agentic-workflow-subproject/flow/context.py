@@ -1,7 +1,26 @@
 """Deterministic context plan for the fixed per-desk workflow (node 5)."""
 
+import re
+from functools import lru_cache
+
 from flow.contracts import ContextPlan, Desk, FieldCheckResult, FlowConfig, load_config
-from ml.qualifier.src.dataset_build.schema import TicketLabel, UNDEFINED
+from ml.qualifier.src.dataset_build.schema import UNDEFINED, TicketLabel
+
+
+# Payment-specific sub-intents require a transaction fact. A general policy
+# answer can still be prepared from approved documentation when no ID exists.
+@lru_cache(maxsize=8)
+def _keyword_pattern(keywords: tuple[str, ...]) -> re.Pattern[str] | None:
+    """Whole words, plural allowed: "regulator" must not match "regulatory"."""
+    if not keywords:
+        return None
+    alternatives = "|".join(re.escape(keyword) for keyword in keywords)
+    return re.compile(rf"\b(?:{alternatives})s?\b", re.IGNORECASE)
+
+
+def _has_keyword(text: str, keywords: tuple[str, ...]) -> bool:
+    pattern = _keyword_pattern(keywords)
+    return bool(pattern and pattern.search(text))
 
 
 # Payment-specific sub-intents require a transaction fact. A general policy
@@ -12,10 +31,11 @@ def plan_context(
     merchant_id: str,
     field_check: FieldCheckResult | None = None,
     config: FlowConfig | None = None,
+    text: str = "",
 ) -> ContextPlan:
     """Select fixed, read-only sources; never derive tenant scope from the ticket text."""
     cfg = config or load_config()
-    if label.sub_intent in cfg.human_only_sub_intents:
+    if label.sub_intent in cfg.human_only_sub_intents or _has_keyword(text, cfg.human_only_keywords):
         return ContextPlan(
             desk=desk,
             merchant_id=merchant_id,
