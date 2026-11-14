@@ -49,6 +49,10 @@ _SIGN_OFF = re.compile(
     r"cordiali\s+saluti|distinti\s+saluti|keelpay)\b[^.?!]{0,40}[,.!]?$",
     re.IGNORECASE,
 )
+MAX_SEGMENTS = 4
+# The reply speaks for the team: "we", never "I" / "je" / "me".
+_FIRST_PERSON_EN = re.compile(r"\bI\b|\bI['’](?:m|ll|ve|d)\b")
+_FIRST_PERSON = re.compile(r"\b(?:je|j['’]\w+|me|m['’]\w+|ich)\b", re.IGNORECASE)
 _QUOTES = "\"'“”«»"
 
 
@@ -95,6 +99,8 @@ def parse_reply(raw: str) -> tuple[str, tuple[Segment, ...]]:
         segments.append(Segment(text=text, source_ids=segment.source_ids))
     if not segments:
         raise DraftRejected("Drafter answer has no body")
+    if len(segments) > MAX_SEGMENTS:
+        raise DraftRejected(f"Drafter wrote {len(segments)} segments, at most {MAX_SEGMENTS}")
     return reply.language.strip().lower(), tuple(segments)
 
 
@@ -109,9 +115,11 @@ def check_segments(
     Raises:
         DraftRejected: a placeholder, an unknown source, a bare reference, or no grounding.
     """
-    grounded = mode in {"factual", "documentary"}
+    grounded = mode == "factual"  # facts must cite their source; guidance may simply shape a question
     used: dict[str, None] = {}
     for segment in segments:
+        if _FIRST_PERSON_EN.search(segment.text) or _FIRST_PERSON.search(segment.text):
+            raise DraftRejected("Drafter wrote in the first person singular: write as we")
         if _PLACEHOLDER.search(segment.text):
             raise DraftRejected("Drafter left a placeholder or a bracket in the reply")
         if any(source not in allowed_source_ids for source in segment.source_ids):

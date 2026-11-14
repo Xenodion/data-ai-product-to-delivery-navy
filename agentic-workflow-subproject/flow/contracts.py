@@ -37,6 +37,7 @@ PolicyFindingCode = Literal[
     "FOREIGN_MERCHANT_IDENTIFIER",
     "SOURCE_STATUS_CONFLICT",
     "ACCOUNT_STATE_CLAIM",
+    "AVAILABILITY_CLAIM",
     "POLICY_CHECK_ERROR",
 ]
 ReasonCode = Literal[

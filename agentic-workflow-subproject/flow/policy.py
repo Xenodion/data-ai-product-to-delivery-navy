@@ -54,6 +54,14 @@ _ACCOUNT_STATE = re.compile(
     r"(?:gel[ée]s|bloqu[ée]s|retenus)\b",
     re.IGNORECASE,
 )
+# A draft may ask for a document or a result; it must not say that one exists or will be delivered.
+_AVAILABILITY_CLAIM = re.compile(
+    r"\bwe\s+(?:can|will|shall|are\s+able\s+to)\s+(?:provide|issue|send|supply|deliver|share)\b|"
+    r"\b(?:is|are|will\s+be)\s+(?:now\s+)?available\b|\bhas\s+been\s+(?:issued|sent)\b|"
+    r"\bnous\s+(?:pouvons|allons|pourrons)\s+(?:vous\s+)?(?:fournir|[ée]mettre|envoyer|transmettre)\b|"
+    r"\bnous\s+vous\s+(?:fournirons|enverrons|transmettrons)\b|\b(?:est|sera)\s+disponible\b",
+    re.IGNORECASE,
+)
 _FIGURE = re.compile(
     r"(?<![\w])(?:\d{1,3}(?:[ ,.\u00a0]\d{3})+|\d+)(?:[,.]\d{1,2})?(?:\s?[kK])?(?![\w])"
 )
@@ -170,6 +178,8 @@ def _evaluate(
         findings.append("LEGAL_ADVICE")
     if _ACCOUNT_STATE.search(text):
         findings.append("ACCOUNT_STATE_CLAIM")
+    if _AVAILABILITY_CLAIM.search(text):
+        findings.append("AVAILABILITY_CLAIM")
 
     # Human-authored final text is not subject to a numeric evidence match, but
     # the other shared rules still run and require an explicit logged override.

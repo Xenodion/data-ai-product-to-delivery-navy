@@ -85,7 +85,7 @@ def test_an_unknown_source_and_a_documentary_draft_without_source_are_rejected()
     with pytest.raises(DraftRejected):
         check_segments(_segments(("Fine.", ("kb_other",))), "documentary", frozenset({SOURCE}))
     with pytest.raises(DraftRejected):
-        check_segments(_segments(("Fine.", ())), "documentary", frozenset({SOURCE}))
+        check_segments(_segments(("Fine.", ())), "factual", frozenset({SOURCE}))
 
 
 def test_a_source_is_rejected_when_no_evidence_was_supplied() -> None:
