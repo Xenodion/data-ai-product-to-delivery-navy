@@ -1,5 +1,6 @@
 """Typed records exchanged between the flow steps."""
 
+import os
 import tomllib
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -12,6 +13,7 @@ from pydantic import AliasChoices, BaseModel, ConfigDict, Field, field_validator
 from ml.qualifier.src.dataset_build.schema import TicketLabel
 
 CONFIG_PATH = Path(__file__).parent / "config.toml"
+WORLD_DATABASE_ENV = "NAVY_WORLD_DB"
 FROZEN = ConfigDict(extra="forbid", frozen=True)
 
 Desk = Literal["payments", "disputes", "technical_api", "compliance"]
@@ -489,4 +491,7 @@ def load_config(path: Path = CONFIG_PATH) -> FlowConfig:
         api_worker_count=api.get("worker_count", 0),
         api_cors_origins=tuple(api.get("cors_origins", ())),
     )
+    world = os.environ.get(WORLD_DATABASE_ENV)
+    if world:  # run the flow on a world database without editing the committed config
+        raw["world_database_path"] = world
     return FlowConfig.model_validate(raw)

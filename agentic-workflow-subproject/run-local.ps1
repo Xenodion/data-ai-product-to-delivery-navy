@@ -5,7 +5,8 @@ param(
     [switch] $SkipQualifier,
     [switch] $DownloadModel,
     [switch] $SkipDependencyInstall,
-    [switch] $NoBrowser
+    [switch] $NoBrowser,
+    [string] $WorldDb = ""   # path of a world database (flow\world build) to show merchants and conversations
 )
 
 $ErrorActionPreference = "Stop"
@@ -144,6 +145,7 @@ try {
     }
 
     Write-Step "Starting the local Flow API"
+    if ($WorldDb) { $env:NAVY_WORLD_DB = (Resolve-Path $WorldDb).Path }
     Assert-PortAvailable $ApiPort
     $apiOut = Join-Path $LogRoot "api-$stamp.out.log"
     $apiErr = Join-Path $LogRoot "api-$stamp.err.log"

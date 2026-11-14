@@ -64,3 +64,89 @@ def merchant_context(config: FlowConfig, merchant_id: str) -> dict[str, Any] | N
         "recent_transactions": [dict(r) for r in transactions],
         "tickets": [dict(r) for r in tickets],
     }
+
+
+THREAD_LIMIT = 50
+PREVIEW_CHARS = 160
+SUBJECT_CHARS = 80
+SUBJECT_PREFIX = "subject:"
+
+
+def _roles(config: FlowConfig) -> tuple[str, ...]:
+    return ("history", "dev", "current") if config.world_show_current else ("history", "dev")
+
+
+def _subject(body: str) -> str:
+    """The ``Subject:`` line when the message has one, else the start of the first line."""
+    first = body.strip().splitlines()[0] if body.strip() else ""
+    if first.lower().startswith(SUBJECT_PREFIX):
+        first = first[len(SUBJECT_PREFIX) :]
+    return first.strip()[:SUBJECT_CHARS]
+
+
+def merchant_threads(config: FlowConfig, merchant_id: str) -> list[dict[str, Any]] | None:
+    """The merchant's conversations as a mailbox list, latest activity first; None if unknown."""
+    roles = _roles(config)
+    connection = _open_read_only(config, time.perf_counter())
+    connection.row_factory = sqlite3.Row
+    try:
+        if connection.execute(
+            "SELECT 1 FROM merchants WHERE merchant_id = ?", (merchant_id,)
+        ).fetchone() is None:
+            return None
+        marks = ",".join("?" * len(roles))
+        tickets = connection.execute(
+            "SELECT t.ticket_id, t.opened_at, t.channel, t.language, t.role, t.thread_state, "
+            "o.desk, o.resolution FROM tickets t "
+            "LEFT JOIN ticket_outcomes o ON o.ticket_id = t.ticket_id "
+            f"WHERE t.merchant_id = ? AND t.role IN ({marks})",
+            (merchant_id, *roles),
+        ).fetchall()
+        threads = []
+        for ticket in tickets:
+            messages = connection.execute(
+                "SELECT turn_index, author_kind, sent_at, body FROM messages WHERE ticket_id = ? "
+                "ORDER BY turn_index",
+                (ticket["ticket_id"],),
+            ).fetchall()
+            first, last = messages[0], messages[-1]
+            threads.append(
+                {
+                    **dict(ticket),
+                    "subject": _subject(first["body"]),
+                    "message_count": len(messages),
+                    "last_message_at": last["sent_at"],
+                    "last_author": last["author_kind"],
+                    "preview": " ".join(last["body"].split())[:PREVIEW_CHARS],
+                }
+            )
+    finally:
+        connection.close()
+    threads.sort(key=lambda item: item["last_message_at"], reverse=True)
+    return threads[:THREAD_LIMIT]
+
+
+def ticket_thread(config: FlowConfig, ticket_id: str) -> dict[str, Any] | None:
+    """Every message of one conversation; None if unknown or held back for the final evaluation."""
+    connection = _open_read_only(config, time.perf_counter())
+    connection.row_factory = sqlite3.Row
+    try:
+        ticket = connection.execute(
+            "SELECT ticket_id, merchant_id, opened_at, channel, language, role, thread_state "
+            "FROM tickets WHERE ticket_id = ?",
+            (ticket_id,),
+        ).fetchone()
+        if ticket is None or ticket["role"] not in _roles(config):
+            return None
+        messages = connection.execute(
+            "SELECT turn_index, author_kind, sent_at, body FROM messages WHERE ticket_id = ? "
+            "ORDER BY turn_index",
+            (ticket_id,),
+        ).fetchall()
+    finally:
+        connection.close()
+    return {
+        **dict(ticket),
+        "subject": _subject(messages[0]["body"]),
+        "messages": [dict(message) for message in messages],
+    }

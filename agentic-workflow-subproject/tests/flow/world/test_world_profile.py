@@ -82,3 +82,73 @@ def test_route_is_unavailable_without_a_world(monkeypatch) -> None:
     with pytest.raises(HTTPException) as caught:
         api.get_merchant_context("M-0001")
     assert caught.value.status_code == 503
+
+
+def _merchant_with_role(database: Path, role: str) -> str:
+    with sqlite3.connect(database) as conn:
+        return conn.execute(
+            "SELECT merchant_id FROM tickets WHERE role = ? LIMIT 1", (role,)
+        ).fetchone()[0]
+
+
+def test_the_mailbox_lists_only_the_merchants_threads_latest_first(world) -> None:
+    config, database = world
+    merchant = _merchant_with_role(database, "history")
+    threads = world_profile.merchant_threads(config, merchant)
+    assert threads
+    with sqlite3.connect(database) as conn:
+        own = {r[0] for r in conn.execute(
+            "SELECT ticket_id FROM tickets WHERE merchant_id = ?", (merchant,))}
+    assert {t["ticket_id"] for t in threads} <= own
+    stamps = [t["last_message_at"] for t in threads]
+    assert stamps == sorted(stamps, reverse=True)
+    assert all(t["subject"] and t["message_count"] >= 1 and t["last_author"] for t in threads)
+
+
+def test_the_mailbox_hides_current_tickets_unless_the_flag_is_set(world) -> None:
+    config, database = world
+    merchant = _merchant_with_role(database, "current")
+    assert all(t["role"] != "current" for t in world_profile.merchant_threads(config, merchant))
+    shown = world_profile.merchant_threads(
+        config.model_copy(update={"world_show_current": True}), merchant
+    )
+    assert any(t["role"] == "current" for t in shown)
+
+
+def test_a_thread_returns_every_message_in_order_and_hides_current(world) -> None:
+    config, database = world
+    with sqlite3.connect(database) as conn:
+        ticket, sent = conn.execute(
+            "SELECT t.ticket_id, t.opened_at FROM tickets t WHERE t.role = 'history' LIMIT 1"
+        ).fetchone()
+        conn.execute(  # a later agent message, as the generated history threads add
+            "INSERT INTO messages VALUES (?, ?, 2, 'outbound', '2999-01-01T00:00:00Z', 'Reply', 'agent')",
+            (f"{ticket}:2", ticket),
+        )
+        current = conn.execute("SELECT ticket_id FROM tickets WHERE role = 'current' LIMIT 1").fetchone()[0]
+    thread = world_profile.ticket_thread(config, ticket)
+    assert [m["turn_index"] for m in thread["messages"]] == [1, 2]
+    assert [m["author_kind"] for m in thread["messages"]] == ["merchant", "agent"]
+    assert world_profile.ticket_thread(config, current) is None
+    assert world_profile.ticket_thread(config, "no-such-ticket") is None
+
+
+def test_the_mailbox_routes_answer_404_and_503(world, monkeypatch) -> None:
+    config, _ = world
+    monkeypatch.setattr(api, "load_config", lambda: config)
+    with pytest.raises(HTTPException) as caught:
+        api.get_merchant_threads("M-NOPE")
+    assert caught.value.status_code == 404
+    with pytest.raises(HTTPException) as caught:
+        api.get_world_thread("no-such-ticket")
+    assert caught.value.status_code == 404
+    monkeypatch.setattr(api, "load_config", lambda: load_config())
+    with pytest.raises(HTTPException) as caught:
+        api.get_merchant_threads("M-1")
+    assert caught.value.status_code == 503
+
+
+def test_an_environment_variable_points_the_flow_at_a_world_database(monkeypatch) -> None:
+    assert load_config().world_database_path is None
+    monkeypatch.setenv("NAVY_WORLD_DB", "some/world.sqlite")
+    assert load_config().world_database_path == "some/world.sqlite"

@@ -543,3 +543,24 @@ a.flow-node-link:hover .node-card, a.flow-node-link:focus-visible .node-card { s
 .dashboard-details .dashboard-bottom { margin-top: 8px; }
 @media (max-width: 900px) { .flow-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } .flow-connector { display: none; } .queue-shortcuts { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { .is-active .flow-connector i { display: none; } }
+
+/* Merchant mailbox: earlier conversations above the ticket in the main column */
+.mailbox { margin: 4px 0 14px; padding: 12px 0 4px; border-bottom: 1px solid #edf0f4; }
+.mailbox-heading h3 { margin: 0 0 8px; font-family: Inter, "Segoe UI", system-ui, sans-serif; font-size: 13px; letter-spacing: -.01em; }
+.mailbox-list { margin: 0; padding: 0; list-style: none; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--paper); }
+.mailbox-list > li + li { border-top: 1px solid var(--line); }
+.mailbox-row { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto auto; grid-template-areas: "dot subject state time" ". preview preview count"; column-gap: 10px; row-gap: 1px; width: 100%; padding: 9px 12px; border: 0; background: transparent; text-align: left; cursor: pointer; color: var(--ink); }
+.mailbox-row:hover, .mailbox-list > li.open > .mailbox-row { background: #f7f9fc; }
+.mailbox-dot { grid-area: dot; align-self: center; width: 8px; height: 8px; border-radius: 50%; background: var(--blue); }
+.mailbox-dot.agent { background: var(--soft); }
+.mailbox-subject { grid-area: subject; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; font-size: 12px; }
+.mailbox-state { grid-area: state; align-self: center; padding: 1px 7px; border-radius: 999px; background: #f0f2f5; color: #566379; font-size: 10px; font-weight: 700; }
+.mailbox-row time { grid-area: time; align-self: center; color: var(--soft); font-size: 10px; }
+.mailbox-preview { grid-area: preview; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font-size: 11px; }
+.mailbox-count { grid-area: count; color: var(--soft); font-size: 10px; }
+.mailbox-thread { padding: 4px 12px 12px 30px; background: #fafbfd; }
+.mail-message { margin-top: 8px; padding: 9px 12px; border: 1px solid var(--line); border-left-width: 3px; border-radius: 6px; background: var(--paper); }
+.mail-message.from-merchant { border-left-color: var(--blue); }
+.mail-message.from-agent { border-left-color: var(--green); }
+.mail-message > p { margin: 6px 0 0; color: #33435a; font-size: 12px; line-height: 1.65; white-space: pre-wrap; }
+@media (max-width: 720px) { .mailbox-row { grid-template-columns: 10px minmax(0, 1fr); grid-template-areas: "dot subject" ". state" ". preview" ". count"; } .mailbox-row time { display: none; } }

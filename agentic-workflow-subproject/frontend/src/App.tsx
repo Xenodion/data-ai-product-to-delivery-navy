@@ -4,6 +4,7 @@ import {
   type OverviewData, type QueueName, type TicketSnapshot,
 } from "./api.ts";
 import { FlowGraph } from "./FlowGraph.tsx";
+import { Mailbox } from "./Mailbox.tsx";
 
 const VIEWS: { hash: string; label: string; icon: string }[] = [
   { hash: "#dashboard", label: "Dashboard", icon: "▦" },
@@ -284,6 +285,7 @@ function TicketWorkbench({ ticket, onChanged }: { ticket: TicketSnapshot; onChan
     <article className="ticket-main card">
       <div className="ticket-heading"><div><div className="ticket-kicker">TICKET <span>·</span> TURN {ticket.turn}</div><h2>{ticket.ticket.subject || "Incoming support request"}</h2></div><StatusBadge status={ticket.status} /></div>
       {actions.length > 0 && <div className="action-required"><span className="action-required-icon" aria-hidden="true">!</span><div><b>Human action required</b><span>{ticket.status === "awaiting_validation" ? "Review the draft and choose how to proceed." : ticket.status === "awaiting_reroute" ? "Confirm the right desk or write a direct reply." : ticket.status === "ready_to_send" ? "The reply is approved. Confirm the simulated send." : "Review the case and choose an allowed next step."}</span></div><span className="human-owner">AGENT</span></div>}
+      <Mailbox merchantId={ticket.ticket.merchant_id} currentTicketId={ticket.ticket_id} />
       <div className="message-block"><div className="message-byline"><b>{ticket.ticket.merchant_id}</b><span>{humanize(ticket.ticket.channel)}</span><time>{formatDate(ticket.ticket.created_at)}</time></div><p>{ticket.ticket.body}</p></div>
       {ticket.error_code && <Notice>Flow stopped: <b>{humanize(ticket.error_code)}</b></Notice>}
       <div className="draft-section">

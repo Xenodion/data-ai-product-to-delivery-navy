@@ -135,3 +135,28 @@ export function submitSend(
     body: JSON.stringify({ actor, disposition }),
   });
 }
+
+export type MailboxThread = {
+  ticket_id: string;
+  opened_at: string;
+  channel: string;
+  language: string;
+  role: string;
+  thread_state: "open_awaiting_agent" | "open_awaiting_merchant" | "closed";
+  desk: string | null;
+  resolution: string | null;
+  subject: string;
+  message_count: number;
+  last_message_at: string;
+  last_author: "merchant" | "agent";
+  preview: string;
+};
+
+export type ThreadMessage = { turn_index: number; author_kind: "merchant" | "agent"; sent_at: string; body: string };
+export type WorldThread = { ticket_id: string; merchant_id: string; subject: string; thread_state: string; messages: ThreadMessage[] };
+
+export const getMerchantThreads = (merchantId: string) =>
+  request<{ threads: MailboxThread[] }>(`/api/v1/merchants/${encodeURIComponent(merchantId)}/threads`);
+
+export const getWorldThread = (ticketId: string) =>
+  request<WorldThread>(`/api/v1/world/tickets/${encodeURIComponent(ticketId)}/thread`);

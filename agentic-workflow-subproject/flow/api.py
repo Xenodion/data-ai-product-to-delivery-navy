@@ -27,7 +27,7 @@ from flow.langgraph_app import build_ticket_graph, initial_state
 from flow.metrics_store import MetricsStore
 from flow.policy import can_approve_model_draft
 from flow.runner import build_deps
-from flow.world_profile import merchant_context
+from flow.world_profile import merchant_context, merchant_threads, ticket_thread
 
 logger = logging.getLogger(__name__)
 ROOT = Path(__file__).resolve().parent.parent
@@ -539,6 +539,30 @@ def get_merchant_context(merchant_id: str) -> dict[str, Any]:
     if context is None:
         raise HTTPException(status_code=404, detail={"code": "MERCHANT_NOT_FOUND"})
     return context
+
+
+@app.get("/api/v1/merchants/{merchant_id}/threads")
+def get_merchant_threads(merchant_id: str) -> dict[str, Any]:
+    """The merchant's conversations as a mailbox list, for the front end only."""
+    config = load_config()
+    if not config.world_database_path:
+        raise HTTPException(status_code=503, detail={"code": "WORLD_NOT_CONFIGURED"})
+    threads = merchant_threads(config, merchant_id)
+    if threads is None:
+        raise HTTPException(status_code=404, detail={"code": "MERCHANT_NOT_FOUND"})
+    return {"threads": threads}
+
+
+@app.get("/api/v1/world/tickets/{ticket_id}/thread")
+def get_world_thread(ticket_id: str) -> dict[str, Any]:
+    """One conversation with every message, for the front end only."""
+    config = load_config()
+    if not config.world_database_path:
+        raise HTTPException(status_code=503, detail={"code": "WORLD_NOT_CONFIGURED"})
+    thread = ticket_thread(config, ticket_id)
+    if thread is None:
+        raise HTTPException(status_code=404, detail={"code": "THREAD_NOT_FOUND"})
+    return thread
 
 
 @app.get("/api/v1/overview")
