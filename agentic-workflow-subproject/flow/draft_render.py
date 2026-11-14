@@ -114,8 +114,6 @@ def check_segments(
     for segment in segments:
         if _PLACEHOLDER.search(segment.text):
             raise DraftRejected("Drafter left a placeholder or a bracket in the reply")
-        if not grounded and segment.source_ids:
-            raise DraftRejected("Drafter cited a source although none was supplied")
         if any(source not in allowed_source_ids for source in segment.source_ids):
             raise DraftRejected("Drafter cited an unknown source")
         known = known_text.casefold()

@@ -8,6 +8,16 @@ def decide_evidence(plan: ContextPlan, result: EvidenceResult) -> EvidenceDecisi
     if plan.status == "human_only":
         return EvidenceDecision(mode="no_draft", reason_codes=plan.reason_codes)
     if plan.status == "clarification":
+        found = result.retrieval
+        if found.status == "found" and found.source_ids and found.facts and all(
+            fact.source_id in found.source_ids for fact in found.facts
+        ):
+            return EvidenceDecision(
+                mode="clarification",
+                reason_codes=plan.reason_codes,
+                source_ids=found.source_ids,
+                facts=found.facts,
+            )
         return EvidenceDecision(mode="clarification", reason_codes=plan.reason_codes)
 
     ledger = result.ledger

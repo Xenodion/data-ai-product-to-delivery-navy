@@ -111,7 +111,7 @@ def tools_step(work: PipelineWork, deps: FlowDeps) -> PipelineWork:
     plan = work.context_plan
     result = (
         deps.gather_evidence(work.ticket, plan)
-        if deps.gather_evidence is not None and plan.status == "planned"
+        if deps.gather_evidence is not None and plan.status in {"planned", "clarification"}
         else unavailable_stubs(plan)
     )
     return work.model_copy(update={"tool_results": result})

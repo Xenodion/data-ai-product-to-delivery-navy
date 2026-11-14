@@ -262,11 +262,14 @@ def gather_evidence(
 ) -> EvidenceResult:
     """Invoke only planned SQL/Text Search tools, awaiting both when both are required."""
     cfg = config or load_config()
-    if plan.status != "planned":
+    if plan.status not in {"planned", "clarification"}:
         return _not_called(plan)
 
+    # A clarification asks for what is missing: it reads the approved guidance, never the ledger.
     ledger_result = (
-        LedgerToolResult(status="unavailable")
+        LedgerToolResult(status="not_required")
+        if plan.status == "clarification"
+        else LedgerToolResult(status="unavailable")
         if plan.ledger_required and not cfg.ledger_enabled
         else LedgerToolResult(status="not_required")
         if not plan.ledger_required
