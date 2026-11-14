@@ -147,7 +147,7 @@ export function FlowMap({ o }: { o: Overview }) {
         <Counts s={s.drafter} />
       </Card>
       <Tool x={682} title="SQL lookup" l1="Reads a fake transactions" l2="table, one merchant at a time." />
-      <Tool x={926} title="RAG search" l1="Finds the right passage in a" l2="fake help centre, with its source." />
+      <Tool x={926} title="Text Search" l1="Finds a passage in the approved" l2="help centre and returns its source." />
       <a href="#re-router" aria-label={`Open Re-router, ${s.reRouter.waiting} tickets waiting`}>
         <Card x={390} y={432} kind="hum" head="HUMAN DECISION" title="Re-router">
           <Counts s={s.reRouter} />

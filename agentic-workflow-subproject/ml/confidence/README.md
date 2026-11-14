@@ -2,7 +2,7 @@
 
 Question: can the probability of the tokens the Qualifier (D-q4) writes be used as a confidence threshold, so that doubtful tickets go to the Re-router with a flag `UNCONFIDENT` instead of to a desk? Does it lower the silent errors, at what cost in tickets sent to a human, and does it reach zero urgent tickets in a wrong desk?
 
-Status on 7 November 2026: **replay done for `val`, the two test sets are replayed on Vertex and not analysed yet.** Nothing here changes the flow; a threshold would need a separate decision.
+Status at the 7 November 2026 repository checkpoint: **replay done for `val`; the two test sets were reported running on Vertex and are not present in the local `.local/runs/confidence/` directory.** Their current Vertex state has not been rechecked. No test-split analysis is recorded here. Nothing changes the flow: validation did not support a desk or urgency threshold, so none is adopted.
 
 ## How the data is made
 

@@ -93,13 +93,44 @@ The B3 import does not access Vertex or GCS. Inspect Vertex Pipelines/ML Metadat
 
 `flow/` takes a validation ticket through the Qualifier Model, the Routing Node and the Drafter Model, and stops at the first human step. Spec: [`specs/012-flow-script`](specs/012-flow-script/spec.md).
 
-Needs the setup above, Docker, `OPENROUTER_API_KEY` and the Langfuse keys in `.env`. The Qualifier needs about 2 GB of free Docker memory: when it runs out, the container stops and tickets go to the Re-router with status `unavailable`. Without Langfuse keys, the flow still runs.
+Needs the setup above, Docker, `OPENROUTER_API_KEY` in `.env`, and about 2 GB of free Docker memory for the local Qualifier. Langfuse keys are optional; without them or if Langfuse is unavailable, the flow uses its marked local prompt fallback. If the Qualifier container runs out of memory, tickets go to the Re-router with status `unavailable`.
+
+The `navy/qualifier` and `navy/drafter` prompts are published in Langfuse under `production`; see the [prompt release setup](docs/design/flow-v2/prompt-management.md). Without working Langfuse credentials or if a prompt fetch fails, runs use the clearly marked local fallback.
 
 ```bash
 docker compose -f flow/docker-compose.yml up -d    # about 40 s to load the model
 uv run python -m flow.runner --n 5 --seed 7 --every 30
 docker compose -f flow/docker-compose.yml down
 ```
+
+### Local API and frontend
+
+The API stores ticket state/idempotency in `.local/flow/api.sqlite3` and LangGraph checkpoints in `.local/flow/langgraph-checkpoints.sqlite3`. Both paths are set in `flow/config.toml`. Start the API after creating `.env` with `OPENROUTER_API_KEY` and starting the local Qualifier:
+
+For one-command startup on Windows PowerShell, use the local launcher from this sub-project:
+
+```powershell
+.\run-local.ps1
+```
+
+It syncs the locked Python environment, installs frontend dependencies when needed, starts the CPU Qualifier through Docker Compose, starts the API and Vite, and opens the browser. On first use, if the roughly 2 GB model is missing, it asks before downloading it from GCS; this requires Google Application Default Credentials. The API and Qualifier run locally, but Drafter calls still go to OpenRouter; Langfuse prompt lookup is optional and uses the configured Langfuse service. Stop everything with `Ctrl+C`; the launcher stops its API/frontend processes and the Qualifier container, while keeping local SQLite state. Logs go to `.local/logs/`.
+
+To work on the UI without Docker/model inference, run `.\run-local.ps1 -SkipQualifier`. This still requires `OPENROUTER_API_KEY` because the API initializes the Drafter client. Optional flags: `-DownloadModel` to opt into the model download without a prompt, `-NoBrowser`, `-SkipDependencyInstall`, `-ApiPort <port>`, and `-FrontendPort <port>`.
+
+The equivalent manual commands are:
+
+```powershell
+uv run uvicorn flow.api:app --host 127.0.0.1 --port 8000
+```
+
+In another terminal, start the frontend. Vite proxies `/api` and `/health` to the local API:
+
+```powershell
+cd frontend
+npm run dev
+```
+
+The API is a synthetic single-user local demo. It is not exposed on the network and has no user authentication yet. The Overview and initial Re-router/Validator/error workspaces read from this API; accessibility, full workflow acceptance, and broader evaluation remain tracked by #37, #38, and #39.
 
 Each run writes to `.local/runs/<run_id>.jsonl`. It sends nothing, and it reads the validation split only.
 

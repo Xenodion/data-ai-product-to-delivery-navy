@@ -1,6 +1,6 @@
 # Flow v2: node table (working document, v1)
 
-Status: target architecture validated on 6 November 2026; working document, not a course deliverable, not implemented. Diagram: [flow_v2.svg](flow_v2.svg). This table carries the project status. Build order: [task list](../../../specs/013-flow-v2/tasks.md).
+Status: target architecture validated on 6 November 2026; decisions clarified by [ADR 0001](../adr/0001-text-search-and-ticket-resolution.md) on 10 November. Working document, not a course deliverable. Integration is partial: the initial local path is split into checkpointable LangGraph steps through the Policy Check, with separate SQL and deterministic Text Search tools, human review and simulated-send gates. API/domain persistence, atomic human reroute, send disposition, Judge/Redraft and full-flow evaluation remain. Diagram: [flow_v2.svg](flow_v2.svg) (intentionally unchanged pending a dedicated diagram update). This table carries the project status. Build order: [task list](../../../specs/013-flow-v2/tasks.md).
 
 This replaces two rules of the 3 November workflow: "the Drafter attempts every ticket" and "every reply passes through the Validator". The root `spec.md`, `governance.md` and `docs/design/copilot-workflow.md` still describe the old rules.
 
@@ -13,6 +13,7 @@ This replaces two rules of the 3 November workflow: "the Drafter attempts every 
 - **Optional Judge.** It sends recommendations back and never approves. Compare 0, 1 and 2 revisions on the frozen evaluation set, then keep it only for a clear gain in sendable drafts against latency and cost.
 - **Last gate for every author.** Node 14 runs the same policy code as node 10 on the final text, whether written by a model or a person.
 - **Human control.** A person can take a ticket back at any time.
+- **Send disposition.** At the final simulated send, the Support Agent explicitly chooses to leave the ticket open or close it. The flow does not infer closure from reply text or an LLM recommendation. Closing without sending remains a separate manual action; all outcomes are audited distinctly.
 - **Turns.** A merchant reply keeps the same `ticket_id` and raises `turn` by 1. Later turns keep the desk, unless a person changes it, and node 5 loads the earlier turns. Above a configured limit, the ticket goes to the Re-router.
 - **Spam has no module.** `docs/label_definitions.md` puts spam and thank-you notes in `OTHER`, which goes to the Re-router, where a person closes it. On val, 19 of 20 `OTHER` tickets stayed `OTHER`; one went to `technical_api`. Real unsolicited spam is barely present in the corpus, so add cases to the evaluation set.
 
@@ -59,17 +60,17 @@ Level: L1 suggests, L2 drafts and a person approves every reply, L3 acts on a sc
 | 3 | Field check | Rule | Chaining gate | L4 | To build | Text, 7 fields | Each reference `verified` or `unverified` | Mark `unverified`, route anyway |
 | 4 | Routing | Rule | Routing | L3 | Partial | Fields, turn | Desk or triage, priority, reasons; later turns keep the desk | Re-router |
 | 5 | Context plan | Rule | Routing table | L4 | To build | Desk, sub-intent, verified references, earlier turns | Tools to call, or none | Empty plan, node 8 decides |
-| 6 | Ledger lookup | Tool, SQL | Tool of the augmented LLM | L1 | To build | Merchant, transaction id | Record, `missing`, `ambiguous` or `unavailable` | `unavailable` |
-| 7 | Knowledge search | Tool, retrieval | Tool of the augmented LLM | L1 | To build | Query, desk | Passages with sources, including compliance rules | `unavailable` |
+| 6 | Ledger lookup | Tool, SQL | Tool of the augmented LLM | L1 | Partial | Merchant, transaction id | Record, `missing`, `ambiguous` or `unavailable` | `unavailable` |
+| 7 | Text Search | Tool, deterministic lexical search | Approved-document search | L1 | Partial | Ticket text plus desk/sub-intent/date filters | Bounded approved passages with source IDs/versions | `unavailable` |
 | 8 | Evidence gate | Rule | Chaining gate | L4 | To build | Plan, tool results | `factual`, `clarification` or `no_draft` | `no_draft` |
 | 9 | Desk Drafter | LLM | Routing, chaining | L2 | Partial | Ticket, desk prompt, evidence, mode | Draft with citations | Validator, no draft |
-| 10 | Policy check | Rule | Chaining gate | L4 | To build | Draft, evidence | Pass, or block with reason | Treated as blocked |
+| 10 | Policy check | Rule | Chaining gate | L4 | Partial | Draft, evidence | Pass, or block with reason | Treated as blocked |
 | 11 | Judge (optional) | LLM, other model | Evaluator-optimizer | L1 | To build | Ticket, evidence, draft | Closed rubric, recommendations | Skip; flag "not judged" |
 | 12 | Redraft | LLM, stronger model | Evaluator-optimizer, cascade | L2 | To build | Previous draft, reasons, same evidence | New draft version | Keep last draft, objections shown |
 | R | Re-router | Person | Checkpoint | Human | Backend only | Ticket, reasons | Correction, direct reply or closure | Stays in queue |
 | 13 | Validator | Person | Approval checkpoint | Human | Backend only | Draft, evidence, objections | Approve, edit, send back, write | Stays in queue |
-| 14 | Final compliance gate | Rule | Last gate | L4 | To build | Final text, author, merchant | Pass, override, hard block | Treated as blocked |
-| 15 | Send | Rule, person trigger | Action | Human trigger | To build | Approved text | Simulated send, once | Retry, never duplicate |
+| 14 | Final compliance gate | Rule | Last gate | L4 | Partial | Final text, author, merchant | Pass, override, hard block | Treated as blocked |
+| 15 | Send and disposition | Rule, person trigger | Action | Human trigger | To build | Approved text plus explicit `leave_open` / `close` choice | Simulated send, once; resulting state is sent-open or sent-closed | Retry, never duplicate; disposition is idempotent and audited |
 | 16 | Audit log | Rule | Trace | L4 | Partial | All nodes | Versions, actors, reasons | Raise an alert; do not lose the ticket |
 
 Blocked after the budget: the draft is shown with its reason and cannot be approved; the person writes the reply. LLM calls per ticket: 2 with the Judge off, 3 with one Judge call, 4 when a policy block triggers a redraft without the Judge, 7 in the worst case (Qualifier, Drafter, 3 Judge, 2 Redraft), 1 of them local.
@@ -86,7 +87,7 @@ No threshold is set yet. Thresholds are chosen on validation data, never while r
 | 4 | Re-router correction rate | Share sent to triage | Pure versioned function; urgency is shown and never changes the path | No |
 | 5 | Needed sources planned | Tool calls per ticket | Closed table; no model input | No |
 | 6 | Exact, missing and ambiguous cases correct | Records missed although present | Read-only; merchant from the envelope; timeout; cross-merchant results: 0 | No |
-| 7 | Retrieval hit rate | Stale passages; passage volume in the prompt | Approved versioned sources; desk filter; score floor | No |
+| 7 | Relevant passage hit rate | Stale passages; irrelevant passage volume in the prompt | Approved versioned sources; desk/sub-intent/date filters; lexical score floor | No |
 | 8 | `factual` decisions that truly had enough evidence | Share of `clarification` and `no_draft` | Rule only; no factual mode without evidence | No |
 | 9 | Drafts sendable as is | Unsupported claims per draft; latency; cost | Citations required; ticket treated as untrusted; no tools or actions | One run: 9.6 s, about $0.00001, with `[Your Name]` left and unwarranted promises |
 | 10 | Seeded violations caught | Good drafts blocked | Price, refund promise, legal advice, figures outside evidence; blocked drafts cannot be approved | No |
@@ -103,10 +104,10 @@ No threshold is set yet. Thresholds are chosen on validation data, never while r
 | Tier | Nodes 6 and 7 | Effect |
 |---|---|---|
 | 1. POC | Stubs return `unavailable`, shown in every diagram | Node 8 returns `clarification`; no factual reply |
-| 2. Demo | Mini synthetic ledger, knowledge base and compliance rules in the project | Factual replies with citations |
+| 2. Demo | Mini synthetic ledger, searchable knowledge base and compliance rules in the project | Factual/documentary replies with citations |
 | 3. Bonus | Tools deployed with the rest, only if everything else is deployed | Same contracts |
 
-Contracts stay the same across tiers. At tier 2 the ledger must include the transactions of both demo and evaluation tickets, otherwise node 8 fails across the evaluation.
+Contracts stay the same across tiers. At tier 2 the ledger must include the transactions of both demo and evaluation tickets, otherwise node 8 fails across the evaluation. Text Search is lexical in V1; embedding/vector retrieval is deferred unless a frozen evaluation shows a material lexical-recall gap.
 
 ## 7. Override switch
 
@@ -135,5 +136,5 @@ Validated with the target architecture, sized for a course project.
 - Human-only list for the architecture: legal threat, formal complaint, `account_hold`, regulatory deadline, refund or compensation request, suspected fraud, data-protection request. In V1 a keyword rule sends them to the Re-router with no draft.
 - Models for nodes 11 and 12, and the mix of ledger, knowledge base and rules per desk.
 - Rubric of the Judge and rules of node 8 per desk and sub-intent.
-- Turn limit before the Re-router: from turn 4 (proposal).
+- Turn limit before the Re-router: turn 4 and later. Implemented as `MAX_AUTOMATED_TURN = 3` in `flow/turns.py`; turn 4 skips model calls and goes to the Re-router.
 - Whole-flow, financial and course-level metrics: next layer, including turns per ticket as the counter-metric to closure speed.

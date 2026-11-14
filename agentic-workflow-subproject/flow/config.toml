@@ -1,19 +1,47 @@
 # Endpoints, models and versions of the flow. Secrets stay in .env.
 qualifier_model_uri = "gs://navy-team-llmops-bucket/pipeline_root/158407666882/keelpay-router-compact-variants-pipeline-20261102155447/compact-variants-component_-2725338443608489984/gguf_q4/model-q4.gguf"
 qualifier_model_md5 = "b23b4f3092c9083c1c741551ec351dc8"
-qualifier_url = "http://127.0.0.1:8081/completion"
+qualifier_url = "http://127.0.0.1:8081/v1"
 qualifier_model_version = "d-q4"
 qualifier_max_tokens = 160       # same value as the D-q4 evaluation
 qualifier_timeout_seconds = 120
+qualifier_temperature = 0.0
+qualifier_prompt_name = "navy/qualifier"
+qualifier_prompt_label = "production"
 
 drafter_url = "https://openrouter.ai/api/v1/chat/completions"
 drafter_model = "mistralai/mistral-nemo"
-drafter_prompt_version = "drafter-v1"
+drafter_prompt_name = "navy/drafter"
+drafter_prompt_label = "production"
 drafter_temperature = 0.2
 drafter_max_tokens = 500
 drafter_timeout_seconds = 60
 
 policy_version = "demo-policy-v1"
+routing_version = "routing-node-v1"
 transient_retries = 3            # attempts on network errors, 429 and 5xx
 retry_wait_seconds = 1.0
 merchant_id = "M-DEMO"           # val.csv has no merchant column
+
+# Workflow policy and local tool behaviour. Keep mutable run settings here;
+# credentials and secrets stay in the project .env file.
+max_automated_turns = 3
+max_reroutes = 2
+ledger_enabled = true
+knowledge_enabled = true
+tool_timeout_seconds = 0.75
+max_knowledge_results = 2
+knowledge_min_overlap_tokens = 1
+ledger_fixture_path = "fixtures/ledger.json"
+knowledge_fixture_path = "fixtures/knowledge.json"
+metrics_enabled = true
+metrics_db_path = "../.local/flow/metrics.sqlite"
+payment_fact_sub_intents = ["delayed_credit", "missing_payment", "status_inquiry", "refund_status"]
+dispute_fact_sub_intents = ["unauthorised_fee", "chargeback", "duplicate_charge", "amount_mismatch"]
+
+[api]
+db_path = ".local/flow/api.sqlite3"
+checkpoint_db_path = ".local/flow/langgraph-checkpoints.sqlite3"
+max_page_size = 200
+worker_count = 1
+cors_origins = ["http://localhost:5173", "http://127.0.0.1:5173"]

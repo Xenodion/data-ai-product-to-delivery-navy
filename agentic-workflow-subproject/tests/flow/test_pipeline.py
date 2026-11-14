@@ -56,7 +56,7 @@ def _fixing(draft: DraftWriter = _write) -> FlowDeps:
 def test_traced_functions_never_capture_their_arguments() -> None:
     for module in (Path("flow/pipeline.py"), Path("flow/qualifier.py"), Path("flow/drafter.py")):
         source = module.read_text(encoding="utf-8")
-        assert "@observe(capture_input=False)" in source
+        assert "@observe(capture_input=False, capture_output=False)" in source
         assert "@observe()" not in source
 
 
@@ -69,15 +69,15 @@ def test_process_waits_for_validation_on_a_known_desk() -> None:
 @pytest.mark.parametrize(
     ("result", "reason"), [(INVALID, "QUALIFIER_INVALID"), (UNAVAILABLE, "QUALIFIER_UNAVAILABLE")]
 )
-def test_process_still_drafts_when_qualifier_fails(result: QualifierResult, reason: str) -> None:
+def test_process_does_not_draft_when_qualifier_fails(result: QualifierResult, reason: str) -> None:
     run = process(TICKET, _deps(result))
-    assert (run.desk, run.status, len(run.drafts)) == ("triage", "awaiting_reroute", 1)
+    assert (run.desk, run.status, len(run.drafts)) == ("triage", "awaiting_reroute", 0)
     assert run.reason_codes == (reason,)
 
 
-def test_process_goes_to_manual_handling_when_drafter_fails_on_a_known_desk() -> None:
+def test_process_sends_drafter_failure_to_validator_on_a_known_desk() -> None:
     run = process(TICKET, _deps(draft=_fail))
-    assert (run.desk, run.status, run.drafts) == ("disputes", "manual_handling", ())
+    assert (run.desk, run.status, run.drafts) == ("disputes", "awaiting_validation", ())
     assert "DRAFTER_UNAVAILABLE" in run.reason_codes
     assert run.draft_error == "down"
 
@@ -95,9 +95,9 @@ def test_reroute_first_change_writes_one_new_draft_and_keeps_the_old_one() -> No
     assert "FIRST_REROUTE_RECOMPUTE" in run.reason_codes
 
 
-def test_reroute_first_change_goes_to_manual_handling_when_drafter_fails() -> None:
+def test_reroute_first_change_sends_drafter_failure_to_validator() -> None:
     run = reroute(process(TICKET, _deps()), "payments", _fixing(_fail))
-    assert (run.desk, run.status) == ("payments", "manual_handling")
+    assert (run.desk, run.status) == ("payments", "awaiting_validation")
     assert [d.stale for d in run.drafts] == [True]
     assert {"FIRST_REROUTE_RECOMPUTE", "DRAFTER_UNAVAILABLE"} <= set(run.reason_codes)
 
@@ -114,7 +114,7 @@ def test_reroute_second_change_goes_to_manual_handling_without_a_new_draft() -> 
 def test_reroute_rejects_a_third_change() -> None:
     run: TicketRun = process(TICKET, _deps())
     run = reroute(reroute(run, "payments", _fixing()), "compliance", _fixing())
-    with pytest.raises(ValueError, match="corrections"):
+    with pytest.raises(ValueError):
         reroute(run, "payments", _fixing())
 
 

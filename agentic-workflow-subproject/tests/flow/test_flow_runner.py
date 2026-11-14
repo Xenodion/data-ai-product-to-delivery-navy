@@ -81,7 +81,7 @@ def _eval_csv(path: Path) -> Path:
 def test_load_eval_tickets_keeps_file_order_and_reads_through_the_bom(tmp_path: Path) -> None:
     tickets = load_eval_tickets(_eval_csv(tmp_path / "eval_set_v0.csv"), "m")
     assert [t.ticket_id for t in tickets] == ["NAVY-EV-02", "NAVY-EV-01", "NAVY-EV-03"]
-    assert tickets[0].text.endswith("second")
+    assert tickets[0].body.endswith("second")
 
 
 def test_load_eval_tickets_never_carries_expected_labels(tmp_path: Path) -> None:

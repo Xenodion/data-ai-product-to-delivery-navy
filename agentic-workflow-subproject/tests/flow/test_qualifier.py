@@ -1,23 +1,13 @@
-import json
-from collections.abc import Callable
 from datetime import UTC, datetime
 
-import httpx
-
 from flow.contracts import FlowConfig, QualifierResult, Ticket, load_config
-from flow.qualifier import build_prompt, qualify
+from flow.prompt_management import PromptRelease
+from flow.qualifier import qualify, qualifier_output_schema
 
-VALID = json.dumps(
-    {
-        "intent": "dispute",
-        "sub_intent": "chargeback",
-        "transaction_id": "TX-123456",
-        "amount": "10.00",
-        "currency": "EUR",
-        "urgency": "low",
-        "sentiment": "neutral",
-    }
-)
+VALID = {
+    "intent": "dispute", "sub_intent": "chargeback", "transaction_id": "TX-123456",
+    "amount": "10.00", "currency": "EUR", "urgency": "low", "sentiment": "neutral",
+}
 TICKET = Ticket(ticket_id="t1", merchant_id="m1", text="hello", created_at=datetime(2026, 11, 5, tzinfo=UTC))
 
 
@@ -25,51 +15,53 @@ def _config() -> FlowConfig:
     return load_config().model_copy(update={"retry_wait_seconds": 0.0})
 
 
-def _call(handler: Callable[[httpx.Request], httpx.Response]) -> tuple[QualifierResult, list[httpx.Request]]:
-    calls: list[httpx.Request] = []
+class _StructuredModel:
+    def __init__(self, answer: object) -> None:
+        self.answer = answer
+        self.inputs: list[object] = []
 
-    def counting(request: httpx.Request) -> httpx.Response:
-        calls.append(request)
-        return handler(request)
+    def invoke(self, value: object) -> object:
+        self.inputs.append(value)
+        if isinstance(self.answer, Exception):
+            raise self.answer
+        return self.answer
 
-    with httpx.Client(transport=httpx.MockTransport(counting)) as client:
-        return qualify(TICKET, client=client, config=_config()), calls
+
+class _Prompt:
+    def compile(self, **variables: str) -> str:
+        return f"Ticket:\n{variables['ticket']}"
 
 
-def test_qualify_returns_label_when_output_is_valid() -> None:
-    result, calls = _call(lambda _: httpx.Response(200, json={"content": VALID + "<|im_end|>"}))
+def _call(answer: object) -> tuple[QualifierResult, _StructuredModel]:
+    model = _StructuredModel(answer)
+    prompt = PromptRelease(_Prompt(), "test/qualifier", "test", "3")
+    return qualify(TICKET, model=model, prompt=prompt, config=_config()), model  # type: ignore[arg-type]
+
+
+def test_qualify_returns_label_when_structured_output_is_valid() -> None:
+    result, model = _call(VALID)
     assert result.status == "valid"
-    assert result.label is not None
-    assert result.label.intent == "dispute"
-    assert json.loads(calls[0].content)["temperature"] == 0.0
+    assert result.label is not None and result.label.intent == "dispute"
+    assert "Ticket:\nhello" in str(model.inputs[0])
 
 
-def test_qualify_never_retries_or_repairs_malformed_output() -> None:
-    result, calls = _call(lambda _: httpx.Response(200, json={"content": '{"intent": "dispute"'}))
+def test_qualifier_schema_is_closed_and_contains_taxonomy_enums() -> None:
+    schema = qualifier_output_schema()
+    assert schema["additionalProperties"] is False
+    assert schema["properties"]["intent"]["enum"]
+
+
+def test_qualify_keeps_cross_field_validation_after_structured_generation() -> None:
+    invalid_pair = {**VALID, "intent": "dispute", "sub_intent": "auth_failure"}
+    result, _ = _call(invalid_pair)
     assert (result.status, result.label) == ("invalid", None)
-    assert result.raw == '{"intent": "dispute"'
-    assert len(calls) == 1
 
 
-def test_qualify_is_unavailable_after_transient_retries() -> None:
-    result, calls = _call(lambda _: httpx.Response(503))
+def test_qualify_marks_invalid_structured_payload_invalid() -> None:
+    result, _ = _call({"intent": "dispute"})
+    assert (result.status, result.label) == ("invalid", None)
+
+
+def test_qualify_marks_model_transport_error_unavailable() -> None:
+    result, _ = _call(RuntimeError("connection failed"))
     assert result.status == "unavailable"
-    assert len(calls) == _config().transient_retries
-
-
-def test_qualify_is_unavailable_on_client_error_without_retry() -> None:
-    result, calls = _call(lambda _: httpx.Response(400))
-    assert result.status == "unavailable"
-    assert len(calls) == 1
-
-
-def test_qualify_recovers_when_a_transient_error_clears() -> None:
-    answers = iter([httpx.Response(503), httpx.Response(200, json={"content": VALID})])
-    result, calls = _call(lambda _: next(answers))
-    assert result.status == "valid"
-    assert len(calls) == 2
-
-
-def test_build_prompt_wraps_ticket_in_chat_turns() -> None:
-    prompt = build_prompt("my ticket")
-    assert prompt.endswith("Ticket:\nmy ticket<|im_end|>\n<|im_start|>assistant\n")

@@ -23,7 +23,9 @@ from langfuse import get_client
 from flow.contracts import FlowConfig, FlowDeps, Ticket, TicketRun, load_config
 from flow.drafter import write_draft
 from flow.pipeline import process
-from flow.qualifier import qualify
+from flow.qualifier import build_qualifier_model, qualify
+from flow.tools import gather_evidence
+from flow.langgraph_app import make_ticket_step
 from ml.qualifier.src.local_paths import RUNS_DIR
 
 logger = logging.getLogger(__name__)
@@ -40,7 +42,7 @@ def select_tickets(path: Path, n: int, seed: int, merchant_id: str) -> list[Tick
         rows = [(row["card_id"], row["ticket"]) for row in csv.DictReader(handle)]
     chosen = random.Random(seed).sample(rows, n)
     return [
-        Ticket(ticket_id=card_id, merchant_id=merchant_id, text=text, created_at=datetime.now(UTC))
+        Ticket(ticket_id=card_id, merchant_id=merchant_id, body=text, created_at=datetime.now(UTC))
         for card_id, text in chosen
     ]
 
@@ -58,7 +60,7 @@ def load_eval_tickets(path: Path, merchant_id: str, ids: frozenset[str] | None =
             raise ValueError(f"IDs not in {path.name}: {sorted(unknown)}")
         rows = [(ticket_id, text) for ticket_id, text in rows if ticket_id in ids]
     return [
-        Ticket(ticket_id=ticket_id, merchant_id=merchant_id, text=text, created_at=datetime.now(UTC))
+        Ticket(ticket_id=ticket_id, merchant_id=merchant_id, body=text, created_at=datetime.now(UTC))
         for ticket_id, text in rows
     ]
 
@@ -82,13 +84,15 @@ def run_tickets(
             logger.info("%s -> %s (%s)", ticket.ticket_id, run.status, run.desk)
 
 
-def build_deps(
-    qualifier_client: httpx.Client, drafter_client: httpx.Client, config: FlowConfig
-) -> FlowDeps:
+def build_deps(drafter_client: httpx.Client, config: FlowConfig) -> FlowDeps:
+    qualifier_model = build_qualifier_model(config)
     return FlowDeps(
-        qualify=partial(qualify, client=qualifier_client, config=config),
+        qualify=partial(qualify, model=qualifier_model, config=config),
         draft=partial(write_draft, client=drafter_client, config=config),
         policy_version=config.policy_version,
+        grounded_draft=partial(write_draft, client=drafter_client, config=config),
+        gather_evidence=partial(gather_evidence, config=config),
+        flow_config=config,
     )
 
 
@@ -127,17 +131,18 @@ def main() -> int:
     else:
         tickets = select_tickets(VAL_PATH, args.n, args.seed, config.merchant_id)
         output = RUNS_DIR / f"{run_id}.jsonl"
-    # Separate clients: the local Qualifier never receives the OpenRouter key.
+    # Only the Drafter client receives the OpenRouter key; the Qualifier uses local llama.cpp.
     with (
-        httpx.Client() as qualifier_client,
         httpx.Client(headers={"Authorization": f"Bearer {api_key}"}) as drafter_client,
     ):
+        deps = build_deps(drafter_client, config)
         try:
             run_tickets(
                 tickets,
-                build_deps(qualifier_client, drafter_client, config),
+                deps,
                 output,
                 args.every,
+                step=make_ticket_step(deps),
             )
         finally:
             _flush_traces()
