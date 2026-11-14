@@ -334,6 +334,7 @@ class Draft(BaseModel):
     source_versions: tuple[tuple[str, str], ...] = ()
     stale: bool = False
     blocked: bool = False
+    attempts: int = 1  # model calls this draft needed; 2 means the first answer was repaired
 
 
 class PolicyCheckResult(BaseModel):

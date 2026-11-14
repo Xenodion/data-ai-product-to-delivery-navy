@@ -131,6 +131,7 @@ def test_write_draft_documentary_success_records_sources_and_versions() -> None:
     good = _answer({"text": "Send the KYC form.", "source_ids": [SOURCE]}, language="fr")
     draft, bodies = _run([good], DOCUMENTARY)
     assert draft.source_ids == (SOURCE,) and draft.source_versions == ((SOURCE, "1"),)
+    assert draft.attempts == 1
     assert draft.text.startswith("Bonjour,") and "[" not in draft.text
     assert "JSON object only" in bodies[0]["messages"][-1]["content"]  # the code states the format
 
@@ -138,7 +139,7 @@ def test_write_draft_documentary_success_records_sources_and_versions() -> None:
 def test_a_bad_first_answer_is_repaired_once() -> None:
     good = _answer({"text": "Send the KYC form.", "source_ids": [SOURCE]})
     draft, bodies = _run(["plain prose", good], DOCUMENTARY)
-    assert len(bodies) == 2 and draft.model == CONFIG.drafter_model
+    assert len(bodies) == 2 and draft.model == CONFIG.drafter_model and draft.attempts == 2
     assert draft.cost_usd == pytest.approx(0.002)
     assert bodies[1]["messages"][-2]["content"] == "plain prose"
     assert "rejected" in bodies[1]["messages"][-1]["content"]
@@ -153,6 +154,7 @@ def test_two_bad_answers_in_clarification_mode_fall_back_to_a_template_question(
     draft, bodies = _run(["plain prose", "still prose"], CLARIFY, language="fr")
     assert len(bodies) == 2
     assert (draft.model, draft.prompt_version, draft.source_ids) == ("template", "template-v1", ())
+    assert draft.attempts == 2
     assert "TX-123456" in draft.text and draft.text.startswith("Bonjour,")
     assert draft.cost_usd == pytest.approx(0.002)
 

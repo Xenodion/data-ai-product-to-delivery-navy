@@ -34,7 +34,7 @@ def test_write_draft_builds_the_reply_from_the_json_segments() -> None:
     body = _json({"text": "Pouvez-vous préciser la référence ?", "source_ids": []})
     draft = _draft(lambda _: _reply(body))
     assert draft.text.startswith("Bonjour,") and "Cordialement," in draft.text
-    assert (draft.cost_usd, draft.version, draft.model) == (0.0002, 1, "mistralai/mistral-nemo")
+    assert (draft.cost_usd, draft.version, draft.model) == (0.0002, 1, load_config().drafter_model)
 
 
 @pytest.mark.parametrize("response", [httpx.Response(402), httpx.Response(200, json={})])

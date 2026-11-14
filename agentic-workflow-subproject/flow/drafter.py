@@ -234,7 +234,7 @@ def write_draft(
     known_text = " ".join([ticket.body, *(f.value for f in facts), *(f.source_id for f in facts)])
     messages, cost = base, 0.0
     failure = "no attempt"
-    for _ in range(1 + REPAIR_ATTEMPTS):
+    for attempt in range(1, 2 + REPAIR_ATTEMPTS):
         answer = post_json(
             client,
             cfg.drafter_url,
@@ -268,7 +268,7 @@ def write_draft(
         )
         return _draft(
             version, desk, cfg, prompt, mode, cost, start, text, sources,
-            source_versions, model=cfg.drafter_model,
+            source_versions, model=cfg.drafter_model, attempts=attempt,
         )
     if mode != "clarification":
         raise DraftRejected(f"Drafter rejected after repair: {failure}")
@@ -276,7 +276,7 @@ def write_draft(
     language = pick_language(ticket.language, "", cfg)
     return _draft(
         version, desk, cfg, prompt, mode, cost, start, template_question(language, codes, cfg), (), (),
-        model=TEMPLATE_MODEL, prompt_version=TEMPLATE_VERSION,
+        model=TEMPLATE_MODEL, prompt_version=TEMPLATE_VERSION, attempts=1 + REPAIR_ATTEMPTS,
     )
 
 
@@ -294,6 +294,7 @@ def _draft(
     *,
     model: str,
     prompt_version: str | None = None,
+    attempts: int = 1,
 ) -> Draft:
     return Draft(
         version=version,
@@ -307,4 +308,5 @@ def _draft(
         evidence_mode=mode,  # type: ignore[arg-type]  # a PreparationMode by construction
         source_ids=sources,
         source_versions=source_versions,
+        attempts=attempts,
     )
