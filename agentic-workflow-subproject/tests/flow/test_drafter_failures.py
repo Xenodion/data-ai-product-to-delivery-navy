@@ -5,7 +5,14 @@ from datetime import UTC, datetime
 import httpx
 import pytest
 
-from flow.contracts import EvidenceDecision, FlowDeps, QualifierResult, Ticket, load_config
+from flow.contracts import (
+    EvidenceDecision,
+    EvidenceFact,
+    FlowDeps,
+    QualifierResult,
+    Ticket,
+    load_config,
+)
 from flow.drafter import _prompt_variables, write_draft
 from flow.llm import DraftRejected, LLMError
 from flow.pipeline import draft_failure_codes, process, reroute
@@ -30,6 +37,10 @@ def _down(ticket, qualifier, desk, version):
 
 def _deps(draft) -> FlowDeps:
     return FlowDeps(qualify=lambda _: VALID, draft=draft, policy_version="p1")
+
+
+_FACT = EvidenceFact(field="approved_guidance", value="v", source_id="kb_x", source_version="1")
+_DOCUMENTARY = EvidenceDecision(mode="documentary", reason_codes=("EVIDENCE_READY",), source_ids=("kb_x",), facts=(_FACT,))
 
 
 def test_failure_codes_separate_rejection_from_outage() -> None:
@@ -68,7 +79,7 @@ def test_an_unusable_model_answer_raises_draft_rejected(content: str) -> None:
     config = load_config().model_copy(update={"retry_wait_seconds": 0.0})
     transport = httpx.MockTransport(lambda _: httpx.Response(200, json=reply))
     with httpx.Client(transport=transport) as client, pytest.raises(DraftRejected):
-        write_draft(TICKET, VALID, "disputes", 1, client=client, config=config)
+        write_draft(TICKET, VALID, "disputes", 1, client=client, config=config, evidence=_DOCUMENTARY)
 
 
 def test_the_drafter_receives_the_reason_codes_of_the_evidence_mode() -> None:

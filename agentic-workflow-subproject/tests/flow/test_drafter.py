@@ -1,3 +1,4 @@
+import json
 from collections.abc import Callable
 from datetime import UTC, datetime
 
@@ -25,16 +26,19 @@ def _reply(content: str | None, finish_reason: str = "stop") -> httpx.Response:
     return httpx.Response(200, json={"choices": [choice], "usage": {"cost": 0.0002}})
 
 
-def test_write_draft_returns_text_and_cost() -> None:
-    draft = _draft(lambda _: _reply(" Bonjour "))
-    assert (draft.text, draft.cost_usd, draft.version) == ("Bonjour", 0.0002, 1)
+def _json(*segments: dict[str, object], language: str = "fr") -> str:
+    return json.dumps({"language": language, "segments": list(segments)})
 
 
-@pytest.mark.parametrize(
-    "response",
-    [_reply(""), _reply(None), _reply("cut", "length"), httpx.Response(402), httpx.Response(200, json={})],
-)
-def test_write_draft_raises_when_no_usable_reply(response: httpx.Response) -> None:
+def test_write_draft_builds_the_reply_from_the_json_segments() -> None:
+    body = _json({"text": "Pouvez-vous préciser la référence ?", "source_ids": []})
+    draft = _draft(lambda _: _reply(body))
+    assert draft.text.startswith("Bonjour,") and "Cordialement," in draft.text
+    assert (draft.cost_usd, draft.version, draft.model) == (0.0002, 1, "mistralai/mistral-nemo")
+
+
+@pytest.mark.parametrize("response", [httpx.Response(402), httpx.Response(200, json={})])
+def test_write_draft_raises_when_the_provider_gives_nothing(response: httpx.Response) -> None:
     with pytest.raises(LLMError):
         _draft(lambda _: response)
 

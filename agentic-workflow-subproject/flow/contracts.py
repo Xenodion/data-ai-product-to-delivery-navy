@@ -93,6 +93,11 @@ class FlowConfig(BaseModel):
     drafter_temperature: float
     drafter_max_tokens: int
     drafter_timeout_seconds: float
+    drafter_response_format: str = "json_object"  # "json_object" or "none"
+    drafter_require_parameters: bool = True  # OpenRouter must not silently drop response_format
+    drafter_greeting: dict[str, str] = {}
+    drafter_closing: dict[str, str] = {}
+    drafter_fallback_question: dict[str, dict[str, str]] = {}
     policy_version: str
     transient_retries: int
     retry_wait_seconds: float
