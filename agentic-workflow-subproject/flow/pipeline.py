@@ -21,7 +21,7 @@ from flow.contracts import (
     TicketRun,
     load_config,
 )
-from flow.llm import LLMError
+from flow.llm import DraftRejected, LLMError
 from flow.field_check import check_fields
 from flow.context import plan_context
 from flow.evidence import decide_evidence, unavailable_stubs
@@ -31,6 +31,8 @@ from flow.turns import is_within_automated_turn_limit
 from ml.qualifier.src.dataset_build.schema import OTHER, UNDEFINED
 
 logger = logging.getLogger(__name__)
+
+REJECTED_PREFIX = "rejected: "  # draft_error is a plain string; the prefix tells rejection from outage
 
 def _require_next_turn(ticket: Ticket, previous_run: TicketRun | None) -> None:
     if ticket.turn == 1:
@@ -66,9 +68,19 @@ def _attempt_draft(
         if deps.grounded_draft is not None and evidence is not None:
             return deps.grounded_draft(ticket, qualifier, desk, version, evidence=evidence), None
         return deps.draft(ticket, qualifier, desk, version), None
+    except DraftRejected as exc:
+        logger.error("Draft rejected for %s: %s", ticket.ticket_id, exc)
+        return None, f"{REJECTED_PREFIX}{exc}"
     except LLMError as exc:
         logger.error("Draft failed for %s: %s", ticket.ticket_id, exc)
         return None, str(exc)
+
+
+def draft_failure_codes(error: str | None) -> tuple[str, ...]:
+    """Reason code of a failed draft: the model's answer was rejected, or it never answered."""
+    if not error:
+        return ()
+    return ("DRAFT_REJECTED",) if error.startswith(REJECTED_PREFIX) else ("DRAFTER_UNAVAILABLE",)
 
 
 def _policy_reason_codes(policy: PolicyCheckResult | None) -> tuple[str, ...]:
@@ -237,7 +249,7 @@ def reroute(
     )
     if draft is not None and policy is not None:
         draft = draft.model_copy(update={"blocked": policy.status == "blocked"})
-    failure = ("DRAFTER_UNAVAILABLE",) if error else ()
+    failure = draft_failure_codes(error)
     policy_failure = _policy_reason_codes(policy)
     return run.model_copy(
         update={

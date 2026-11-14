@@ -41,6 +41,7 @@ PolicyFindingCode = Literal[
 ReasonCode = Literal[
     "DESK_FROM_SUPPORTED_INTENT",
     "DRAFTER_UNAVAILABLE",
+    "DRAFT_REJECTED",
     "EVIDENCE_BLOCKED",
     "EVIDENCE_READY",
     "CONTENT_POLICY_BLOCK",

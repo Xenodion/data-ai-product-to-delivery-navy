@@ -4,7 +4,13 @@ from flow.context import plan_context
 from flow.contracts import FlowDeps, PipelineWork, QualifierResult, RoutingDecision, Ticket, TicketRun, load_config
 from flow.evidence import decide_evidence, unavailable_stubs
 from flow.field_check import check_fields
-from flow.pipeline import _attempt_draft, _carry_history, _next_status, _policy_reason_codes
+from flow.pipeline import (
+    _attempt_draft,
+    _carry_history,
+    _next_status,
+    _policy_reason_codes,
+    draft_failure_codes,
+)
 from flow.policy import PolicyContext, check_draft
 from flow.router import decide_later_turn, decide_route
 from flow.turns import is_within_automated_turn_limit
@@ -182,7 +188,7 @@ def finalize_step(work: PipelineWork, deps: FlowDeps) -> TicketRun:
         )
 
     policy = work.policy_check
-    failures = ("DRAFTER_UNAVAILABLE",) if work.draft_error else ()
+    failures = draft_failure_codes(work.draft_error)
     new_drafts = (*stale, work.draft) if work.draft else stale
     return TicketRun(
         ticket=work.ticket, qualifier=qualifier, decision=decision, desk=decision.desk,

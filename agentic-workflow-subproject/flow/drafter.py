@@ -17,7 +17,7 @@ from flow.contracts import (
     Ticket,
     load_config,
 )
-from flow.llm import LLMError, post_json
+from flow.llm import DraftRejected, LLMError, post_json
 from flow.prompt_management import PromptRelease, fetch_prompt, record_prompt_release
 
 logger = logging.getLogger(__name__)
@@ -44,6 +44,7 @@ DRAFTER_FALLBACK_PROMPT = [
             "Desk: {{desk}}\nPreparation mode: {{mode}}\nReply language hint: {{language}}\n"
             "Extracted fields (unverified): {{qualifier_fields}}\n"
             "Evidence facts (the only factual basis): {{evidence_facts}}\n"
+            "Why this preparation mode (reason codes): {{reason_codes}}\n"
             "Allowed source IDs: {{allowed_source_ids}}\n\n"
             "<ticket>\n{{ticket_text}}\n</ticket>"
         ),
@@ -110,6 +111,7 @@ def _prompt_variables(
         "language": language,
         "qualifier_fields": fields,
         "evidence_facts": str(evidence_json),
+        "reason_codes": ", ".join(evidence.reason_codes) if evidence is not None else "none",
         "allowed_source_ids": str(fact_source_ids),
         "ticket_text": text,
     }
@@ -128,9 +130,9 @@ def _validate_citations(text: str, evidence: EvidenceDecision | None) -> tuple[s
     allowed = {fact.source_id for fact in evidence.facts}
     citations = re.findall(r"\[([^\]]+)\]", text)
     if not citations or any(citation not in allowed for citation in citations):
-        raise LLMError("Drafter cited no approved source or an unknown source")
+        raise DraftRejected("Drafter cited no approved source or an unknown source")
     if any(line.strip() and not re.search(r"\[[^\]]+\]", line) for line in text.splitlines()):
-        raise LLMError("Drafter left a line without an evidence citation")
+        raise DraftRejected("Drafter left a line without an evidence citation")
     return tuple(dict.fromkeys(citations))
 
 
@@ -145,9 +147,9 @@ def _reply_text(answer: dict[str, object]) -> tuple[str, float]:
     choice = completion.choices[0]
     text = (choice.message.content or "").strip()
     if not text:
-        raise LLMError("empty Drafter reply")
+        raise DraftRejected("empty Drafter reply")
     if choice.finish_reason == "length":
-        raise LLMError("truncated Drafter reply")
+        raise DraftRejected("truncated Drafter reply")
     return text, completion.usage.cost if completion.usage else 0.0
 
 

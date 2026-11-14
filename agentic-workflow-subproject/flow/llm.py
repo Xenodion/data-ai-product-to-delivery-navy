@@ -17,6 +17,10 @@ class LLMError(RuntimeError):
     """No usable answer: failed exchange, exhausted retries or unexpected response shape."""
 
 
+class DraftRejected(LLMError):
+    """The model answered but the answer cannot be used (empty, cut off or breaking a rule)."""
+
+
 class _TransientError(LLMError):
     """Network error, timeout, 429 or 5xx: worth a short retry."""
 

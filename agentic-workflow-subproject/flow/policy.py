@@ -46,6 +46,8 @@ _LEGAL_ADVICE = re.compile(
 _FIGURE = re.compile(
     r"(?<![\w])(?:\d{1,3}(?:[ ,.\u00a0]\d{3})+|\d+)(?:[,.]\d{1,2})?(?:\s?[kK])?(?![\w])"
 )
+# The T and Z of an ISO stamp glue digits to letters; without this the day and hour are lost.
+_ISO_STAMP_SEPARATOR = re.compile(r"(?<=\d)T(?=\d)|(?<=\d)Z\b")
 _TRANSACTION_TOKEN = re.compile(r"\bTX[- ]?\d{6}\b", re.IGNORECASE)
 _MERCHANT_TOKEN = re.compile(r"\bM-\d+\b", re.IGNORECASE)
 _MERCHANT_ID = re.compile(r"^M-\d+$", re.IGNORECASE)
@@ -110,6 +112,7 @@ def _number(value: str) -> Decimal | None:
 
 
 def _figures(text: str, source_ids: tuple[str, ...]) -> set[Decimal]:
+    text = _ISO_STAMP_SEPARATOR.sub(" ", text)
     cleaned = _TRANSACTION_TOKEN.sub(" ", text)
     cleaned = _MERCHANT_TOKEN.sub(" ", cleaned)
     for source_id in source_ids:
