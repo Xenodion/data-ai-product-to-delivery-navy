@@ -5,6 +5,8 @@ from flow.contracts import ContextPlan, EvidenceDecision, EvidenceResult, Prepar
 
 def decide_evidence(plan: ContextPlan, result: EvidenceResult) -> EvidenceDecision:
     """Factual mode requires every planned source and verified merchant scope."""
+    if plan.status == "human_only":
+        return EvidenceDecision(mode="no_draft", reason_codes=plan.reason_codes)
     if plan.status == "clarification":
         return EvidenceDecision(mode="clarification", reason_codes=plan.reason_codes)
 

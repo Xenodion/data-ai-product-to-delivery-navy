@@ -22,7 +22,7 @@ Status = Literal[
     "ready_to_send", "sent_open", "sent_closed", "closed_manual",
 ]
 SendDisposition = Literal["leave_open", "close"]
-ContextStatus = Literal["planned", "clarification", "no_tools"]
+ContextStatus = Literal["planned", "clarification", "no_tools", "human_only"]
 ToolStatus = Literal[
     "not_run", "not_required", "exact_id", "candidate_selection", "not_found",
     "conflict", "wrong_merchant", "unavailable", "found", "empty", "blocked",
@@ -36,12 +36,14 @@ PolicyFindingCode = Literal[
     "UNSUPPORTED_FIGURE",
     "FOREIGN_MERCHANT_IDENTIFIER",
     "SOURCE_STATUS_CONFLICT",
+    "ACCOUNT_STATE_CLAIM",
     "POLICY_CHECK_ERROR",
 ]
 ReasonCode = Literal[
     "DESK_FROM_SUPPORTED_INTENT",
     "DRAFTER_UNAVAILABLE",
     "DRAFT_REJECTED",
+    "HUMAN_ONLY_TOPIC",
     "EVIDENCE_BLOCKED",
     "EVIDENCE_READY",
     "CONTENT_POLICY_BLOCK",
@@ -108,6 +110,7 @@ class FlowConfig(BaseModel):
     metrics_db_path: str
     payment_fact_sub_intents: tuple[str, ...]
     dispute_fact_sub_intents: tuple[str, ...]
+    human_only_sub_intents: tuple[str, ...] = ()
     api_db_path: str
     api_checkpoint_db_path: str
     api_max_page_size: int

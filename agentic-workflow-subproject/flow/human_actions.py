@@ -63,6 +63,8 @@ def edit_draft(run: TicketRun, text: str, *, actor: str) -> TicketRun:
             "latency_seconds": 0.0,
             "stale": False,
             "blocked": False,
+            "source_ids": (),
+            "source_versions": (),
         }
     )
     return run.model_copy(

@@ -43,6 +43,17 @@ _LEGAL_ADVICE = re.compile(
     r"conform[eé]ment\s+[àa]\s+la\s+loi,?\s+vous\s+avez\s+droit)\b",
     re.IGNORECASE,
 )
+_ACCOUNT_STATE = re.compile(
+    r"\b(?:your|the)\s+account\s+(?:is|has\s+been|was|remains|will\s+be)\s+(?:currently\s+)?"
+    r"(?:restricted|suspended|frozen|blocked|closed|on\s+hold|under\s+review)\b|"
+    r"\b(?:your|the)\s+(?:funds|payouts?)\s+(?:are|is|have\s+been)\s+(?:currently\s+)?"
+    r"(?:frozen|blocked|on\s+hold|withheld)\b|"
+    r"\b(?:votre|le)\s+compte\s+(?:est|a\s+[ée]t[ée]|reste|sera)\s+(?:actuellement\s+)?"
+    r"(?:restreint|suspendu|gel[ée]|bloqu[ée]|cl[ôo]tur[ée]|en\s+cours\s+d.examen)\b|"
+    r"\b(?:vos|les)\s+(?:fonds|virements)\s+(?:sont|ont\s+[ée]t[ée])\s+(?:actuellement\s+)?"
+    r"(?:gel[ée]s|bloqu[ée]s|retenus)\b",
+    re.IGNORECASE,
+)
 _FIGURE = re.compile(
     r"(?<![\w])(?:\d{1,3}(?:[ ,.\u00a0]\d{3})+|\d+)(?:[,.]\d{1,2})?(?:\s?[kK])?(?![\w])"
 )
@@ -157,6 +168,8 @@ def _evaluate(
         findings.append("REFUND_PROMISE")
     if _LEGAL_ADVICE.search(text):
         findings.append("LEGAL_ADVICE")
+    if _ACCOUNT_STATE.search(text):
+        findings.append("ACCOUNT_STATE_CLAIM")
 
     # Human-authored final text is not subject to a numeric evidence match, but
     # the other shared rules still run and require an explicit logged override.

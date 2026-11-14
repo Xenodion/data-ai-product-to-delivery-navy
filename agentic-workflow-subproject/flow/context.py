@@ -15,6 +15,16 @@ def plan_context(
 ) -> ContextPlan:
     """Select fixed, read-only sources; never derive tenant scope from the ticket text."""
     cfg = config or load_config()
+    if label.sub_intent in cfg.human_only_sub_intents:
+        return ContextPlan(
+            desk=desk,
+            merchant_id=merchant_id,
+            sub_intent=label.sub_intent,
+            ledger_required=False,
+            knowledge_required=False,
+            status="human_only",
+            reason_codes=("HUMAN_ONLY_TOPIC",),
+        )
     if desk == "payments":
         ledger = label.sub_intent in cfg.payment_fact_sub_intents
         if ledger and (
