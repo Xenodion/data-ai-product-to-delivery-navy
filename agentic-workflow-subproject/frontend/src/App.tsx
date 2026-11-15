@@ -4,6 +4,7 @@ import {
   type OverviewData, type QueueName, type TicketSnapshot,
 } from "./api.ts";
 import { FlowGraph } from "./FlowGraph.tsx";
+import { DashboardFlow } from "./DashboardFlow.tsx";
 import { Mailbox } from "./Mailbox.tsx";
 
 const VIEWS: { hash: string; label: string; icon: string }[] = [
@@ -133,19 +134,7 @@ function OverviewPage() {
 
       <section className="card flow-card">
         <div className="section-heading"><div><p className="eyebrow">LIVE CONTROL MAP</p><h2>Ticket flow</h2></div><div className="graph-live"><i className={!error && (data.by_status.processing ?? 0) ? "is-busy" : ""} />{error ? "Last known data" : (data.by_status.processing ?? 0) ? `${data.by_status.processing} processing` : "Flow idle"}<span>· {updatedAt ? `Updated ${updatedAt.toLocaleTimeString()}` : "Waiting for update"}</span></div></div>
-        <div className={`flow-summary${!error && (data.by_status.processing ?? 0) > 0 ? " is-active" : ""}`} aria-label="Ticket flow overview">
-          <div className="flow-step"><small>01 · INTAKE</small><b>Receive</b><span>Incoming tickets</span></div><span className="flow-connector" aria-hidden="true"><i /></span>
-          <div className="flow-step"><small>02 · ROUTING</small><b>Qualify &amp; route</b><span>Rules and model</span></div><span className="flow-connector" aria-hidden="true"><i /></span>
-          <div className="flow-step"><small>03 · PREPARATION</small><b>Gather &amp; draft</b><span>Evidence and reply</span></div><span className="flow-connector" aria-hidden="true"><i /></span>
-          <div className="flow-step human"><small>04 · HUMAN REVIEW</small><b>Review &amp; decide</b><span>Agent control</span></div><span className="flow-connector" aria-hidden="true"><i /></span>
-          <div className="flow-step"><small>05 · OUTCOME</small><b>Resolve</b><span>Send or close</span></div>
-        </div>
-        <div className="queue-shortcuts" aria-label="Human and error queues">
-          <a href="#workspace/re-routing"><span><b>Re-routing</b><small>Unclear assignments</small></span><strong>{data.queues["re-router"] ?? 0}</strong><em>Open queue →</em></a>
-          <a href="#workspace/review"><span><b>Ticket review</b><small>Human review</small></span><strong>{data.queues.validator ?? 0}</strong><em>Open queue →</em></a>
-          <a className="errors" href="#workspace/errors"><span><b>Flow errors</b><small>Operational attention</small></span><strong>{data.queues.errors ?? 0}</strong><em>Investigate →</em></a>
-        </div>
-        <p className="flow-caption">Movement indicates overall processing activity; it does not represent individual tickets.</p>
+        <DashboardFlow data={data} stale={!!error} />
         <details className="flow-details"><summary>View detailed workflow</summary><FlowGraph data={error ? {...data, by_status: {...data.by_status, processing: 0}} : data} /></details>
       </section>
       <details className="dashboard-details"><summary>More metrics and demo tools</summary>
