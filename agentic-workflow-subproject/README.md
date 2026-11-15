@@ -120,8 +120,8 @@ It syncs the locked Python environment, installs frontend dependencies when need
 `flow/deploy/compose.demo.yml` runs the whole demo in containers: the API serves the built front end on one origin, and the CPU Qualifier runs next to it with the model inside its image. Build the world database first (`python -m flow.world.build --threads data/world/threads/accepted.jsonl`), make sure `.local/models/model-q4.gguf` exists (`flow.setup_local`), stop the `l07` Airflow stack (Docker needs about 2 GiB free), then:
 
 ```
-.low\deploy\demo.ps1 -StopAirflow -Inject 6   # builds, starts, waits, sends 6 dev tickets, opens the browser
-.low\deploy\demo.ps1 -Down                    # stops it (add -Reset to erase the state)
+.\flow\deploy\demo.ps1 -StopAirflow -Inject 6   # builds, starts, waits, sends 6 dev tickets, opens the browser
+.\flow\deploy\demo.ps1 -Down                    # stops it (add -Reset to erase the state)
 ```
 
 The script checks the prerequisites (model, world database), builds the world database if it is missing, and waits for the flow to be ready. The equivalent Compose command is `docker compose -f flow/deploy/compose.demo.yml up --build`.
