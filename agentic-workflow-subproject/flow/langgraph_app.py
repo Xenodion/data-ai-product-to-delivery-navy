@@ -140,7 +140,7 @@ def build_ticket_graph(
     config = deps.flow_config or load_config()
     checkpoint_store = checkpointer if checkpointer is not None else InMemorySaver()
     metrics_store = (
-        MetricsStore((Path(__file__).parent / config.metrics_db_path).resolve())
+        MetricsStore((Path(__file__).resolve().parent.parent / config.metrics_db_path).resolve())
         if config.metrics_enabled
         else None
     )

@@ -152,3 +152,8 @@ def test_an_environment_variable_points_the_flow_at_a_world_database(monkeypatch
     assert load_config().world_database_path is None
     monkeypatch.setenv("NAVY_WORLD_DB", "some/world.sqlite")
     assert load_config().world_database_path == "some/world.sqlite"
+
+
+def test_an_environment_variable_points_the_flow_at_another_qualifier(monkeypatch) -> None:
+    monkeypatch.setenv("NAVY_QUALIFIER_URL", "http://qualifier:8080/v1")
+    assert load_config().qualifier_url == "http://qualifier:8080/v1"

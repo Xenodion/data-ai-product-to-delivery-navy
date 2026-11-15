@@ -14,6 +14,7 @@ from ml.qualifier.src.dataset_build.schema import TicketLabel
 
 CONFIG_PATH = Path(__file__).parent / "config.toml"
 WORLD_DATABASE_ENV = "NAVY_WORLD_DB"
+QUALIFIER_URL_ENV = "NAVY_QUALIFIER_URL"
 FROZEN = ConfigDict(extra="forbid", frozen=True)
 
 Desk = Literal["payments", "disputes", "technical_api", "compliance"]
@@ -494,4 +495,7 @@ def load_config(path: Path = CONFIG_PATH) -> FlowConfig:
     world = os.environ.get(WORLD_DATABASE_ENV)
     if world:  # run the flow on a world database without editing the committed config
         raw["world_database_path"] = world
+    qualifier = os.environ.get(QUALIFIER_URL_ENV)
+    if qualifier:  # containers reach the Qualifier by service name, not by 127.0.0.1
+        raw["qualifier_url"] = qualifier
     return FlowConfig.model_validate(raw)

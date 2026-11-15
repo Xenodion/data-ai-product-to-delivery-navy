@@ -1,0 +1,24 @@
+# Build context of the API image: only what the flow needs. No dataset, no notebooks, no secrets.
+.git
+.env
+.env.*
+!.env.example
+.venv
+**/__pycache__
+**/*.pyc
+node_modules
+frontend/node_modules
+frontend/dist
+data/dataset
+data/runs
+**/*_quarantine.csv
+audit_logs_*.csv
+docs
+specs
+tests
+ml/**/*.ipynb
+ml/qualifier/data
+.local/*
+!.local/world
+.local/world/*
+!.local/world/world.sqlite

@@ -35,7 +35,7 @@ knowledge_min_overlap_tokens = 1
 ledger_fixture_path = "fixtures/ledger.json"
 knowledge_fixture_path = "fixtures/knowledge.json"
 metrics_enabled = true
-metrics_db_path = "../.local/flow/metrics.sqlite"
+metrics_db_path = ".local/flow/metrics.sqlite"
 payment_fact_sub_intents = ["delayed_credit", "missing_payment", "status_inquiry", "refund_status"]
 # Sub-intents a person answers: no draft is written, the Validator sees HUMAN_ONLY_TOPIC.
 human_only_sub_intents = ["account_hold"]

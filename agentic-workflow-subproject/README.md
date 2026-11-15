@@ -115,6 +115,16 @@ For one-command startup on Windows PowerShell, use the local launcher from this 
 
 It syncs the locked Python environment, installs frontend dependencies when needed, starts the CPU Qualifier through Docker Compose, starts the API and Vite, and opens the browser. On first use, if the roughly 2 GB model is missing, it asks before downloading it from GCS; this requires Google Application Default Credentials. The API and Qualifier run locally, but Drafter calls still go to OpenRouter; Langfuse prompt lookup is optional and uses the configured Langfuse service. Stop everything with `Ctrl+C`; the launcher stops its API/frontend processes and the Qualifier container, while keeping local SQLite state. Logs go to `.local/logs/`.
 
+### Container demo (API, front end and Qualifier in Docker)
+
+`flow/deploy/compose.demo.yml` runs the whole demo in containers: the API serves the built front end on one origin, and the CPU Qualifier runs next to it with the model inside its image. Build the world database first (`python -m flow.world.build --threads data/world/threads/accepted.jsonl`), make sure `.local/models/model-q4.gguf` exists (`flow.setup_local`), stop the `l07` Airflow stack (Docker needs about 2 GiB free), then:
+
+```
+docker compose -f flow/deploy/compose.demo.yml up --build
+```
+
+Open http://127.0.0.1:8000. `OPENROUTER_API_KEY` is read from your shell or from `.env` by Docker Compose and is never copied into an image. State lives in the `navy-state` volume. The image installs only the base dependencies: training and evaluation packages are in the `ml` dependency group, which `uv` still installs by default for local work.
+
 To work on the UI without Docker/model inference, run `.\run-local.ps1 -SkipQualifier`. This still requires `OPENROUTER_API_KEY` because the API initializes the Drafter client. Optional flags: `-DownloadModel` to opt into the model download without a prompt, `-NoBrowser`, `-SkipDependencyInstall`, `-ApiPort <port>`, and `-FrontendPort <port>`.
 
 The equivalent manual commands are:

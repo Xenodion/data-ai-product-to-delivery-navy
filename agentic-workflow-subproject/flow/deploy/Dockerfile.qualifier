@@ -1,0 +1,7 @@
+# D-q4 Qualifier on CPU with the model inside the image. Build with the models folder as context:
+#   docker build -f flow/deploy/Dockerfile.qualifier -t navy-qualifier .local/models
+# The checksum is the one in flow/config.toml (qualifier_model_md5).
+FROM ghcr.io/ggml-org/llama.cpp:server-b5974
+ARG MODEL_MD5=b23b4f3092c9083c1c741551ec351dc8
+COPY model-q4.gguf /models/model-q4.gguf
+RUN echo "${MODEL_MD5}  /models/model-q4.gguf" | md5sum -c -

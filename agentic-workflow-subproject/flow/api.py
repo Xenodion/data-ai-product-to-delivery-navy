@@ -7,8 +7,8 @@ import hashlib
 import json
 import logging
 import os
-from contextlib import asynccontextmanager
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Literal
@@ -18,6 +18,8 @@ import httpx
 from dotenv import load_dotenv
 from fastapi import FastAPI, Header, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from langfuse import get_client
 from langgraph.types import Command
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -303,6 +305,10 @@ async def lifespan(app: FastAPI):
         app.state.executor.shutdown(wait=True, cancel_futures=False)
         drafter_client.close()
         saver_context.__exit__(None, None, None)
+        try:
+            get_client().flush()
+        except Exception as exc:  # a tracing failure must not break shutdown
+            logger.error("Langfuse flush failed: %s", exc)
 
 
 app = FastAPI(title="NAVY Ticket Flow API", version="1.0.0", lifespan=lifespan)
@@ -591,4 +597,12 @@ def get_overview(request: Request) -> dict[str, Any]:
         "oldest_waiting_seconds": round(oldest_seconds, 1),
         "ratios": {"human_review_rate": {"numerator": len(waiting), "denominator": len(rows)}},
     }
+
+
+# Container image: serve the built front end from the same origin. Mounted last so that it never
+# shadows an API route; unset in local development, where Vite serves the front end.
+_STATIC_DIR = os.environ.get("NAVY_STATIC_DIR")
+if _STATIC_DIR:
+    app.mount("/", StaticFiles(directory=_STATIC_DIR, html=True), name="front")
+
 
