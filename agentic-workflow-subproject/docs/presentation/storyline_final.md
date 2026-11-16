@@ -1,6 +1,6 @@
 # Final oral: storyline and slide content
 
-Status: **final content v2, 16 November 2026.** Merged from four independent drafts kept in this folder for reference (`storyline_v1.md` to `storyline_v4.md`, constraints in `brief.md`). This file is the one the deck is built from. Paths starting with `sub/` are in `agentic-workflow-subproject/`.
+Status: **final content v2, 16 November 2026.** Merged from four independent drafts archived in `archive/` (`storyline_v1.md` to `storyline_v4.md`, constraints in `brief.md`). This file is the one the deck is built from. Paths starting with `sub/` are in `agentic-workflow-subproject/`.
 
 ## 0. Directions for the deck
 
@@ -235,9 +235,11 @@ Questions, with the short honest answer:
 - Next technical step: check the registered Vertex artifact, then adapt the llama.cpp container to the Vertex prediction contract before any billed deployment.
 - Tracking: issues #40, #41, #73-#77.
 
+**Taken (deck, 16 November 2026):**
+- Scope: this deck covers the Agentic Workflows & LLMOps oral only; the AI Product work serves as context.
+- Tool: a PowerPoint file kept in the repository, charts exported from code.
+- Language: English.
+
 **Still open:**
-- **D1** API host with persistent storage.
-- **D2** Slide tool (Google Slides recommended for 4 editors, charts exported from code).
-- **D3** Slide language.
+- **D1** Host of the Python API (FastAPI + LangGraph + persistent storage). Cloudflare Pages serves the front end; Pages/Workers cannot run this API as is.
 - **D4** Who presents which section; date of the oral.
-- **D5** Same deck as the AI Product final oral (#66) or a separate one (recommended: separate, shared charts).
