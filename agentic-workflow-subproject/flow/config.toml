@@ -2,6 +2,10 @@
 qualifier_model_uri = "gs://navy-team-llmops-bucket/pipeline_root/158407666882/keelpay-router-compact-variants-pipeline-20261102155447/compact-variants-component_-2725338443608489984/gguf_q4/model-q4.gguf"
 qualifier_model_md5 = "b23b4f3092c9083c1c741551ec351dc8"
 qualifier_url = "http://127.0.0.1:8081/v1"
+qualifier_provider = "openai_compatible" # set NAVY_QUALIFIER_PROVIDER=vertex_raw_predict when deployed
+qualifier_vertex_endpoint_id = ""        # set by NAVY_QUALIFIER_VERTEX_ENDPOINT_ID in the hosted API
+qualifier_vertex_project_id = ""         # falls back to GCP_PROJECT_ID
+qualifier_vertex_region = "europe-west2" # can be overridden by NAVY_QUALIFIER_VERTEX_REGION
 qualifier_model_version = "d-q4"
 qualifier_max_tokens = 160       # same value as the D-q4 evaluation
 qualifier_timeout_seconds = 120

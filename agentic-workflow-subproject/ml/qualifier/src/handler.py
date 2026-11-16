@@ -1,7 +1,8 @@
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-# Environment-specific values: set for a T4 GPU (Colab test and Vertex AI endpoint).
+# Legacy Hugging Face/LoRA handler for the unquantized training artifact.
+# The selected D-q4 GGUF model is served by llama.cpp; see flow/deploy/vertex_build/.
 MODEL_DIR = "models/router-qwen"
 DEVICE_MAP = "cuda:0"
 TORCH_DTYPE = torch.float16  # T4 has no native bfloat16 support
