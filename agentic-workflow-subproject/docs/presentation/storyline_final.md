@@ -153,7 +153,7 @@ Two charts.
 
 ### 10 · Registry and endpoint
 - **On slide:** "The chosen model is a version in the Vertex AI Model Registry, served on a Vertex AI endpoint by a llama.cpp container. The interface and the API that runs the workflow call it."
-- **Visual:** chain of cropped screenshots: Model Registry (`keelpay-router-json`, alias `qwen3b-lora-q4`, europe-west2) → Vertex AI endpoint with the D-q4 model deployed (CPU machine, status) → front end on Cloudflare Pages calling the hosted API → Qualifier answer in the app. A small architecture strip above: Cloudflare Pages (front end) → API (FastAPI + LangGraph, persistent storage) → Vertex AI endpoint (D-q4, llama.cpp) ; Langfuse Cloud on the side.
+- **Visual:** chain of cropped screenshots: Model Registry (`keelpay-router-json`, alias `qwen3b-lora-q4`, europe-west2) → Vertex AI endpoint with the D-q4 model deployed (CPU machine, status) → Cloud Run service (API + front end) with its URL → Qualifier answer in the app. A small architecture strip above: Cloud Run (FastAPI + LangGraph API serving the front end) → Vertex AI endpoint (D-q4, llama.cpp) ; Langfuse Cloud on the side.
 - **Say:** the deployed file is the evaluated one (4-bit GGUF, checksum pinned). The llama.cpp container is adapted to the Vertex prediction contract. An endpoint bills every hour, even idle: the model is deployed for tests and the demo, then undeployed to free the billed resources. Secrets stay out of images; demo data is synthetic.
 - **Sources:** `sub/docs/scoring_protocol.md` §8 "Registration", `sub/flow/deploy/`, `sub/flow/config.toml`; deployment issues #40, #73-#77. **Material:** blocked until the deployment is done (gap 1).
 
@@ -228,7 +228,7 @@ Questions, with the short honest answer:
 **Taken (deployment, 16 November 2026):**
 - Model: D-q4, 4-bit GGUF served by llama.cpp.
 - Qualifier served on a Vertex AI endpoint (required by the project); deployed for tests and the demo, then undeployed to free billed resources (the empty endpoint can be kept or deleted).
-- Front end on Cloudflare Pages. Back end: the current FastAPI + LangGraph API needs a compatible host with persistent storage (Pages/Workers cannot host it as is): host to choose.
+- Hosting: the Qualifier's Vertex AI endpoint stays in the school GCP project (with the Model Registry). The API, which also serves the front end, runs on Cloud Run in a personal GCP project (the course project gives no Cloud Run access), at zero minimum instances; it calls the school endpoint through a service account with cross-project access. Cloudflare Pages is dropped. Container state is not durable: the demo history is rebuilt by the `demo-agent` simulator at each demo session.
 - Monitoring: Langfuse Cloud, synthetic traces, no sensitive content.
 - Demo history: a deterministic human simulator acting through the same API as the interface, identified as `demo-agent`.
 - Reset: protected per demo session; Langfuse traces stay identified by session and follow their retention policy.
@@ -241,5 +241,4 @@ Questions, with the short honest answer:
 - Language: English.
 
 **Still open:**
-- **D1** Host of the Python API (FastAPI + LangGraph). Direction: Cloudflare Containers, only if it is free on our account (Cloudflare's docs say Workers Paid plan, its pricing page shows a free allowance: check in the dashboard before building). Container disk is not durable, so the demo state is rebuilt by the deterministic `demo-agent` simulator at each demo session instead of relying on persistent storage. Fallback if not free: another free container host.
 - **D4** Who presents which section; date of the oral.
