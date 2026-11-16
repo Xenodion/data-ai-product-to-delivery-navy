@@ -6,6 +6,14 @@ Status: **final content v2, 16 November 2026.** Merged from four independent dra
 
 Advice, not rules: use judgment slide by slide. The aim is a deck that carries a lot of real work and still reads easily: neither a book nor empty slides.
 
+**Progress gauge**
+- Every slide after the index carries a discreet progress gauge with the chapter names (Context · Framing · Workflow · Model · Guardrails · Deployment · Monitoring · Next), the current chapter highlighted, so the audience always knows where we are. The index slide introduces it; dividers can show it enlarged.
+
+**Visual identity: our own, not the generic AI look**
+- Most student decks this year come out of the same AI tools and look alike. Ours must not. Avoid the recognisable generated look: dark navy or black backgrounds with purple-blue gradients, glowing accents, glass cards with rounded corners, a grid of identical cards, small uppercase labels above every title, giant stat numbers, emoji or line icons as decoration, the default Inter/system font everywhere.
+- Instead, choose one deliberate art direction early and keep it: for example an editorial or print-like look (a characterful serif or grotesque typeface pair, a light paper background, one strong accent colour, generous margins, real photos/screenshots framed simply), or a "payments product" identity built around a fictional Keelpay brand (logo, palette, type) as if the copilot were a real internal product.
+- Decide the identity once as a small style sheet (2 typefaces, 4-5 colours with their meaning, chart style, gauge style, divider style) before building slides, and make every chart in it.
+
 **Density**
 - A slide can hold two related pieces of information (two charts, a chart and a screenshot, two short titles) when the layout leaves each one room to breathe. Prefer one well-filled slide over two near-empty ones.
 - Split a slide when the two pieces compete for attention or when the audience would need to read for more than a few seconds.
@@ -144,10 +152,10 @@ Two charts.
 *Divider · Deployment*
 
 ### 10 · Registry and endpoint
-- **On slide:** "The chosen model is a version in the Vertex AI Model Registry, served on CPU from GCP next to the API that runs the workflow."
-- **Visual:** chain of cropped screenshots: Model Registry (`keelpay-router-json`, alias `qwen3b-lora-q4`, europe-west2) → container images in Artifact Registry → running service with its URL and health check.
-- **Say:** the deployed file is the evaluated one: its checksum is pinned in the configuration. A GPU endpoint bills every hour even idle, so CPU, and every billed resource has a stop command. Secrets stay out of images; demo data is synthetic.
-- **Sources:** `sub/docs/scoring_protocol.md` §8 "Registration", `sub/flow/deploy/`, `sub/flow/config.toml`. **Material:** blocked until the deployment is done (gap 1).
+- **On slide:** "The chosen model is a version in the Vertex AI Model Registry, served on a Vertex AI endpoint by a llama.cpp container. The interface and the API that runs the workflow call it."
+- **Visual:** chain of cropped screenshots: Model Registry (`keelpay-router-json`, alias `qwen3b-lora-q4`, europe-west2) → Vertex AI endpoint with the D-q4 model deployed (CPU machine, status) → front end on Cloudflare Pages calling the hosted API → Qualifier answer in the app. A small architecture strip above: Cloudflare Pages (front end) → API (FastAPI + LangGraph, persistent storage) → Vertex AI endpoint (D-q4, llama.cpp) ; Langfuse Cloud on the side.
+- **Say:** the deployed file is the evaluated one (4-bit GGUF, checksum pinned). The llama.cpp container is adapted to the Vertex prediction contract. An endpoint bills every hour, even idle: the model is deployed for tests and the demo, then undeployed to free the billed resources. Secrets stay out of images; demo data is synthetic.
+- **Sources:** `sub/docs/scoring_protocol.md` §8 "Registration", `sub/flow/deploy/`, `sub/flow/config.toml`; deployment issues #40, #73-#77. **Material:** blocked until the deployment is done (gap 1).
 
 ---
 *Divider · Monitoring*
@@ -155,7 +163,7 @@ Two charts.
 ### 11 · Monitoring with Langfuse
 - **On slide:** "Each ticket leaves a trace: one span per step, its duration, the model and the prompt version. Ticket text is not sent to it."
 - **Visual:** cropped Langfuse trace of one ticket (qualifier, drafter, human action; durations; `prompt_name`, `prompt_version`), with a dashboard view next to it if latency or cost per ticket is available.
-- **Say:** prompts are released in Langfuse under a `production` label; if Langfuse is down, the flow uses a marked local copy and continues. Operational counts (waiting, approved, sent) stay in our own store; Langfuse observes. In production, silent errors have no label: the signals to watch are Re-router corrections, edited drafts, policy blocks and a weekly QA sample.
+- **Say:** we use Langfuse Cloud with synthetic traces only, identified by demo session. The demo history is produced by a deterministic human simulator (`demo-agent`) that acts through the same API as the interface, so the traces look like real use without real data. Prompts are released in Langfuse under a `production` label; if Langfuse is down, the flow uses a marked local copy and continues. Operational counts (waiting, approved, sent) stay in our own store; Langfuse observes. In production, silent errors have no label: the signals to watch are Re-router corrections, edited drafts, policy blocks and a weekly QA sample.
 - **Sources:** `sub/flow/prompt_management.py`, `@observe` in `sub/flow/qualifier.py`, `drafter.py`, `human_actions.py`; `sub/docs/design/flow-v2/prompt-management.md`. **Material:** to capture after gap 2.
 
 ---
@@ -206,7 +214,7 @@ Questions, with the short honest answer:
 
 | # | Gap | Blocks | Action |
 |---|---|---|---|
-| 1 | Nothing is deployed on GCP; only the Model Registry entry exists. A Vertex endpoint lived 32 min on 2 November and was deleted. | slides 10, 11, 13 | Decide Cloud Run vs Vertex endpoint (ask the lecturer), get the go, deploy with a written teardown, capture. Issue #40. |
+| 1 | Nothing is deployed on GCP; only the Model Registry entry exists. A Vertex endpoint lived 32 min on 2 November and was deleted. gcloud and a GCP browser session are not available in the current environment. | slides 10, 11, 13 | Check the registered Vertex artifact, adapt the llama.cpp container to the Vertex prediction contract, choose the API host with persistent storage, deploy for tests and demo, undeploy after, capture. Issues #40, #73-#77. |
 | 2 | Langfuse: spans and prompt versions in code, no trace or dashboard captured; no cost, token or score on spans; one trace per ticket not verified. | slide 11 | Run with keys, check the trace tree, group spans per ticket if needed, capture. Issue #41. |
 | 3 | Charts live in untracked `sub/.local/figures/`; several charts and diagrams to make. | slides 2-4, 6-9, 12 | One script, one theme, tracked output folder. |
 | 4 | No screenshot or video exists. | slides 5, 7, 9-11, 13 | Capture after 1 and 2. |
@@ -215,9 +223,20 @@ Questions, with the short honest answer:
 | 7 | Full flow not re-evaluated since the guardrails (only the 13 November run). | slide 9 wording | Optional rerun on `evals/eval_set_v1.csv` (Drafter API cost, synthetic data); otherwise say "built and tested, not re-measured". |
 | 8 | `audit_logs_equipe_navy.csv` holds a personal e-mail and IPs. | appendix | Never commit or show as is; quote timestamps only. |
 
-## 6. Decisions to take as a team
+## 6. Decisions
 
-- **D1** Endpoint type: Cloud Run on CPU (recommended, scales to zero) or a short-lived Vertex AI endpoint for the screenshot. Ask the lecturer.
+**Taken (deployment, 16 November 2026):**
+- Model: D-q4, 4-bit GGUF served by llama.cpp.
+- Qualifier served on a Vertex AI endpoint (required by the project); deployed for tests and the demo, then undeployed to free billed resources (the empty endpoint can be kept or deleted).
+- Front end on Cloudflare Pages. Back end: the current FastAPI + LangGraph API needs a compatible host with persistent storage (Pages/Workers cannot host it as is): host to choose.
+- Monitoring: Langfuse Cloud, synthetic traces, no sensitive content.
+- Demo history: a deterministic human simulator acting through the same API as the interface, identified as `demo-agent`.
+- Reset: protected per demo session; Langfuse traces stay identified by session and follow their retention policy.
+- Next technical step: check the registered Vertex artifact, then adapt the llama.cpp container to the Vertex prediction contract before any billed deployment.
+- Tracking: issues #40, #41, #73-#77.
+
+**Still open:**
+- **D1** API host with persistent storage.
 - **D2** Slide tool (Google Slides recommended for 4 editors, charts exported from code).
 - **D3** Slide language.
 - **D4** Who presents which section; date of the oral.
