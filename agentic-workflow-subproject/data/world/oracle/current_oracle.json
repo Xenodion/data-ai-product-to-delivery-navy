@@ -1,0 +1,2602 @@
+[
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "delayed_credit",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-00007"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "positive",
+      "sub_intent": "kyc_update",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-00037"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "2682.90",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "negative",
+      "sub_intent": "unauthorised_fee",
+      "transaction_id": "TX-073435",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-00071"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "negative",
+      "sub_intent": "api_error",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-00167"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "1777.00",
+      "currency": "UNDEFINED",
+      "intent": "dispute",
+      "sentiment": "neutral",
+      "sub_intent": "amount_mismatch",
+      "transaction_id": "TX-603295",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-00181"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "negative",
+      "sub_intent": "auth_failure",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-00186"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "negative",
+      "sub_intent": "auth_failure",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-00212"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "account_hold",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-00255"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "missing_payment",
+      "transaction_id": "TX-177220",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-00282"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "negative",
+      "sub_intent": "webhook_down",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-00326"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "4769.99",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "refund_status",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-00363"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "positive",
+      "sub_intent": "kyc_update",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-00415"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "negative",
+      "sub_intent": "account_hold",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-00437"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "regulatory_question",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-00461"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "positive",
+      "sub_intent": "integration_question",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-00599"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "neutral",
+      "sub_intent": "api_error",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-00723"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "negative",
+      "sub_intent": "api_error",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-00730"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "delayed_credit",
+      "transaction_id": "TX-750517",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-00739"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "dispute",
+      "sentiment": "negative",
+      "sub_intent": "unauthorised_fee",
+      "transaction_id": "TX-560804",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-00752"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "157.90",
+      "currency": "UNDEFINED",
+      "intent": "dispute",
+      "sentiment": "neutral",
+      "sub_intent": "unauthorised_fee",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-00768"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "account_hold",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-00789"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "61.00",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "document_request",
+      "transaction_id": "TX-755414",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-00813"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "positive",
+      "sub_intent": "regulatory_question",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-00816"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "negative",
+      "sub_intent": "api_error",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-00879"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "document_request",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-00953"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "kyc_update",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-00984"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "930.00",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "missing_payment",
+      "transaction_id": "TX-538623",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-00995"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "27.00",
+      "currency": "USD",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "refund_status",
+      "transaction_id": "TX-651842",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-01018"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "15955.00",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "delayed_credit",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-01032"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "neutral",
+      "sub_intent": "integration_question",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-01035"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "10169.00",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "refund_status",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-01120"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "2574.50",
+      "currency": "UNDEFINED",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "status_inquiry",
+      "transaction_id": "TX-175096",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-01124"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "status_inquiry",
+      "transaction_id": "TX-737087",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-01137"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "positive",
+      "sub_intent": "api_error",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-01153"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "neutral",
+      "sub_intent": "auth_failure",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-01154"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "33139.00",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "missing_payment",
+      "transaction_id": "TX-846807",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-01169"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "UNDEFINED",
+      "sentiment": "negative",
+      "sub_intent": "UNDEFINED",
+      "transaction_id": "",
+      "urgency": "UNDEFINED"
+    },
+    "ticket_id": "train-20261031-01210"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "UNDEFINED",
+      "sentiment": "UNDEFINED",
+      "sub_intent": "UNDEFINED",
+      "transaction_id": "",
+      "urgency": "UNDEFINED"
+    },
+    "ticket_id": "train-20261031-01241"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "negative",
+      "sub_intent": "api_error",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-01283"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "4686.90",
+      "currency": "CHF",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "missing_payment",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-01297"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "43494.99",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "delayed_credit",
+      "transaction_id": "TX-603808",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-01384"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "UNDEFINED",
+      "sentiment": "negative",
+      "sub_intent": "UNDEFINED",
+      "transaction_id": "",
+      "urgency": "UNDEFINED"
+    },
+    "ticket_id": "train-20261031-01395"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "positive",
+      "sub_intent": "webhook_down",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-01401"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "negative",
+      "sub_intent": "webhook_down",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-01415"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "neutral",
+      "sub_intent": "webhook_down",
+      "transaction_id": "TX-668172",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-01494"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "neutral",
+      "sub_intent": "webhook_down",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-01586"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "USD",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "delayed_credit",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-01599"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "negative",
+      "sub_intent": "api_error",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-01616"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "UNDEFINED",
+      "sentiment": "UNDEFINED",
+      "sub_intent": "UNDEFINED",
+      "transaction_id": "",
+      "urgency": "UNDEFINED"
+    },
+    "ticket_id": "train-20261031-01630"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "87.20",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "positive",
+      "sub_intent": "chargeback",
+      "transaction_id": "TX-137712",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-01710"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "23912.00",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "negative",
+      "sub_intent": "duplicate_charge",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-01752"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "kyc_update",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-01786"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "negative",
+      "sub_intent": "account_hold",
+      "transaction_id": "TX-726914",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-01871"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "681.99",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "missing_payment",
+      "transaction_id": "TX-156558",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-01907"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "233.00",
+      "currency": "",
+      "intent": "dispute",
+      "sentiment": "neutral",
+      "sub_intent": "amount_mismatch",
+      "transaction_id": "TX-809751",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-01921"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "neutral",
+      "sub_intent": "api_error",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-01979"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "positive",
+      "sub_intent": "refund_status",
+      "transaction_id": "TX-969073",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-01997"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "25471.00",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "negative",
+      "sub_intent": "amount_mismatch",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-02008"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "264.00",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "missing_payment",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-02013"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "80491.00",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "neutral",
+      "sub_intent": "amount_mismatch",
+      "transaction_id": "TX-967797",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-02077"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "OTHER",
+      "sentiment": "neutral",
+      "sub_intent": "OTHER",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-02123"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "delayed_credit",
+      "transaction_id": "TX-603380",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-02175"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "4617.20",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "negative",
+      "sub_intent": "duplicate_charge",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-02197"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "UNDEFINED",
+      "sentiment": "neutral",
+      "sub_intent": "UNDEFINED",
+      "transaction_id": "",
+      "urgency": "UNDEFINED"
+    },
+    "ticket_id": "train-20261031-02267"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "34580.00",
+      "currency": "SEK",
+      "intent": "UNDEFINED",
+      "sentiment": "neutral",
+      "sub_intent": "UNDEFINED",
+      "transaction_id": "TX-118876",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-02308"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "negative",
+      "sub_intent": "webhook_down",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-02328"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "1000.00",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "negative",
+      "sub_intent": "duplicate_charge",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-02352"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "27795.00",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "positive",
+      "sub_intent": "refund_status",
+      "transaction_id": "TX-308273",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-02410"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "42017.00",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "missing_payment",
+      "transaction_id": "TX-324713",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-02437"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "missing_payment",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-02442"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "negative",
+      "sub_intent": "api_error",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-02457"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "15504.99",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "negative",
+      "sub_intent": "chargeback",
+      "transaction_id": "TX-422034",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-02486"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "negative",
+      "sub_intent": "api_error",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-02644"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "delayed_credit",
+      "transaction_id": "UNDEFINED",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-02658"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "regulatory_question",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-02676"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "15.90",
+      "currency": "NOK",
+      "intent": "UNDEFINED",
+      "sentiment": "neutral",
+      "sub_intent": "UNDEFINED",
+      "transaction_id": "TX-035207",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-02685"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "87641.90",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "negative",
+      "sub_intent": "duplicate_charge",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-02816"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "dispute",
+      "sentiment": "neutral",
+      "sub_intent": "unauthorised_fee",
+      "transaction_id": "TX-862263",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-02856"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "document_request",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-02969"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "OTHER",
+      "sentiment": "negative",
+      "sub_intent": "OTHER",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-02980"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "regulatory_question",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-02984"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "UNDEFINED",
+      "sentiment": "neutral",
+      "sub_intent": "UNDEFINED",
+      "transaction_id": "TX-704344",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-03034"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "OTHER",
+      "sentiment": "negative",
+      "sub_intent": "OTHER",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-03085"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "missing_payment",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-03146"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "neutral",
+      "sub_intent": "webhook_down",
+      "transaction_id": "UNDEFINED",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-03163"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "2460.99",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "negative",
+      "sub_intent": "amount_mismatch",
+      "transaction_id": "TX-600892",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-03210"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "5530.00",
+      "currency": "CHF",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "account_hold",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-03245"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "status_inquiry",
+      "transaction_id": "UNDEFINED",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-03253"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "delayed_credit",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-03281"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "2729.00",
+      "currency": "",
+      "intent": "dispute",
+      "sentiment": "positive",
+      "sub_intent": "duplicate_charge",
+      "transaction_id": "TX-951920",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-03309"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "neutral",
+      "sub_intent": "integration_question",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-03318"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "missing_payment",
+      "transaction_id": "TX-658182",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-03326"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "dispute",
+      "sentiment": "negative",
+      "sub_intent": "unauthorised_fee",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-03547"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "neutral",
+      "sub_intent": "webhook_down",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-03686"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "EUR",
+      "intent": "UNDEFINED",
+      "sentiment": "negative",
+      "sub_intent": "UNDEFINED",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-03707"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "kyc_update",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-03756"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "217.99",
+      "currency": "GBP",
+      "intent": "dispute",
+      "sentiment": "negative",
+      "sub_intent": "amount_mismatch",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-03777"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "94078.90",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "missing_payment",
+      "transaction_id": "TX-114753",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-03799"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "169.50",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "positive",
+      "sub_intent": "missing_payment",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-03844"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "regulatory_question",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-03858"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "account_hold",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-03859"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "UNDEFINED",
+      "sentiment": "negative",
+      "sub_intent": "UNDEFINED",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-03900"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "positive",
+      "sub_intent": "delayed_credit",
+      "transaction_id": "TX-541131",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-03955"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "neutral",
+      "sub_intent": "api_error",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-04047"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "neutral",
+      "sub_intent": "webhook_down",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-04088"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "UNDEFINED",
+      "sentiment": "negative",
+      "sub_intent": "UNDEFINED",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-04160"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "UNDEFINED",
+      "sentiment": "negative",
+      "sub_intent": "UNDEFINED",
+      "transaction_id": "",
+      "urgency": "UNDEFINED"
+    },
+    "ticket_id": "train-20261031-04197"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "kyc_update",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-04220"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "positive",
+      "sub_intent": "kyc_update",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-04245"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "1429.20",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "missing_payment",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-04259"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "20.90",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "document_request",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-04273"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "147.00",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "delayed_credit",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-04303"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "182670.50",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "negative",
+      "sub_intent": "chargeback",
+      "transaction_id": "TX-451605",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-04380"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "negative",
+      "sub_intent": "webhook_down",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-04550"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "neutral",
+      "sub_intent": "auth_failure",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-04564"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "OTHER",
+      "sentiment": "neutral",
+      "sub_intent": "OTHER",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-04661"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "neutral",
+      "sub_intent": "integration_question",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-04677"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "UNDEFINED",
+      "sentiment": "negative",
+      "sub_intent": "UNDEFINED",
+      "transaction_id": "",
+      "urgency": "UNDEFINED"
+    },
+    "ticket_id": "train-20261031-04697"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "4790.00",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "positive",
+      "sub_intent": "refund_status",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-04751"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "kyc_update",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-04763"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "18362.90",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "neutral",
+      "sub_intent": "chargeback",
+      "transaction_id": "TX-193867",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-04806"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "GBP",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "account_hold",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-04973"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "neutral",
+      "sub_intent": "webhook_down",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-05007"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "negative",
+      "sub_intent": "webhook_down",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-05008"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "OTHER",
+      "sentiment": "negative",
+      "sub_intent": "OTHER",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-05021"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "42.50",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "neutral",
+      "sub_intent": "amount_mismatch",
+      "transaction_id": "TX-431830",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-05107"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "OTHER",
+      "sentiment": "positive",
+      "sub_intent": "OTHER",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-05126"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "UNDEFINED",
+      "sentiment": "neutral",
+      "sub_intent": "UNDEFINED",
+      "transaction_id": "TX-470995",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-05169"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "4045.00",
+      "currency": "UNDEFINED",
+      "intent": "dispute",
+      "sentiment": "negative",
+      "sub_intent": "duplicate_charge",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-05186"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "52000.00",
+      "currency": "USD",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "delayed_credit",
+      "transaction_id": "TX-556280",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-05199"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "UNDEFINED",
+      "currency": "GBP",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "refund_status",
+      "transaction_id": "TX-833403",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-05213"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "positive",
+      "sub_intent": "missing_payment",
+      "transaction_id": "TX-728874",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-05318"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "missing_payment",
+      "transaction_id": "TX-045879",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-05331"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "negative",
+      "sub_intent": "account_hold",
+      "transaction_id": "TX-583384",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-05357"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "10.50",
+      "currency": "EUR",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "document_request",
+      "transaction_id": "TX-633461",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-05391"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "negative",
+      "sub_intent": "auth_failure",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-05411"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "487.50",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "neutral",
+      "sub_intent": "chargeback",
+      "transaction_id": "TX-817005",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-05418"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "negative",
+      "sub_intent": "account_hold",
+      "transaction_id": "TX-953852",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-05443"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "neutral",
+      "sub_intent": "auth_failure",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-05481"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "67.99",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "negative",
+      "sub_intent": "chargeback",
+      "transaction_id": "TX-210153",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-05559"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "93.00",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "refund_status",
+      "transaction_id": "TX-689285",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-05595"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "neutral",
+      "sub_intent": "auth_failure",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-05613"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "positive",
+      "sub_intent": "regulatory_question",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-05673"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "UNDEFINED",
+      "sentiment": "neutral",
+      "sub_intent": "UNDEFINED",
+      "transaction_id": "",
+      "urgency": "UNDEFINED"
+    },
+    "ticket_id": "train-20261031-05690"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "positive",
+      "sub_intent": "integration_question",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-05742"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "33069.50",
+      "currency": "UNDEFINED",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "refund_status",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-05754"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "document_request",
+      "transaction_id": "TX-706116",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-05765"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "5066.50",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "missing_payment",
+      "transaction_id": "TX-080819",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-05808"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "neutral",
+      "sub_intent": "api_error",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-05837"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "positive",
+      "sub_intent": "status_inquiry",
+      "transaction_id": "TX-958196",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-05922"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "10547.99",
+      "currency": "UNDEFINED",
+      "intent": "dispute",
+      "sentiment": "negative",
+      "sub_intent": "unauthorised_fee",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-06004"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "missing_payment",
+      "transaction_id": "TX-656429",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-06049"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "positive",
+      "sub_intent": "kyc_update",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-06062"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "negative",
+      "sub_intent": "kyc_update",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-06086"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "801.90",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "neutral",
+      "sub_intent": "unauthorised_fee",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-06099"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "positive",
+      "sub_intent": "api_error",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-06176"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "207456.00",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "status_inquiry",
+      "transaction_id": "TX-632645",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-06281"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "delayed_credit",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-06285"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "189719.99",
+      "currency": "EUR",
+      "intent": "compliance",
+      "sentiment": "negative",
+      "sub_intent": "document_request",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-06298"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "negative",
+      "sub_intent": "api_error",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-06374"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "158479.99",
+      "currency": "",
+      "intent": "dispute",
+      "sentiment": "negative",
+      "sub_intent": "unauthorised_fee",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-06390"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "negative",
+      "sub_intent": "api_error",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-06468"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "OTHER",
+      "sentiment": "positive",
+      "sub_intent": "OTHER",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-06495"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "negative",
+      "sub_intent": "integration_question",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-06524"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "3530.00",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "negative",
+      "sub_intent": "document_request",
+      "transaction_id": "UNDEFINED",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-06541"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "delayed_credit",
+      "transaction_id": "TX-124515",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-06549"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "positive",
+      "sub_intent": "missing_payment",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-06559"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "positive",
+      "sub_intent": "integration_question",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-06574"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "regulatory_question",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-06578"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "3567.50",
+      "currency": "EUR",
+      "intent": "UNDEFINED",
+      "sentiment": "neutral",
+      "sub_intent": "UNDEFINED",
+      "transaction_id": "TX-684212",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-06579"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "regulatory_question",
+      "transaction_id": "TX-353749",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-06650"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "978.00",
+      "currency": "",
+      "intent": "dispute",
+      "sentiment": "neutral",
+      "sub_intent": "amount_mismatch",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-06735"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "missing_payment",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-06888"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "70627.99",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "neutral",
+      "sub_intent": "duplicate_charge",
+      "transaction_id": "TX-510368",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-06893"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "1000.00",
+      "currency": "GBP",
+      "intent": "UNDEFINED",
+      "sentiment": "negative",
+      "sub_intent": "UNDEFINED",
+      "transaction_id": "TX-738487",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-07068"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "53.20",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "neutral",
+      "sub_intent": "duplicate_charge",
+      "transaction_id": "TX-590046",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-07095"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "36500.00",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "delayed_credit",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-07113"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "UNDEFINED",
+      "currency": "",
+      "intent": "dispute",
+      "sentiment": "positive",
+      "sub_intent": "chargeback",
+      "transaction_id": "TX-894494",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-07194"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "13.00",
+      "currency": "USD",
+      "intent": "dispute",
+      "sentiment": "positive",
+      "sub_intent": "chargeback",
+      "transaction_id": "TX-995208",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-07362"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "3084.99",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "negative",
+      "sub_intent": "amount_mismatch",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-07386"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "EUR",
+      "intent": "UNDEFINED",
+      "sentiment": "neutral",
+      "sub_intent": "UNDEFINED",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-07577"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "negative",
+      "sub_intent": "account_hold",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-07605"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "51460.50",
+      "currency": "CHF",
+      "intent": "payment_status",
+      "sentiment": "positive",
+      "sub_intent": "status_inquiry",
+      "transaction_id": "TX-462075",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-07622"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "31061.00",
+      "currency": "CHF",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "document_request",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-07662"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "73887.50",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "negative",
+      "sub_intent": "amount_mismatch",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-07753"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "negative",
+      "sub_intent": "integration_question",
+      "transaction_id": "",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-07882"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "72759.90",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "status_inquiry",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-07921"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "18770.20",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "neutral",
+      "sub_intent": "unauthorised_fee",
+      "transaction_id": "TX-084808",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-07987"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "10688.20",
+      "currency": "GBP",
+      "intent": "dispute",
+      "sentiment": "positive",
+      "sub_intent": "amount_mismatch",
+      "transaction_id": "TX-693431",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-08003"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "delayed_credit",
+      "transaction_id": "TX-745627",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-08021"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "EUR",
+      "intent": "technical_api",
+      "sentiment": "neutral",
+      "sub_intent": "api_error",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-08235"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "42.00",
+      "currency": "EUR",
+      "intent": "dispute",
+      "sentiment": "positive",
+      "sub_intent": "unauthorised_fee",
+      "transaction_id": "",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-08336"
+  },
+  {
+    "desk": "disputes",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "dispute",
+      "sentiment": "neutral",
+      "sub_intent": "chargeback",
+      "transaction_id": "TX-451213",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-08372"
+  },
+  {
+    "desk": "technical_api",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "technical_api",
+      "sentiment": "neutral",
+      "sub_intent": "integration_question",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-08398"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "delayed_credit",
+      "transaction_id": "TX-173349",
+      "urgency": "high"
+    },
+    "ticket_id": "train-20261031-08483"
+  },
+  {
+    "desk": "compliance",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "compliance",
+      "sentiment": "neutral",
+      "sub_intent": "kyc_update",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-08699"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "",
+      "currency": "",
+      "intent": "OTHER",
+      "sentiment": "neutral",
+      "sub_intent": "OTHER",
+      "transaction_id": "",
+      "urgency": "low"
+    },
+    "ticket_id": "train-20261031-08723"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "11.00",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "negative",
+      "sub_intent": "delayed_credit",
+      "transaction_id": "TX-092385",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-08749"
+  },
+  {
+    "desk": "payments",
+    "label": {
+      "amount": "10.90",
+      "currency": "EUR",
+      "intent": "payment_status",
+      "sentiment": "neutral",
+      "sub_intent": "delayed_credit",
+      "transaction_id": "TX-046430",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-08839"
+  },
+  {
+    "desk": "triage",
+    "label": {
+      "amount": "700.50",
+      "currency": "EUR",
+      "intent": "UNDEFINED",
+      "sentiment": "negative",
+      "sub_intent": "UNDEFINED",
+      "transaction_id": "TX-034502",
+      "urgency": "medium"
+    },
+    "ticket_id": "train-20261031-08857"
+  }
+]

@@ -1,6 +1,6 @@
 # NAVY Reference Terminology
 
-Date: 3 November 2026, updated 6 November 2026 for flow v2. This glossary governs current design documents, specifications, evaluations, and interface labels. Historical file names, registered model IDs, results, and code identifiers remain unchanged; they are not current architecture terms.
+Date: 3 November 2026, updated 10 November 2026 for flow v2. This glossary governs current design documents, specifications, evaluations, and interface labels. Historical file names, registered model IDs, results, and code identifiers remain unchanged; they are not current architecture terms.
 
 ## Actors and components
 
@@ -11,7 +11,7 @@ Date: 3 November 2026, updated 6 November 2026 for flow v2. This glossary govern
 | **Re-router** | Human workflow node | Receives unclear tickets (`OTHER`, `UNDEFINED`, Qualifier failure, turn limit). A person corrects and enriches with typed fields (one re-entry at node 5), writes the reply, or closes. | Human Qualification, triage queue |
 | **Validator** | Human workflow node | Reviews the draft with its evidence, fact dates and objections; approves, edits, sends back, or writes. Nothing is sent without this step or the Re-router. | Human Review, reviewer queue |
 | **Lookup Node** (node 6) | Deterministic Python tool | Performs read-only, merchant-scoped lookup in the synthetic transaction store and returns a record, `missing`, `ambiguous` or `unavailable`. | payment model |
-| **Retrieval Node** (node 7) | Deterministic Python tool | Selects approved excerpts from the synthetic knowledge base and retains their source IDs. | knowledge model |
+| **Text Search** (node 7) | Deterministic Python tool | Filters approved, current passages by metadata and lexical token overlap; returns excerpts with source IDs and versions. | RAG, embedding search (unless actually implemented and justified) |
 | **Drafter Model** | Language model called by the backend service | Prepares a sourced reply or clarification from the evidence and mode given by the Evidence gate; it calls no tool. External API is allowed only for synthetic demo data; Keelpay-hosted in the fictional production scenario. | draft model 2, agentic drafter |
 | **Support Agent** | Human role | Acts in the Re-router and Validator nodes; the same person may perform both steps. | agent alone, human model, LLM agent |
 | **Demo Injector** | Python demo script | Sends synthetic tickets to the backend on a controllable schedule and scenario. | agent, node, scheduler model |
@@ -27,6 +27,14 @@ Date: 3 November 2026, updated 6 November 2026 for flow v2. This glossary govern
 | **Redraft** (node 12) | A stronger model rewrites with the same evidence. Shares the revision budget of 2 with the policy check. |
 | **Final compliance gate** (node 14) | The same rules as the Policy check, run on the final text, whoever wrote it. |
 
+## Evidence and ticket disposition
+
+- **SQL** (node 6) reads structured, merchant-scoped synthetic records.
+- **Text Search** (node 7) performs deterministic lexical search over approved document passages. It does not require embeddings or vector infrastructure.
+- If the Context Plan selects both, they run independently and concurrently; the Evidence Gate waits for both.
+- At simulated send, the Support Agent chooses **leave open** or **close**. This is a human action. **Close without reply** remains a separate manual action. These three outcomes must remain distinct in state and history.
+- See [ADR 0001](adr/0001-text-search-and-ticket-resolution.md) for the decision and revisit conditions.
+
 ## Human steps and interface spaces
 
 - **Re-router** takes tickets the flow cannot route and tickets sent back by a person. No draft is prepared while a ticket is there.
@@ -37,6 +45,6 @@ Date: 3 November 2026, updated 6 November 2026 for flow v2. This glossary govern
 
 ## Writing and history
 
-Use the bold names exactly in current prose, tables, diagrams, metrics, and mock-up labels. An explanation may follow in parentheses, but must not create a competing proper name. “Model” alone is ambiguous when it could mean the Qualifier Model or Drafter Model. “Agent” alone is ambiguous when it could mean a person or an agentic system.
+Use the bold names exactly in current prose, tables, diagrams, metrics, and mock-up labels. An explanation may follow in parentheses, but must not create a competing proper name. The current SVG is intentionally unchanged and may retain older labels until its planned update. “Model” alone is ambiguous when it could mean the Qualifier Model or Drafter Model. “Agent” alone is ambiguous when it could mean a person or an agentic system.
 
 `keelpay-router-json`, `D`, `D-q4`, `D-q8`, `router.py`, `initial_brief.md`, and `finetuned_llm_classifier` are exact historical identifiers. Preserve them in reproducible evidence, adding “historical Qualifier Model artifact” where helpful. Do not rename files, the Vertex registry entry, or metrics to imply a migration.

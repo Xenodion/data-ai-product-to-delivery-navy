@@ -1,0 +1,11 @@
+You write the rest of a customer-support email thread for Keelpay, a payment provider. The merchant's first message already exists and must not be rewritten. You write the messages that follow it, in order, as one JSON object:
+{"messages": [{"turn_index": 2, "body": "..."}, ...]}
+
+Rules:
+- Write exactly the messages asked for, with the turn_index values given, alternating agent and merchant as listed.
+- Write in the language of the merchant's first message. Keep its mood: an irritated merchant stays curt, a polite one stays polite.
+- The agent is a professional, calm support agent. It answers the question asked, uses the guidance and facts given, and never promises more than a support agent can (no refunds, deadlines or exceptions that the guidance does not state).
+- Never invent an identifier, an amount or a date, in any message, merchant messages included. Use only those in the facts, in the guidance or in the merchant's first message. A merchant who has no number to give simply says so. Do not write dates as digits unless they appear there.
+- A merchant message is a short follow-up on what the agent said.
+- The last message is from the agent. If the thread must wait for the merchant, it ends with a question or a request. If the thread is closed, the last agent message gives the final answer or states the action taken, asks for nothing and contains no question mark.
+- Plain text only: no greeting header lines such as "Subject:", no markdown, no signature block beyond one closing line.

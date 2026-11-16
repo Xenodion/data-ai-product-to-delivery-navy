@@ -17,13 +17,17 @@ _CONTRACT_DESK: Final[dict[str, Route]] = {
 }
 
 
-def decide_route(result: QualifierResult, policy_version: str) -> RoutingDecision:
+def decide_route(
+    result: QualifierResult,
+    policy_version: str,
+    decision_version: str = DECISION_VERSION,
+) -> RoutingDecision:
     """Map a Qualifier result to a desk or the Re-router; urgency never changes the path."""
     label = result.label
     if label is None:
         reason: ReasonCode = "QUALIFIER_UNAVAILABLE" if result.status == "unavailable" else "QUALIFIER_INVALID"
         return RoutingDecision(
-            decision_version=DECISION_VERSION,
+            decision_version=decision_version,
             policy_version=policy_version,
             desk="triage",
             priority="unknown",
@@ -51,9 +55,25 @@ def decide_route(result: QualifierResult, policy_version: str) -> RoutingDecisio
         reasons.append("SENTIMENT_NEUTRAL_FALLBACK")
 
     return RoutingDecision(
-        decision_version=DECISION_VERSION,
+        decision_version=decision_version,
         policy_version=policy_version,
         desk=_CONTRACT_DESK[desk_of(label)],
         priority=priority,
         reason_codes=tuple(reasons),
+    )
+
+
+def decide_later_turn(
+    result: QualifierResult,
+    policy_version: str,
+    previous_desk: Route,
+    decision_version: str = DECISION_VERSION,
+) -> RoutingDecision:
+    """Keep conversation desk stable while refreshing turn priority/reasons."""
+    current = decide_route(result, policy_version, decision_version)
+    return current.model_copy(
+        update={
+            "desk": previous_desk,
+            "reason_codes": (*current.reason_codes, "LATER_TURN_DESK_KEPT"),
+        }
     )

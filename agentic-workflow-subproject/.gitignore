@@ -10,6 +10,8 @@ data/*
 !data/gate2/
 !data/_gate2*/
 !data/runs/
+# Merchant world: config, cards, manifest, oracle and accepted-message log are small and synthetic
+!data/world/
 ml/*/notebooks/outputs/
 .local/
 

@@ -1,19 +1,95 @@
 # Endpoints, models and versions of the flow. Secrets stay in .env.
 qualifier_model_uri = "gs://navy-team-llmops-bucket/pipeline_root/158407666882/keelpay-router-compact-variants-pipeline-20261102155447/compact-variants-component_-2725338443608489984/gguf_q4/model-q4.gguf"
 qualifier_model_md5 = "b23b4f3092c9083c1c741551ec351dc8"
-qualifier_url = "http://127.0.0.1:8081/completion"
+qualifier_url = "http://127.0.0.1:8081/v1"
 qualifier_model_version = "d-q4"
 qualifier_max_tokens = 160       # same value as the D-q4 evaluation
 qualifier_timeout_seconds = 120
+qualifier_temperature = 0.0
+qualifier_prompt_name = "navy/qualifier"
+qualifier_prompt_label = "production"
 
 drafter_url = "https://openrouter.ai/api/v1/chat/completions"
-drafter_model = "mistralai/mistral-nemo"
-drafter_prompt_version = "drafter-v1"
+drafter_model = "mistralai/mistral-small-3.2-24b-instruct"
+drafter_prompt_name = "navy/drafter"
+drafter_prompt_label = "production"
 drafter_temperature = 0.2
-drafter_max_tokens = 500
+drafter_max_tokens = 700
 drafter_timeout_seconds = 60
 
 policy_version = "demo-policy-v1"
+routing_version = "routing-node-v1"
 transient_retries = 3            # attempts on network errors, 429 and 5xx
 retry_wait_seconds = 1.0
 merchant_id = "M-DEMO"           # val.csv has no merchant column
+
+# Workflow policy and local tool behaviour. Keep mutable run settings here;
+# credentials and secrets stay in the project .env file.
+max_automated_turns = 3
+max_reroutes = 2
+ledger_enabled = true
+knowledge_enabled = true
+tool_timeout_seconds = 0.75
+max_knowledge_results = 2
+knowledge_min_overlap_tokens = 1
+ledger_fixture_path = "fixtures/ledger.json"
+knowledge_fixture_path = "fixtures/knowledge.json"
+metrics_enabled = true
+metrics_db_path = ".local/flow/metrics.sqlite"
+payment_fact_sub_intents = ["delayed_credit", "missing_payment", "status_inquiry", "refund_status"]
+# Sub-intents a person answers: no draft is written, the Validator sees HUMAN_ONLY_TOPIC.
+human_only_sub_intents = ["account_hold"]
+# Lowercase fragments: a ticket that contains one is answered by a person (complaint, regulator,
+# legal threat, fraud, data-protection request, frozen funds). A false match only costs a review.
+human_only_keywords = [
+  "complaint", "plainte", "réclamation", "beschwerde", "queja", "reclamo",
+  "regulator", "régulateur", "regulateur", "aufsichtsbehörde", "regulador", "regolatore",
+  "regulatory deadline", "échéance réglementaire", "echeance reglementaire",
+  "lawyer", "avocat", "legal action", "poursuites", "anwalt", "rechtliche schritte", "abogado", "avvocato",
+  "fraud", "fraude", "betrug", "hacked", "piraté", "account takeover",
+  "gdpr", "rgpd", "dsgvo", "compensation", "indemnisation", "entschädigung",
+  "frozen", "gelé", "gelés", "gesperrt", "congelad",
+]
+dispute_fact_sub_intents = ["unauthorised_fee", "chargeback", "duplicate_charge", "amount_mismatch"]
+
+[drafter_greeting]
+en = "Hello,"
+fr = "Bonjour,"
+es = "Hola,"
+de = "Guten Tag,"
+it = "Buongiorno,"
+
+[drafter_closing]
+en = "Kind regards,\nKeelpay Support"
+fr = "Cordialement,\nSupport Keelpay"
+es = "Saludos cordiales,\nSoporte de Keelpay"
+de = "Mit freundlichen Grüßen,\nKeelpay Support"
+it = "Cordiali saluti,\nAssistenza Keelpay"
+
+# Written by the code when the model cannot produce a valid clarification question.
+[drafter_fallback_question.en]
+reference = "Could you send us the reference of the payment you are asking about (format TX-123456)?"
+details = "Could you give us a few more details about your request so that we can look into it?"
+
+[drafter_fallback_question.fr]
+reference = "Pouvez-vous nous indiquer la référence du paiement concerné (format TX-123456) ?"
+details = "Pouvez-vous nous donner quelques détails supplémentaires sur votre demande afin que nous puissions l'examiner ?"
+
+[drafter_fallback_question.es]
+reference = "¿Podría enviarnos la referencia del pago al que se refiere (formato TX-123456)?"
+details = "¿Podría darnos algunos detalles más sobre su solicitud para que podamos revisarla?"
+
+[drafter_fallback_question.de]
+reference = "Können Sie uns die Referenz der betroffenen Zahlung nennen (Format TX-123456)?"
+details = "Können Sie uns einige weitere Angaben zu Ihrer Anfrage machen, damit wir sie prüfen können?"
+
+[drafter_fallback_question.it]
+reference = "Potrebbe indicarci il riferimento del pagamento in questione (formato TX-123456)?"
+details = "Potrebbe fornirci qualche dettaglio in più sulla sua richiesta, in modo che possiamo esaminarla?"
+
+[api]
+db_path = ".local/flow/api.sqlite3"
+checkpoint_db_path = ".local/flow/langgraph-checkpoints.sqlite3"
+max_page_size = 200
+worker_count = 1
+cors_origins = ["http://localhost:5173", "http://127.0.0.1:5173"]

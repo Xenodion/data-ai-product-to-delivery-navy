@@ -1,4 +1,8 @@
-"""Feeds validation tickets to the flow and appends each finished run to a JSONL file."""
+"""Feeds tickets to the flow and appends each finished run to a JSONL file.
+
+By default it samples the validation split. With ``--tickets`` it runs a course eval-set
+(``evals/eval_set_v0.csv`` or ``evals/eval_set_v1.csv``) in file order.
+"""
 
 import argparse
 import csv
@@ -19,12 +23,17 @@ from langfuse import get_client
 from flow.contracts import FlowConfig, FlowDeps, Ticket, TicketRun, load_config
 from flow.drafter import write_draft
 from flow.pipeline import process
-from flow.qualifier import qualify
+from flow.qualifier import build_qualifier_model, qualify
+from flow.tools import gather_evidence
+from flow.langgraph_app import make_ticket_step
 from ml.qualifier.src.local_paths import RUNS_DIR
 
 logger = logging.getLogger(__name__)
 
 VAL_PATH = Path(__file__).parent.parent / "data" / "dataset" / "val.csv"
+# Columns of the course eval-sets; every other column (labels, expected outputs) stays unread.
+EVAL_ID_COLUMN = "id"
+EVAL_TEXT_COLUMN = "input_the_agent_receives"
 
 
 def select_tickets(path: Path, n: int, seed: int, merchant_id: str) -> list[Ticket]:
@@ -33,8 +42,26 @@ def select_tickets(path: Path, n: int, seed: int, merchant_id: str) -> list[Tick
         rows = [(row["card_id"], row["ticket"]) for row in csv.DictReader(handle)]
     chosen = random.Random(seed).sample(rows, n)
     return [
-        Ticket(ticket_id=card_id, merchant_id=merchant_id, text=text, created_at=datetime.now(UTC))
+        Ticket(ticket_id=card_id, merchant_id=merchant_id, body=text, created_at=datetime.now(UTC))
         for card_id, text in chosen
+    ]
+
+
+def load_eval_tickets(path: Path, merchant_id: str, ids: frozenset[str] | None = None) -> list[Ticket]:
+    """Read a course eval-set in file order. Only the ID and the text leave the file, never the labels.
+
+    ``utf-8-sig`` because the eval-sets carry a byte-order mark for Excel.
+    """
+    with path.open(encoding="utf-8-sig", newline="") as handle:
+        rows = [(row[EVAL_ID_COLUMN], row[EVAL_TEXT_COLUMN]) for row in csv.DictReader(handle)]
+    if ids is not None:
+        unknown = ids - {ticket_id for ticket_id, _ in rows}
+        if unknown:
+            raise ValueError(f"IDs not in {path.name}: {sorted(unknown)}")
+        rows = [(ticket_id, text) for ticket_id, text in rows if ticket_id in ids]
+    return [
+        Ticket(ticket_id=ticket_id, merchant_id=merchant_id, body=text, created_at=datetime.now(UTC))
+        for ticket_id, text in rows
     ]
 
 
@@ -57,13 +84,15 @@ def run_tickets(
             logger.info("%s -> %s (%s)", ticket.ticket_id, run.status, run.desk)
 
 
-def build_deps(
-    qualifier_client: httpx.Client, drafter_client: httpx.Client, config: FlowConfig
-) -> FlowDeps:
+def build_deps(drafter_client: httpx.Client, config: FlowConfig) -> FlowDeps:
+    qualifier_model = build_qualifier_model(config)
     return FlowDeps(
-        qualify=partial(qualify, client=qualifier_client, config=config),
+        qualify=partial(qualify, model=qualifier_model, config=config),
         draft=partial(write_draft, client=drafter_client, config=config),
         policy_version=config.policy_version,
+        grounded_draft=partial(write_draft, client=drafter_client, config=config),
+        gather_evidence=partial(gather_evidence, config=config),
+        flow_config=config,
     )
 
 
@@ -77,10 +106,14 @@ def _flush_traces() -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--n", type=int, default=1)
+    parser.add_argument("--n", type=int, default=1, help="validation tickets to sample (ignored with --tickets)")
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--every", type=float, default=0.0, help="seconds between tickets")
+    parser.add_argument("--tickets", type=Path, help="run a course eval-set instead of sampling val.csv")
+    parser.add_argument("--ids", help="with --tickets: comma-separated IDs to run, e.g. NAVY-EV-01,NAVY-EV-14")
     args = parser.parse_args()
+    if args.ids and not args.tickets:
+        parser.error("--ids needs --tickets")
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     load_dotenv(Path(__file__).parent.parent / ".env")
@@ -91,18 +124,25 @@ def main() -> int:
 
     config = load_config()
     run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
-    output = RUNS_DIR / f"{run_id}.jsonl"
-    # Separate clients: the local Qualifier never receives the OpenRouter key.
+    if args.tickets:
+        ids = frozenset(i.strip() for i in args.ids.split(",")) if args.ids else None
+        tickets = load_eval_tickets(args.tickets, config.merchant_id, ids)
+        output = RUNS_DIR / f"{run_id}_{args.tickets.stem}.jsonl"
+    else:
+        tickets = select_tickets(VAL_PATH, args.n, args.seed, config.merchant_id)
+        output = RUNS_DIR / f"{run_id}.jsonl"
+    # Only the Drafter client receives the OpenRouter key; the Qualifier uses local llama.cpp.
     with (
-        httpx.Client() as qualifier_client,
         httpx.Client(headers={"Authorization": f"Bearer {api_key}"}) as drafter_client,
     ):
+        deps = build_deps(drafter_client, config)
         try:
             run_tickets(
-                select_tickets(VAL_PATH, args.n, args.seed, config.merchant_id),
-                build_deps(qualifier_client, drafter_client, config),
+                tickets,
+                deps,
                 output,
                 args.every,
+                step=make_ticket_step(deps),
             )
         finally:
             _flush_traces()

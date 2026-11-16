@@ -1,0 +1,31 @@
+{
+  "code_version": "e9425702666739a453f600f8d2a6de51f1f9316d",
+  "content_hash": "7a6bdbe8ed6fac566b17159b7050ea91c4dba307af26673c4d81d7671f84fd8a",
+  "inputs": {
+    "config:world.toml": "b0c4fa8821f2eb66023c53c442aa84b09434fff8237db6bf575af02d9091c498",
+    "deck:test_natural.csv": "b226b01db41f405f8c46314d94395b44caf49955db0c1ef13ad8b8d0c2cb066b",
+    "deck:test_traps.csv": "1d7e00bb081cc4fede1e6d0e20a5242da458d9fc777f4a7eb8b857e825f3e469",
+    "deck:train.csv": "d1bc386b63827c6ff1091bc34621c85427fb5b1aea3ac05457795d626eb10210",
+    "deck:val.csv": "0f14f64ee42eb28a0be8ba435146cf45d75ff5abc30393542b24b25724f2aef0"
+  },
+  "row_counts": {
+    "contacts": 377,
+    "disputes": 102,
+    "merchant_currencies": 95,
+    "merchants": 60,
+    "messages": 1238,
+    "payouts": 1959,
+    "policies": 22,
+    "policy_sub_intents": 26,
+    "refunds": 86,
+    "ticket_outcomes": 217,
+    "tickets": 600,
+    "transactions": 3834
+  },
+  "sample_hash": "6c3edc2dc1e2f09c0f7a617dcc08f00ad9b465899ba6b62b04935e07326ddfbe",
+  "seed": 20261112,
+  "shared_references": [
+    "UNDEFINED"
+  ],
+  "threads_log_sha256": "d88fc8c88216cfb1c1e463e68b3589e6ee5d3389fb43063ed860d8689797621d"
+}

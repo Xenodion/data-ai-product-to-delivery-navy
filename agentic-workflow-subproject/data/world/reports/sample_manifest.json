@@ -1,0 +1,4647 @@
+{
+  "code_version": "55aa9417ae87ddab7d97618442524788933af89b",
+  "content_hash": "b4c6f08c7c1f58189009def33c2ff7fb27d79da9dddef7d7037f8ff15b62aecc",
+  "excluded": [
+    {
+      "card_id": "train-20261031-00057",
+      "detail": "2024-05-14",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-00267",
+      "detail": "2024-05-12",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-00536",
+      "detail": "2025-05-12",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-00634",
+      "detail": "2024-09-16",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-00652",
+      "detail": "2025-02-13",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-00972",
+      "detail": "2025-03-12",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-01088",
+      "detail": "2024-03-14",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-01145",
+      "detail": "2024-03-03",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-01353",
+      "detail": "2024-03-03",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-01460",
+      "detail": "2024-03-12",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-01502",
+      "detail": "2025-03-03",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-01549",
+      "detail": "2025-03-03",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-01656",
+      "detail": "2024-03-12",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-01835",
+      "detail": "2025-04-14",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-01884",
+      "detail": "2025-03-12",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-01926",
+      "detail": "2024-03-12",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-01965",
+      "detail": "2025-06-10",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-01968",
+      "detail": "2024-03-04",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-02057",
+      "detail": "2024-03-14",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-02452",
+      "detail": "2025-05-14",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-03071",
+      "detail": "2026-03-03",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-03491",
+      "detail": "2024-10-14",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-03561",
+      "detail": "2024-03-12",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-03625",
+      "detail": "2024-03-03",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-03645",
+      "detail": "2025-03-03",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-03700",
+      "detail": "2024-03-12",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-03742",
+      "detail": "2023-10-12",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-03945",
+      "detail": "2024-02-12",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-04116",
+      "detail": "2024-03-12",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-04182",
+      "detail": "2025-03-04",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-04320",
+      "detail": "2024-03-03",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-04434",
+      "detail": "2024-05-12",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-04764",
+      "detail": "2024-03-12",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-04851",
+      "detail": "2024-03-03",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-05036",
+      "detail": "2025-05-14",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-05171",
+      "detail": "2024-03-03",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-05627",
+      "detail": "2024-06-02",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-05834",
+      "detail": "2024-03-14",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-05848",
+      "detail": "2024-05-14",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-06000",
+      "detail": "2024-03-12",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-06254",
+      "detail": "2024-03-12",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-06516",
+      "detail": "2024-03-12",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-06557",
+      "detail": "2024-03-04",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-06697",
+      "detail": "2024-10-14",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-06814",
+      "detail": "2025-03-03",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-06871",
+      "detail": "2024-03-12",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-06921",
+      "detail": "2025-06-14",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-07128",
+      "detail": "2025-03-12",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-07211",
+      "detail": "2025-05-12",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-07454",
+      "detail": "2026-06-01",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-07790",
+      "detail": "2026-03-04",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-08171",
+      "detail": "2024-06-12",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-08505",
+      "detail": "2025-03-03",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-08647",
+      "detail": "2025-03-10",
+      "reason": "cited_date_too_old",
+      "role": "current"
+    },
+    {
+      "card_id": "train-20261031-00337",
+      "detail": "2025-05-12",
+      "reason": "cited_date_too_old",
+      "role": "dev"
+    },
+    {
+      "card_id": "train-20261031-00535",
+      "detail": "2024-05-12",
+      "reason": "cited_date_too_old",
+      "role": "dev"
+    },
+    {
+      "card_id": "train-20261031-01090",
+      "detail": "2025-02-03",
+      "reason": "cited_date_too_old",
+      "role": "dev"
+    },
+    {
+      "card_id": "train-20261031-01261",
+      "detail": "2025-02-03",
+      "reason": "cited_date_too_old",
+      "role": "dev"
+    },
+    {
+      "card_id": "train-20261031-01801",
+      "detail": "2025-04-14",
+      "reason": "cited_date_too_old",
+      "role": "dev"
+    },
+    {
+      "card_id": "train-20261031-02007",
+      "detail": "2025-03-12",
+      "reason": "cited_date_too_old",
+      "role": "dev"
+    },
+    {
+      "card_id": "train-20261031-02088",
+      "detail": "2025-04-14",
+      "reason": "cited_date_too_old",
+      "role": "dev"
+    },
+    {
+      "card_id": "train-20261031-02224",
+      "detail": "2025-03-04",
+      "reason": "cited_date_too_old",
+      "role": "dev"
+    },
+    {
+      "card_id": "train-20261031-02270",
+      "detail": "2025-02-03",
+      "reason": "cited_date_too_old",
+      "role": "dev"
+    },
+    {
+      "card_id": "train-20261031-02379",
+      "detail": "2025-02-03",
+      "reason": "cited_date_too_old",
+      "role": "dev"
+    },
+    {
+      "card_id": "train-20261031-04290",
+      "detail": "2025-03-04",
+      "reason": "cited_date_too_old",
+      "role": "dev"
+    },
+    {
+      "card_id": "train-20261031-04425",
+      "detail": "2025-03-04",
+      "reason": "cited_date_too_old",
+      "role": "dev"
+    },
+    {
+      "card_id": "train-20261031-05056",
+      "detail": "2025-09-12",
+      "reason": "cited_date_too_old",
+      "role": "dev"
+    },
+    {
+      "card_id": "train-20261031-05197",
+      "detail": "2025-03-03",
+      "reason": "cited_date_too_old",
+      "role": "dev"
+    },
+    {
+      "card_id": "train-20261031-05334",
+      "detail": "2025-02-03",
+      "reason": "cited_date_too_old",
+      "role": "dev"
+    },
+    {
+      "card_id": "train-20261031-05841",
+      "detail": "2025-03-03",
+      "reason": "cited_date_too_old",
+      "role": "dev"
+    }
+  ],
+  "inputs": {
+    "config:world.toml": "67a16279ef7ac69816573a087443f869f34d25456805c7fb0eba59364a1b5ff8",
+    "deck:test_natural.csv": "b226b01db41f405f8c46314d94395b44caf49955db0c1ef13ad8b8d0c2cb066b",
+    "deck:test_traps.csv": "1d7e00bb081cc4fede1e6d0e20a5242da458d9fc777f4a7eb8b857e825f3e469",
+    "deck:train.csv": "d1bc386b63827c6ff1091bc34621c85427fb5b1aea3ac05457795d626eb10210",
+    "deck:val.csv": "0f14f64ee42eb28a0be8ba435146cf45d75ff5abc30393542b24b25724f2aef0"
+  },
+  "pool_sizes": {
+    "current": 556,
+    "dev": 277,
+    "history": 2115
+  },
+  "reference_date": "2026-11-12",
+  "seed": 20261112,
+  "sizes": {
+    "current": 200,
+    "dev": 100,
+    "history": 300
+  },
+  "tickets": [
+    {
+      "card_id": "train-20261031-00007",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00037",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00071",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00167",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00181",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00186",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00212",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00255",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00282",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00326",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00363",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00415",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00437",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00461",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00599",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00723",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00730",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00739",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00752",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00768",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00789",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00813",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00816",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00879",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00953",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00984",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00995",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01018",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01032",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01035",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01120",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01124",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01137",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01153",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01154",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01169",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01210",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01241",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01283",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01297",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01384",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01395",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01401",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01415",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01494",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01586",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01599",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01616",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01630",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01710",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01752",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01786",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01871",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01907",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01921",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01979",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-01997",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02008",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02013",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02077",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02123",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02175",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02197",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02267",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02308",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02328",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02352",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02410",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02437",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02442",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02457",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02486",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02644",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02658",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02676",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02685",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02816",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02856",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02969",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02980",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-02984",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03034",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03085",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03146",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03163",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03210",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03245",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03253",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03281",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03309",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03318",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03326",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03547",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03686",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03707",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03756",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03777",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03799",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03844",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03858",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03859",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03900",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-03955",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-04047",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-04088",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-04160",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-04197",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-04220",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-04245",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-04259",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-04273",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-04303",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-04380",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-04550",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-04564",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-04661",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-04677",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-04697",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-04751",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-04763",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-04806",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-04973",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05007",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05008",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05021",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05107",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05126",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05169",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05186",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05199",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05213",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05318",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05331",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05357",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05391",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05411",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05418",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05443",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05481",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05559",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05595",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05613",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05673",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05690",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05742",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05754",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05765",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05808",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05837",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-05922",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06004",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06049",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06062",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06086",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06099",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06176",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06281",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06285",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06298",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06374",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06390",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06468",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06495",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06524",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06541",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06549",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06559",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06574",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06578",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06579",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06650",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06735",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06888",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-06893",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-07068",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-07095",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-07113",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-07194",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-07362",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-07386",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-07577",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-07605",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-07622",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-07662",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-07753",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-07882",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-07921",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-07987",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-08003",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-08021",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-08235",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-08336",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-08372",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-08398",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-08483",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-08699",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-08723",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-08749",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-08839",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-08857",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "current",
+      "split": "test_natural"
+    },
+    {
+      "card_id": "train-20261031-00006",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00092",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00111",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00134",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00180",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00225",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00281",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00340",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00436",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00515",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00539",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00557",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00662",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00685",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00854",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00891",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00947",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00962",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00967",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01009",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01030",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01104",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01144",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01165",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01192",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01259",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01281",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01302",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01412",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01478",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01505",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01560",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01602",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01628",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01668",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01670",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01734",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01759",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01831",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01848",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01866",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01882",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01895",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01925",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01993",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-02054",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-02072",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-02126",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-02298",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-02326",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-02443",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-02668",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-02689",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-02731",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-03124",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-03156",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-03276",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-03323",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-03588",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-03760",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-04043",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-04045",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-04209",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-04518",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-04543",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-04575",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-04599",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-04623",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-04884",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-04989",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-05027",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-05040",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-05438",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-05457",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-05589",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-05665",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-05743",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-06044",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-06488",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-06656",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-06678",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-06741",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-06778",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-06803",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-07072",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-07254",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-07498",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-07675",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-07710",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-07854",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-07887",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-08024",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-08037",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-08081",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-08458",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-08590",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-08771",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-08797",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-08888",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-08955",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "dev",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00002",
+      "earliest_full_date": "2025-09-12",
+      "latest_bound": "2025-09-12",
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00003",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00033",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00034",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00044",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00050",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00083",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00097",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00105",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00131",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00144",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00150",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00153",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00158",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00204",
+      "earliest_full_date": "2025-03-03",
+      "latest_bound": "2025-03-03",
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00205",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00215",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00234",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00266",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00272",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00297",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00315",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00352",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00395",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00401",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00420",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00439",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00440",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00441",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00448",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00450",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00475",
+      "earliest_full_date": "2025-03-10",
+      "latest_bound": "2025-03-10",
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00481",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00502",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00535",
+      "earliest_full_date": "2024-05-12",
+      "latest_bound": "2024-05-12",
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00562",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00566",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00586",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00592",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00622",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00625",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00632",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00654",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00673",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00708",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-00719",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00734",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00736",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00744",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00745",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00758",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00777",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00779",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00798",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00799",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00821",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00867",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00885",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00895",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00910",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00933",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00941",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00943",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00982",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-00997",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01010",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01011",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01016",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01026",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01029",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01043",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01045",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01053",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01059",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01061",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01071",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01090",
+      "earliest_full_date": "2025-02-03",
+      "latest_bound": "2025-02-03",
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01103",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01110",
+      "earliest_full_date": "2025-11-11",
+      "latest_bound": "2025-11-11",
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01111",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01129",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01151",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01158",
+      "earliest_full_date": "2025-03-03",
+      "latest_bound": "2025-03-03",
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01159",
+      "earliest_full_date": "2025-06-09",
+      "latest_bound": "2025-06-09",
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01172",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01204",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01217",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01219",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01255",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01267",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01278",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01292",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01310",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01313",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01327",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01349",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01362",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01421",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01435",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01436",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01461",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01469",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01470",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01477",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01498",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01524",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01568",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01570",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01596",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01598",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01607",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01643",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01650",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01651",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01681",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01683",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01700",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01712",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01715",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01751",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01776",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01805",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01818",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01894",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01908",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01930",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01940",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01944",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01946",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01948",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-01964",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-01969",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02090",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02091",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02098",
+      "earliest_full_date": "2025-02-03",
+      "latest_bound": "2025-02-03",
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02112",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02133",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02137",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-02224",
+      "earliest_full_date": "2025-03-04",
+      "latest_bound": "2025-03-04",
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-02231",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02236",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02300",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02312",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02385",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02439",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02489",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02526",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02597",
+      "earliest_full_date": "2025-03-03",
+      "latest_bound": "2025-03-03",
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02631",
+      "earliest_full_date": "2025-06-09",
+      "latest_bound": "2025-06-09",
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02656",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02763",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02769",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02770",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02805",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02876",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02904",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02927",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02957",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02974",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-02987",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-03017",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-03137",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-03203",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-03225",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-03322",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-03356",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-03362",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-03408",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-03489",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-03543",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-03592",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-03607",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-03631",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-03664",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-03741",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-03743",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-03798",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-03812",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-03830",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-03887",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-03975",
+      "earliest_full_date": "2025-03-12",
+      "latest_bound": "2025-03-12",
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-03992",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04059",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04105",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04109",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04138",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04181",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04192",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04222",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04271",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04288",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04290",
+      "earliest_full_date": "2025-03-04",
+      "latest_bound": "2025-03-04",
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-04293",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04335",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04360",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04368",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04412",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04452",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04462",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04541",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04673",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04713",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04777",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04781",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04868",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04907",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04933",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-04959",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-05000",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-05077",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-05190",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-05193",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-05212",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-05223",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-05227",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-05245",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-05306",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-05337",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-05416",
+      "earliest_full_date": "2025-04-14",
+      "latest_bound": "2025-04-14",
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-05558",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-05669",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-05766",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-05892",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-05985",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06079",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06094",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-06106",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06156",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-06181",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06199",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06205",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06247",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06316",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06402",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06416",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06471",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06543",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06554",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06600",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-06625",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06647",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06688",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06748",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06770",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-06799",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06822",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06877",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06889",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06926",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06936",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-06994",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07023",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07046",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07055",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07061",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07119",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07165",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-07184",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07307",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07315",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07389",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07435",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07448",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07457",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07466",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07533",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07586",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07634",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07646",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07647",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07723",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07754",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07766",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07780",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07792",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-07800",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-07848",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08019",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "val"
+    },
+    {
+      "card_id": "train-20261031-08061",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08071",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08105",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08117",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08190",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08246",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08258",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08277",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08279",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08299",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08388",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08395",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08420",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08490",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08507",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08583",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08635",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08655",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08689",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08893",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08926",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    },
+    {
+      "card_id": "train-20261031-08993",
+      "earliest_full_date": null,
+      "latest_bound": null,
+      "role": "history",
+      "split": "train"
+    }
+  ]
+}

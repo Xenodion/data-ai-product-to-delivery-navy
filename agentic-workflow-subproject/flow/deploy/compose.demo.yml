@@ -1,0 +1,40 @@
+# Full local demo in containers: API + front end + CPU Qualifier. Run from the project root:
+#   docker compose -f flow/deploy/compose.demo.yml up --build
+# Then open http://127.0.0.1:8000. OPENROUTER_API_KEY comes from your shell or from .env (read by
+# Docker Compose, never copied into an image). Stop the l07 Airflow stack first: Docker needs
+# about 2 GiB free for the Qualifier.
+services:
+  qualifier:
+    build:
+      context: ../../.local/models
+      dockerfile: ../../flow/deploy/Dockerfile.qualifier
+    command: ["--model", "/models/model-q4.gguf", "--ctx-size", "2048", "--parallel", "1", "--host", "0.0.0.0", "--port", "8080"]
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 60
+      start_period: 30s
+  api:
+    build:
+      context: ../..
+      dockerfile: flow/deploy/Dockerfile.api
+    depends_on:
+      qualifier:
+        condition: service_healthy
+    env_file:
+      - path: ../../.env
+        required: false
+    environment:
+      NAVY_QUALIFIER_URL: http://qualifier:8080/v1
+    ports:
+      - "127.0.0.1:8000:8080"
+    volumes:
+      - navy-state:/app/.local/flow
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health/ready')"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+volumes:
+  navy-state:
