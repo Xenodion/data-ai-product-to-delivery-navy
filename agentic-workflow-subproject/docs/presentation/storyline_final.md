@@ -241,5 +241,5 @@ Questions, with the short honest answer:
 - Language: English.
 
 **Still open:**
-- **D1** Host of the Python API (FastAPI + LangGraph + persistent storage). Cloudflare Pages serves the front end; Pages/Workers cannot run this API as is.
+- **D1** Host of the Python API (FastAPI + LangGraph). Direction: Cloudflare Containers, only if it is free on our account (Cloudflare's docs say Workers Paid plan, its pricing page shows a free allowance: check in the dashboard before building). Container disk is not durable, so the demo state is rebuilt by the deterministic `demo-agent` simulator at each demo session instead of relying on persistent storage. Fallback if not free: another free container host.
 - **D4** Who presents which section; date of the oral.
