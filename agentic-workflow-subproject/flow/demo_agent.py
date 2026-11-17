@@ -13,6 +13,7 @@ import csv
 import hashlib
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
 
@@ -125,12 +126,13 @@ def main() -> int:
     parser.add_argument("--limit", type=int, required=True, help="tickets to inject from val.csv")
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--world", type=Path, help="draw the dev tickets (with their merchants) from this world database")
+    parser.add_argument("--workers", type=int, default=1, help="parallel fake reviewers, each owning a slice of the tickets")
     parser.add_argument("--api", default="http://127.0.0.1:8000")
     parser.add_argument("--cadence", type=float, default=3.0, help="seconds between human actions")
     parser.add_argument("--timeout", type=float, default=3600, help="give up after this many seconds")
     args = parser.parse_args()
-    if args.limit < 1:
-        parser.error("--limit must be positive")
+    if args.limit < 1 or args.workers < 1:
+        parser.error("--limit and --workers must be positive")
     api = args.api.rstrip("/")
     session_id = f"demo-agent-{'world' if args.world else 'val'}-seed-{args.seed}-n-{args.limit}"
     status = inject(
@@ -141,7 +143,11 @@ def main() -> int:
     if status:
         print("some injections failed; operating on the tickets that were accepted", file=sys.stderr)
     desks = reference_desks(args.limit, args.seed, args.world)
-    return operate(api, session_id, set(desks), desks, args.cadence, args.timeout)
+    ids = sorted(desks)
+    slices = [set(ids[index::args.workers]) for index in range(args.workers)]
+    with ThreadPoolExecutor(max_workers=args.workers) as pool:
+        results = pool.map(lambda part: operate(api, session_id, part, desks, args.cadence, args.timeout), slices)
+        return max(results)
 
 
 if __name__ == "__main__":
