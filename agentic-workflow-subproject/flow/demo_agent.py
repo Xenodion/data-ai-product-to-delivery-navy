@@ -27,12 +27,17 @@ FALLBACK_REPLY = (
 )
 
 
-def reference_desks(limit: int, seed: int) -> dict[str, str]:
-    """Reference desk per injected ticket id, from the same seeded `val` selection as the injector."""
+def desks_for(rows: list[dict[str, str]]) -> dict[str, str]:
+    """Reference desk per `val-<card_id>` ticket id, read from each row's target label."""
     return {
         f"val-{row['card_id']}": _CONTRACT_DESK.get(desk_of(parse_output(row["target"])), "payments")
-        for row in select_rows("val", limit, seed)
+        for row in rows
     }
+
+
+def reference_desks(limit: int, seed: int) -> dict[str, str]:
+    """Reference desk per injected ticket id, from the same seeded `val` selection as the injector."""
+    return desks_for(select_rows("val", limit, seed))
 
 
 def choose_action(item: dict[str, Any], desks: dict[str, str]) -> tuple[str, dict[str, Any]] | None:

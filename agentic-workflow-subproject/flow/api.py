@@ -7,6 +7,7 @@ import hashlib
 import json
 import logging
 import os
+import random
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
@@ -16,7 +17,7 @@ from uuid import uuid4
 
 import httpx
 from dotenv import load_dotenv
-from fastapi import FastAPI, Header, HTTPException, Query, Request, Response
+from fastapi import BackgroundTasks, FastAPI, Header, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from langfuse import get_client
@@ -597,6 +598,56 @@ def get_overview(request: Request) -> dict[str, Any]:
         "oldest_waiting_seconds": round(oldest_seconds, 1),
         "ratios": {"human_review_rate": {"numerator": len(waiting), "denominator": len(rows)}},
     }
+
+
+DEMO_MAX_COUNT = 20
+
+
+class DemoInjectRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    count: int = Field(ge=1, le=DEMO_MAX_COUNT)
+    auto_handle: bool = False
+
+
+def _demo_enabled() -> bool:
+    return os.environ.get("NAVY_DEMO_MODE") == "1"
+
+
+@app.get("/api/v1/demo")
+def demo_status() -> dict[str, Any]:
+    return {"enabled": _demo_enabled(), "max_count": DEMO_MAX_COUNT}
+
+
+@app.post("/api/v1/demo/inject", status_code=202)
+def demo_inject(body: DemoInjectRequest, request: Request, background: BackgroundTasks) -> dict[str, Any]:
+    """Demo only: submit fresh `val` tickets (never the locked test splits); optionally play the human."""
+    if not _demo_enabled():
+        raise HTTPException(404, detail={"code": "DEMO_MODE_OFF"})
+    import csv
+
+    from flow import demo_agent
+    from flow.inject_dataset import SPLITS, _merchant_id, build_envelope
+
+    store: ApiStore = request.app.state.store
+    with SPLITS["val"].open(encoding="utf-8", newline="") as handle:
+        fresh = [row for row in csv.DictReader(handle) if store.ticket(f"val-{row['card_id']}", 1) is None]
+    if len(fresh) < body.count:
+        raise HTTPException(409, detail={"code": "DEMO_TICKETS_EXHAUSTED", "remaining": len(fresh)})
+    # seeded by what is already injected: deterministic for a given state, different on each click
+    rows = random.Random(len(store.list_tickets())).sample(fresh, body.count)
+    now = datetime.now(UTC)
+    merchant_id = _merchant_id()
+    ids = []
+    for row in rows:
+        ticket = Ticket.model_validate(build_envelope(row, "val", merchant_id, 1, now))
+        submit_ticket(ticket, request, Response(), f"demo-{ticket.ticket_id}")
+        ids.append(ticket.ticket_id)
+    if body.auto_handle:
+        background.add_task(
+            demo_agent.operate, str(request.base_url).rstrip("/"), f"demo-ui-{uuid4().hex[:8]}",
+            set(ids), demo_agent.desks_for(rows), 3.0, 1800.0,
+        )
+    return {"injected": ids, "auto_handle": body.auto_handle}
 
 
 # Container image: serve the built front end from the same origin. Mounted last so that it never
