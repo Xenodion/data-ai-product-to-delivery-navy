@@ -7,3 +7,6 @@
 .mailbox-heading { cursor: pointer; color: #304763; }
 .mailbox-heading .eyebrow, .mailbox-title { display: block; }
 .mailbox-title { margin: 0 0 10px; font-size: 13px; font-weight: 700; }
+
+.action-panel { padding: 2px 0 16px; }
+.history-stack { display: grid; gap: 12px; padding-top: 17px; border-top: 1px solid #edf0f4; }

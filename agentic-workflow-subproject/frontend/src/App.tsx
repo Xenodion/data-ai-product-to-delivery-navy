@@ -280,18 +280,9 @@ function TicketWorkbench({ ticket, onChanged }: { ticket: TicketSnapshot; onChan
   return <div className="ticket-columns">
     <article className="ticket-main card">
       <div className="ticket-heading"><div><div className="ticket-kicker">TICKET <span>·</span> TURN {ticket.turn}</div><h2>{ticket.ticket.subject || "Incoming support request"}</h2></div><StatusBadge status={ticket.status} /></div>
-      {actions.length > 0 && <div className="action-required"><span className="action-required-icon" aria-hidden="true">!</span><div><b>Human action required</b><span>{ticket.status === "awaiting_validation" ? "Review the draft and choose how to proceed." : ticket.status === "awaiting_reroute" ? "Confirm the right desk or write a direct reply." : ticket.status === "ready_to_send" ? "The reply is approved. Confirm the simulated send." : "Review the case and choose an allowed next step."}</span></div><span className="human-owner">AGENT</span></div>}
-      <div className="message-block"><div className="message-byline"><b>{ticket.ticket.merchant_id}</b><span>{humanize(ticket.ticket.channel)}</span><time>{formatDate(ticket.ticket.created_at)}</time></div><p>{ticket.ticket.body}</p></div>
       {ticket.error_code && <Notice>Flow stopped: <b>{humanize(ticket.error_code)}</b></Notice>}
-      <div className="draft-section">
-        <div className="draft-heading"><div><p className="eyebrow">REPLY DRAFT</p><h3>{draft ? `Draft v${draft.version}` : ticket.final_text ? "Final reply" : "Write a reply"}</h3></div>
-          {draft && <span className={`policy-pill ${draft.blocked ? "blocked" : "clear"}`}>{draft.blocked ? "Needs attention" : "Draft ready"}</span>}
-        </div>
-        {draft?.blocked && <Notice>This draft is blocked by a policy check. Review the findings in the ticket context before proceeding.</Notice>}
-        {replyConflict && <div className="reply-conflict" role="status"><b>A newer reply is available.</b> Your edits are preserved. Copy them if needed, then load the latest reply before continuing.<button type="button" className="button button-quiet" onClick={() => setEditor({ text: originalReply, base: originalReply, conflict: false })}>Discard my edits &amp; load latest</button></div>}
-        {hasUnsavedEdit && !replyConflict && actions.includes("approve") && <p className="unsaved-note">You have unsaved edits. Save them before approving this reply.</p>}
-        <textarea aria-label="Reply draft" className="reply-editor" value={text} onChange={(event) => setEditor((previous) => ({ ...previous, text: event.target.value }))} disabled={busy} readOnly={!canWrite} placeholder={canWrite ? "Write a clear, helpful reply…" : "No reply is available for this ticket."} />
-        {!canWrite && <p className="helper">The current status does not allow editing this reply.</p>}
+      {actions.length > 0 && <div className="action-required"><span className="action-required-icon" aria-hidden="true">!</span><div><b>Human action required</b><span>{ticket.status === "awaiting_validation" ? "Review the draft and choose how to proceed." : ticket.status === "awaiting_reroute" ? "Confirm the right desk or write a direct reply." : ticket.status === "ready_to_send" ? "The reply is approved. Confirm the simulated send." : "Review the case and choose an allowed next step."}</span></div><span className="human-owner">AGENT</span></div>}
+      <section className="action-panel" aria-label="Actions">
         <div className="action-fields">
           {actions.includes("reroute") && <label>Assign to desk<select value={desk} onChange={(event) => setDesk(event.target.value)}><option value="payments">Payments</option><option value="disputes">Disputes</option><option value="technical_api">Technical API</option><option value="compliance">Compliance</option></select></label>}
           {(actions.includes("handoff_to_rerouter") || actions.includes("reroute") || actions.includes("close_manual")) && <label>Reason for action<input value={reason} onChange={(event) => setReason(event.target.value)} placeholder="Add a short reason…" /></label>}
@@ -313,8 +304,22 @@ function TicketWorkbench({ ticket, onChanged }: { ticket: TicketSnapshot; onChan
         </div>
         {message && <Notice role="status">{message}</Notice>}
         {!actions.length && !ticket.error_code && <p className="helper">There are no agent actions available for this ticket right now.</p>}
+      </section>
+      <div className="draft-section">
+        <div className="draft-heading"><div><p className="eyebrow">REPLY DRAFT</p><h3>{draft ? `Draft v${draft.version}` : ticket.final_text ? "Final reply" : "Write a reply"}</h3></div>
+          {draft && <span className={`policy-pill ${draft.blocked ? "blocked" : "clear"}`}>{draft.blocked ? "Needs attention" : "Draft ready"}</span>}
+        </div>
+        {draft?.blocked && <Notice>This draft is blocked by a policy check. Review the findings in the ticket context before proceeding.</Notice>}
+        {replyConflict && <div className="reply-conflict" role="status"><b>A newer reply is available.</b> Your edits are preserved. Copy them if needed, then load the latest reply before continuing.<button type="button" className="button button-quiet" onClick={() => setEditor({ text: originalReply, base: originalReply, conflict: false })}>Discard my edits &amp; load latest</button></div>}
+        {hasUnsavedEdit && !replyConflict && actions.includes("approve") && <p className="unsaved-note">You have unsaved edits. Save them before approving this reply.</p>}
+        <textarea aria-label="Reply draft" className="reply-editor" value={text} onChange={(event) => setEditor((previous) => ({ ...previous, text: event.target.value }))} disabled={busy} readOnly={!canWrite} placeholder={canWrite ? "Write a clear, helpful reply…" : "No reply is available for this ticket."} />
+        {!canWrite && <p className="helper">The current status does not allow editing this reply.</p>}
       </div>
+      <section className="history-stack" aria-label="History, newest first">
+        <p className="eyebrow">HISTORY · NEWEST FIRST</p>
+      <div className="message-block"><div className="message-byline"><b>{ticket.ticket.merchant_id}</b><span>{humanize(ticket.ticket.channel)}</span><time>{formatDate(ticket.ticket.created_at)}</time></div><p>{ticket.ticket.body}</p></div>
       <Mailbox merchantId={ticket.ticket.merchant_id} currentTicketId={ticket.ticket_id} />
+      </section>
     </article>
     <TicketContext ticket={ticket} />
   </div>;
