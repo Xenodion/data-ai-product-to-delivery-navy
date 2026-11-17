@@ -1,65 +1,97 @@
-# Serve D-q4 through a Vertex AI endpoint
+# Serving the D-q4 Qualifier on Vertex AI
 
-The application model remains the evaluated D-q4 GGUF artifact. Vertex serves the pinned `llama.cpp` server image as a custom container. The flow calls Vertex `rawPredict` with the OpenAI-compatible chat-completions body, and Vertex forwards that body to `/v1/chat/completions`.
+Only the Qualifier is deployed. The API and the front end run locally and call the endpoint.
 
-## Build the serving image remotely
+## What is deployed
 
-The 1.93 GB model is already in GCS. Cloud Build copies it into a small, dedicated build context, checks the pinned MD5, and pushes the image to Artifact Registry. This avoids building the image or uploading the model from the demo PC.
+| Resource | Value |
+| --- | --- |
+| Project / region | `agentics-workflows-2` (number `158407666882`) / `europe-west2` |
+| Registry model | `navy-team-keelpay-router-json` (ID `7308774847222382592`) |
+| Version 1 | Hugging Face LoRA artifact (training run `…20261101161625`), alias `qwen3b-lora-q4`. Never served. |
+| Version 2 | First GGUF attempt. Broken: the bundled llama-cpp-python wheel links musl. No alias. |
+| **Version 3** | **D-q4 GGUF**, aliases `d-q4-gguf`, `champion`, `default` |
+| Endpoint | `navy-team-keelpay-router` (ID `7728645352521203712`), kept empty between demos |
 
-From `agentic-workflow-subproject`, after authenticating the Google Cloud CLI and confirming the project and region:
+Version 3 provenance (also in its Registry description): compact run
+`keelpay-router-compact-variants-pipeline-20261102155447`, ML Metadata artifact `13644223326725605447`,
+adapter from training run `keelpay-router-training-pipeline-20261101173631`, GGUF MD5
+`b23b4f3092c9083c1c741551ec351dc8`. Both compact runs produced the same file (same size and MD5).
+
+## How it is served
+
+The project has no Artifact Registry, so there is no custom image. Like every Registry model of the
+course, the version uses Google's prebuilt Hugging Face inference image with a custom
+`handler.py` ([`ml/qualifier/src/dq4_handler.py`](../ml/qualifier/src/dq4_handler.py)). The
+Registry artifact directory holds three files:
+
+- `handler.py`: loads the GGUF with llama-cpp-python, greedy decoding, same prompt and token budget as
+  the evaluation;
+- `llama_cpp_python-0.3.16-cp311-cp311-linux_x86_64.whl`: the evaluated version, built for glibc by
+  the pipeline (the published Linux wheels link musl and do not load in the Ubuntu image);
+- `model-q4.gguf`: copied server side from the compact run, checksum verified after the copy.
+
+The handler checks the GGUF MD5 at start-up. Request and response:
+
+```json
+{"instances": [{"prompt": "<instruction>\n\nTicket:\n<ticket text>"}], "parameters": {"max_tokens": 160}}
+{"predictions": [{"response": "<JSON label>"}]}
+```
+
+Checks done: the handler returns exactly the evaluation output on 20/20 `test_natural` tickets
+locally and on 3/3 through the endpoint. Latency on `n1-standard-4`: about 2 min for the first
+call after deployment, then 13-18 s per ticket.
+
+## Commands
+
+All three are Kubeflow pipelines submitted by
+[`ml/qualifier/scripts/dq4_registry_pipeline.py`](../ml/qualifier/scripts/dq4_registry_pipeline.py),
+run from this directory. `compile` builds the templates locally without contacting GCP.
+
+**Register a new version** (builds the wheel, copies the GGUF, moves the aliases; a few cents):
 
 ```powershell
-$project = $env:GCP_PROJECT_ID
-$region = $env:GCP_REGION
-$image = "$region-docker.pkg.dev/$project/navy-serving/qualifier-dq4:b5974"
-
-gcloud artifacts repositories create navy-serving `
-  --repository-format=docker --location=$region --project=$project
-
-gcloud builds submit flow/deploy/vertex_build `
-  --config=flow/deploy/vertex_build/cloudbuild.yaml `
-  --substitutions="_IMAGE=$image,_MODEL_URI=gs://navy-team-llmops-bucket/pipeline_root/158407666882/keelpay-router-compact-variants-pipeline-20261102155447/compact-variants-component_-2725338443608489984/gguf_q4/model-q4.gguf" `
-  --project=$project --region=$region
+$gguf = "gs://navy-team-llmops-bucket/pipeline_root/158407666882/keelpay-router-compact-variants-pipeline-20261102155447/compact-variants-component_-2725338443608489984/gguf_q4"
+uv run --group ml python ml/qualifier/scripts/dq4_registry_pipeline.py register `
+  --gguf-artifact-uri $gguf --gguf-file-uri "$gguf/model-q4.gguf" `
+  --expected-md5-hex b23b4f3092c9083c1c741551ec351dc8 `
+  --source-pipeline-run keelpay-router-compact-variants-pipeline-20261102155447 `
+  --source-artifact-id 13644223326725605447 `
+  --source-adapter-uri gs://navy-team-llmops-bucket/pipeline_root/158407666882/keelpay-router-training-pipeline-20261101173631/fine-tuning-component_-8515982401988460544/model `
+  --serving-dir-uri gs://navy-team-llmops-bucket/registry/keelpay-router-json/<new-version-dir> `
+  --parent-model projects/158407666882/locations/europe-west2/models/7308774847222382592 `
+  --confirm-billable-run
 ```
 
-If the Artifact Registry repository already exists, skip its creation. The Cloud Build service account needs read access to the model object and write access to the `navy-serving` repository. Building and storing the image may incur Cloud Build and Artifact Registry charges, separate from endpoint inference-node charges.
-
-## Register the custom serving model
+**Deploy** (billed per hour until undeployed; 15-20 min):
 
 ```powershell
-uv run --group ml python ml/qualifier/scripts/deploy_dq4_vertex.py `
-  --project $env:GCP_PROJECT_ID --region $env:GCP_REGION `
-  upload --image-uri $image
+$env:GCP_PROJECT_NUMBER = "158407666882"
+uv run --group ml python ml/qualifier/scripts/dq4_registry_pipeline.py deploy `
+  --model-versioned-resource-name projects/158407666882/locations/europe-west2/models/7308774847222382592@3 `
+  --endpoint-resource-name projects/158407666882/locations/europe-west2/endpoints/7728645352521203712 `
+  --machine-type n1-standard-4 --confirm-billable-run --confirm-billable-deploy
 ```
 
-The model is registered with port `8080`, health route `/health` and predict route `/v1/chat/completions`. The application uses Vertex `rawPredict`, which supports arbitrary request bodies; the server response remains the standard OpenAI chat-completion JSON.
-
-## Deploy and stop
-
-First choose a Vertex-supported CPU machine type with enough memory for the 1.93 GB model plus its context/KV cache. The deployment command requires an explicit machine type and an explicit billing acknowledgement. It pins minimum and maximum replicas to one.
+**Undeploy after every session** (keeps the empty endpoint, which costs nothing):
 
 ```powershell
-uv run --group ml python ml/qualifier/scripts/deploy_dq4_vertex.py `
-  --project $env:GCP_PROJECT_ID --region $env:GCP_REGION `
-  deploy --model-resource <MODEL_RESOURCE> --machine-type <MACHINE_TYPE> `
-  --confirm-billable-deploy
+uv run --group ml python ml/qualifier/scripts/dq4_registry_pipeline.py undeploy `
+  --endpoint-resource-name projects/158407666882/locations/europe-west2/endpoints/7728645352521203712 `
+  --expected-model-versioned-resource-name projects/158407666882/locations/europe-west2/models/7308774847222382592@3 `
+  --confirm-billable-run
 ```
 
-Copy the endpoint ID printed by the command into the backend environment:
+The pipelines refuse a non-empty or shared endpoint, an unversioned model name and an unexpected
+version. The project is shared with other teams: never touch their models or endpoints.
 
-```text
-NAVY_QUALIFIER_PROVIDER=vertex_raw_predict
-NAVY_QUALIFIER_VERTEX_ENDPOINT_ID=<ENDPOINT_ID>
-NAVY_QUALIFIER_VERTEX_PROJECT_ID=<PROJECT_ID>
-NAVY_QUALIFIER_VERTEX_REGION=europe-west2
-```
-
-To turn inference off while retaining the empty endpoint for later redeployment:
+## Use it from the local API
 
 ```powershell
-uv run --group ml python ml/qualifier/scripts/deploy_dq4_vertex.py `
-  --project $env:GCP_PROJECT_ID --region $env:GCP_REGION `
-  undeploy --endpoint-id <ENDPOINT_ID>
+$env:NAVY_QUALIFIER_PROVIDER = "vertex_raw_predict"
+$env:NAVY_QUALIFIER_VERTEX_ENDPOINT_ID = "7728645352521203712"
+$env:GCP_PROJECT_ID = "agentics-workflows-2"
+.\run-local.ps1 -SkipQualifier
 ```
 
-Vertex charges for deployed inference nodes while they are ready, including idle time. Undeploy the model immediately after a short test/demo; endpoint deletion is optional after all models are undeployed. See [Google's endpoint cleanup instructions](https://docs.cloud.google.com/gemini-enterprise-agent-platform/machine-learning/predictions/undeploy-model?hl=en).
+The call uses the presenter's Google credentials (`gcloud auth application-default login`).

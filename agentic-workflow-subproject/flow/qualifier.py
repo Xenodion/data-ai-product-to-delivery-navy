@@ -47,7 +47,7 @@ def qualifier_output_schema() -> dict[str, object]:
 
 
 def build_qualifier_model(config: FlowConfig) -> Runnable:
-    """Build the local llama.cpp or Vertex raw-predict Qualifier runnable."""
+    """Build the local llama.cpp or Vertex endpoint Qualifier runnable."""
     if config.qualifier_provider == "vertex_raw_predict":
         if not config.qualifier_vertex_endpoint_id:
             raise ValueError("NAVY_QUALIFIER_VERTEX_ENDPOINT_ID is required for Vertex inference")
@@ -70,7 +70,7 @@ def build_qualifier_model(config: FlowConfig) -> Runnable:
 
 
 def _vertex_raw_predict(prompt: Any, config: FlowConfig) -> dict[str, Any]:
-    """Send the same OpenAI-compatible request to llama.cpp through Vertex rawPredict."""
+    """Call the Vertex endpoint (ml/qualifier/src/dq4_handler.py): greedy decoding, as evaluated."""
     import google.auth
     from google.auth.transport.requests import AuthorizedSession
 
@@ -79,22 +79,11 @@ def _vertex_raw_predict(prompt: Any, config: FlowConfig) -> dict[str, Any]:
     url = (
         f"https://{config.qualifier_vertex_region}-aiplatform.googleapis.com/v1/"
         f"projects/{config.qualifier_vertex_project_id}/locations/{config.qualifier_vertex_region}/"
-        f"endpoints/{config.qualifier_vertex_endpoint_id}:rawPredict"
+        f"endpoints/{config.qualifier_vertex_endpoint_id}:predict"
     )
     body = {
-        "model": config.qualifier_model_version,
-        "messages": [{"role": "user", "content": str(prompt)}],
-        "temperature": config.qualifier_temperature,
-        "max_tokens": config.qualifier_max_tokens,
-        "stream": False,
-        "response_format": {
-            "type": "json_schema",
-            "json_schema": {
-                "name": "ticket_label",
-                "strict": True,
-                "schema": qualifier_output_schema(),
-            },
-        },
+        "instances": [{"prompt": str(prompt)}],
+        "parameters": {"max_tokens": config.qualifier_max_tokens},
     }
     response = session.post(
         url,
@@ -103,8 +92,7 @@ def _vertex_raw_predict(prompt: Any, config: FlowConfig) -> dict[str, Any]:
         timeout=config.qualifier_timeout_seconds,
     )
     response.raise_for_status()
-    result = response.json()
-    content = result["choices"][0]["message"]["content"]
+    content = response.json()["predictions"][0]["response"]
     try:
         parsed = json.loads(content)
         if not isinstance(parsed, dict):
