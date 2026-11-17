@@ -644,7 +644,7 @@ def demo_inject(body: DemoInjectRequest, request: Request, background: Backgroun
         ids.append(ticket.ticket_id)
     if body.auto_handle:
         background.add_task(
-            demo_agent.operate, str(request.base_url).rstrip("/"), f"demo-ui-{uuid4().hex[:8]}",
+            demo_agent.operate, os.environ.get("NAVY_INTERNAL_API", "http://127.0.0.1:8000").rstrip("/"), f"demo-ui-{uuid4().hex[:8]}",
             set(ids), demo_agent.desks_for(rows), 3.0, 1800.0,
         )
     return {"injected": ids, "auto_handle": body.auto_handle}
