@@ -126,7 +126,6 @@ function OverviewPage() {
   return <section className="page dashboard-page">
     <PageHeading eyebrow="OPERATIONS" title="Support flow" description="A live view of incoming work, agent queues and completed outcomes."
       action={<button className="button button-quiet" onClick={() => setRefresh((value) => value + 1)}>↻ <span>Refresh</span></button>} />
-    <DemoPanel onInjected={() => setRefresh((value) => value + 1)} />
     {error && <Notice>{data ? "Showing the last successful update. " : ""}Could not refresh live data: {error}</Notice>}
     {!data ? <Loading label={error ? "Waiting for the flow API" : "Loading live flow metrics…"} /> : <>
       <section className="metric-row" aria-label="Key flow metrics">
@@ -169,6 +168,7 @@ function OverviewPage() {
       </section>
       </details>
     </>}
+    <DemoPanel onInjected={() => setRefresh((value) => value + 1)} />
   </section>;
 }
 
