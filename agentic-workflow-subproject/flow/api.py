@@ -7,8 +7,10 @@ import hashlib
 import json
 import logging
 import os
+import queue
 import random
-from concurrent.futures import ThreadPoolExecutor
+import threading
+import itertools
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 from pathlib import Path
@@ -222,6 +224,35 @@ def _execute_job(app: FastAPI, flow_id: str, resume: dict[str, Any] | None = Non
         store.mark_job(flow_id, "error")
 
 
+class _PriorityExecutor:
+    """One worker thread (the SQLite checkpointer needs serialized runs); lower priority runs first."""
+
+    def __init__(self, name: str) -> None:
+        self._jobs: queue.PriorityQueue[tuple[int, int, Any]] = queue.PriorityQueue()
+        self._order = itertools.count()
+        self._thread = threading.Thread(target=self._run, name=name, daemon=False)
+        self._thread.start()
+
+    def submit(self, priority: int, function: Any, *args: Any) -> None:
+        self._jobs.put((priority, next(self._order), (function, args)))
+
+    def _run(self) -> None:
+        while True:
+            _, _, job = self._jobs.get()
+            if job is None:
+                return
+            function, args = job
+            try:
+                function(*args)
+            except Exception:  # a job reports its own failure; never kill the worker
+                logger.exception("flow job crashed")
+
+    def shutdown(self, wait: bool = True, cancel_futures: bool = False) -> None:
+        self._jobs.put((10**9, next(self._order), None))  # after every queued job
+        if wait:
+            self._thread.join()
+
+
 def _execute_traced(app: FastAPI, flow_id: str, resume: dict[str, Any] | None) -> None:
     """Run a job with the ticket as the Langfuse session, so every turn and human action of one
     ticket is one end-to-end view (Langfuse > Sessions), and the merchant is the trace user."""
@@ -235,7 +266,8 @@ def _execute_traced(app: FastAPI, flow_id: str, resume: dict[str, Any] | None) -
 
 
 def _queue_job(app: FastAPI, flow_id: str, resume: dict[str, Any] | None = None) -> None:
-    app.state.executor.submit(_execute_traced, app, flow_id, resume)
+    # human actions (resume) jump ahead of queued Qualifier/Drafter runs; the worker stays single
+    app.state.executor.submit(0 if resume is not None else 1, _execute_traced, app, flow_id, resume)
 
 
 def _command_already_applied(state: dict[str, Any], command: dict[str, Any], submitted_at: str) -> bool:
@@ -305,7 +337,7 @@ async def lifespan(app: FastAPI):
     app.state.store = store
     app.state.graph = build_ticket_graph(deps, checkpointer=checkpointer)
     # Sync SqliteSaver is intended for lightweight serialized graph execution.
-    app.state.executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="flow-api")
+    app.state.executor = _PriorityExecutor("flow-api")
     app.state.dependencies = deps
     app.state.metrics = MetricsStore((ROOT / config.metrics_db_path).resolve()) if config.metrics_enabled else None
     # Requeue only once at process startup, then atomically claim each queued job.
