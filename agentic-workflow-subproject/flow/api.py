@@ -465,9 +465,12 @@ def get_queue(
     return {"items": [_snapshot(store, row, request.app.state.graph) for row in visible], "count": len(visible), "next_cursor": next_cursor}
 
 
+# API action names -> flow command names (the flow resumes with the short names)
+_COMMAND_NAMES = {"edit_draft": "edit", "write_reply": "write", "handoff_to_rerouter": "handoff", "close_manual": "close"}
+
+
 def _human_command(action: ActionRequest) -> dict[str, Any]:
-    mapping = {"edit_draft": "edit", "write_reply": "write", "handoff_to_rerouter": "handoff", "close_manual": "close"}
-    command: dict[str, Any] = {"action": mapping.get(action.action, action.action), "actor": action.actor}
+    command: dict[str, Any] = {"action": _COMMAND_NAMES.get(action.action, action.action), "actor": action.actor}
     if action.text is not None:
         command["text"] = action.text
     if action.reason is not None:
@@ -514,7 +517,7 @@ def _mutate(
             return replay
         raise HTTPException(409, detail={"code": "STALE_TICKET_VERSION", "current_version": row["version"]})
     run = TicketRun.model_validate(row["run"]) if row.get("run") else None
-    if run is None or command["action"] not in _allowed_actions(run):
+    if run is None or command["action"] not in {_COMMAND_NAMES.get(name, name) for name in _allowed_actions(run)}:
         raise HTTPException(409, detail={"code": "ACTION_NOT_ALLOWED"})
     if command["action"] == "edit" and payload.model_dump().get("draft_version") != next(
         (draft.version for draft in reversed(run.drafts) if not draft.stale), None

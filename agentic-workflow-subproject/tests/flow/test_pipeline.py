@@ -1,3 +1,4 @@
+import re
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -56,7 +57,7 @@ def _fixing(draft: DraftWriter = _write) -> FlowDeps:
 def test_traced_functions_never_capture_their_arguments() -> None:
     for module in (Path("flow/pipeline.py"), Path("flow/qualifier.py"), Path("flow/drafter.py")):
         source = module.read_text(encoding="utf-8")
-        assert "@observe(capture_input=False, capture_output=False)" in source
+        assert re.search(r'@observe\((as_type="generation", )?capture_input=False, capture_output=False\)', source)
         assert "@observe()" not in source
 
 

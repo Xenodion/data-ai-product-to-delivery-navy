@@ -4,7 +4,7 @@ import logging
 import time
 
 import httpx
-from langfuse import observe
+from langfuse import get_client, observe
 from pydantic import BaseModel, ValidationError
 
 from flow.contracts import (
@@ -200,7 +200,7 @@ def _cost(answer: dict[str, object]) -> float:
 
 
 # Arguments stay out of traces: they include the HTTP client that carries the API key.
-@observe(capture_input=False, capture_output=False)
+@observe(as_type="generation", capture_input=False, capture_output=False)
 def write_draft(
     ticket: Ticket,
     qualifier: QualifierResult,
@@ -296,6 +296,8 @@ def _draft(
     prompt_version: str | None = None,
     attempts: int = 1,
 ) -> Draft:
+    # Langfuse shows this step as a generation with the exact OpenRouter cost (usage.cost), not a price table.
+    get_client().update_current_generation(model=model, cost_details={"total": cost})
     return Draft(
         version=version,
         text=text,
