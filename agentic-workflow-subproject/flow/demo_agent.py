@@ -9,12 +9,14 @@ a human action and never reaches the Qualifier. Every model call costs (Vertex t
 """
 
 import argparse
+import csv
 import hashlib
 import sys
 import time
+from pathlib import Path
 from typing import Any
 
-from flow.inject_dataset import ROOT, TERMINAL_STATUSES, _request_json, inject, select_rows
+from flow.inject_dataset import ROOT, SPLITS, TERMINAL_STATUSES, _request_json, inject, select_rows
 from flow.router import _CONTRACT_DESK
 from ml.qualifier.src.scoring import desk_of, parse_output
 
@@ -27,17 +29,27 @@ FALLBACK_REPLY = (
 )
 
 
+def ticket_id_of(row: dict[str, str]) -> str:
+    """Ticket id as the injector submits it: bare card id for world rows, `val-<card>` for deck rows."""
+    return row["card_id"] if "opened_at" in row else f"val-{row['card_id']}"
+
+
 def desks_for(rows: list[dict[str, str]]) -> dict[str, str]:
-    """Reference desk per `val-<card_id>` ticket id, read from each row's target label."""
+    """Reference desk per ticket id. World rows carry no label: it comes from `val.csv` by card id."""
+    targets: dict[str, str] = {}
+    if any("target" not in row for row in rows):
+        with SPLITS["val"].open(encoding="utf-8", newline="") as handle:
+            targets = {row["card_id"]: row["target"] for row in csv.DictReader(handle)}
     return {
-        f"val-{row['card_id']}": _CONTRACT_DESK.get(desk_of(parse_output(row["target"])), "payments")
+        ticket_id_of(row): _CONTRACT_DESK.get(desk_of(parse_output(row.get("target") or targets[row["card_id"]])), "payments")
+        if (row.get("target") or row["card_id"] in targets) else "payments"
         for row in rows
     }
 
 
-def reference_desks(limit: int, seed: int) -> dict[str, str]:
-    """Reference desk per injected ticket id, from the same seeded `val` selection as the injector."""
-    return desks_for(select_rows("val", limit, seed))
+def reference_desks(limit: int, seed: int, world: Path | None = None) -> dict[str, str]:
+    """Reference desk per injected ticket id, from the same seeded selection as the injector."""
+    return desks_for(select_rows("val", limit, seed, world))
 
 
 def choose_action(item: dict[str, Any], desks: dict[str, str]) -> tuple[str, dict[str, Any]] | None:
@@ -112,6 +124,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--limit", type=int, required=True, help="tickets to inject from val.csv")
     parser.add_argument("--seed", type=int, default=1)
+    parser.add_argument("--world", type=Path, help="draw the dev tickets (with their merchants) from this world database")
     parser.add_argument("--api", default="http://127.0.0.1:8000")
     parser.add_argument("--cadence", type=float, default=3.0, help="seconds between human actions")
     parser.add_argument("--timeout", type=float, default=3600, help="give up after this many seconds")
@@ -119,15 +132,15 @@ def main() -> int:
     if args.limit < 1:
         parser.error("--limit must be positive")
     api = args.api.rstrip("/")
-    session_id = f"demo-agent-val-seed-{args.seed}-n-{args.limit}"
+    session_id = f"demo-agent-{'world' if args.world else 'val'}-seed-{args.seed}-n-{args.limit}"
     status = inject(
         split="val", limit=args.limit, seed=args.seed, api=api, session_id=session_id, followups={},
         log_path=ROOT / ".local" / "runs" / "demo-agent.jsonl", wait_timeout=args.timeout,
-        allow_locked_split=False, submit=True,
+        allow_locked_split=False, submit=True, world=args.world,
     )
     if status:
         print("some injections failed; operating on the tickets that were accepted", file=sys.stderr)
-    desks = reference_desks(args.limit, args.seed)
+    desks = reference_desks(args.limit, args.seed, args.world)
     return operate(api, session_id, set(desks), desks, args.cadence, args.timeout)
 
 

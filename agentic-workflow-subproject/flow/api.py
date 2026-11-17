@@ -638,11 +638,16 @@ def demo_inject(body: DemoInjectRequest, request: Request, background: Backgroun
     import csv
 
     from flow import demo_agent
-    from flow.inject_dataset import SPLITS, _merchant_id, build_envelope
+    from flow.inject_dataset import SPLITS, _merchant_id, build_envelope, read_world_rows
 
     store: ApiStore = request.app.state.store
-    with SPLITS["val"].open(encoding="utf-8", newline="") as handle:
-        fresh = [row for row in csv.DictReader(handle) if store.ticket(f"val-{row['card_id']}", 1) is None]
+    world = os.environ.get("NAVY_WORLD_DB")  # set by run-local.ps1 -WorldDb: tickets with their own merchants
+    if world:
+        candidates = read_world_rows(Path(world), "val")
+    else:
+        with SPLITS["val"].open(encoding="utf-8", newline="") as handle:
+            candidates = list(csv.DictReader(handle))
+    fresh = [row for row in candidates if store.ticket(demo_agent.ticket_id_of(row), 1) is None]
     if len(fresh) < body.count:
         raise HTTPException(409, detail={"code": "DEMO_TICKETS_EXHAUSTED", "remaining": len(fresh)})
     # seeded by what is already injected: deterministic for a given state, different on each click
