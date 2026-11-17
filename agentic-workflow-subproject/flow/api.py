@@ -20,7 +20,7 @@ from dotenv import load_dotenv
 from fastapi import BackgroundTasks, FastAPI, Header, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from langfuse import get_client
+from langfuse import get_client, propagate_attributes
 from langgraph.types import Command
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -222,8 +222,20 @@ def _execute_job(app: FastAPI, flow_id: str, resume: dict[str, Any] | None = Non
         store.mark_job(flow_id, "error")
 
 
+def _execute_traced(app: FastAPI, flow_id: str, resume: dict[str, Any] | None) -> None:
+    """Run a job with the ticket as the Langfuse session, so every turn and human action of one
+    ticket is one end-to-end view (Langfuse > Sessions), and the merchant is the trace user."""
+    row = app.state.store.ticket_by_flow(flow_id)
+    if row is None:
+        return
+    with propagate_attributes(
+        session_id=row["ticket_id"], user_id=row["ticket"]["merchant_id"], tags=["navy-flow"],
+    ):
+        _execute_job(app, flow_id, resume)
+
+
 def _queue_job(app: FastAPI, flow_id: str, resume: dict[str, Any] | None = None) -> None:
-    app.state.executor.submit(_execute_job, app, flow_id, resume)
+    app.state.executor.submit(_execute_traced, app, flow_id, resume)
 
 
 def _command_already_applied(state: dict[str, Any], command: dict[str, Any], submitted_at: str) -> bool:

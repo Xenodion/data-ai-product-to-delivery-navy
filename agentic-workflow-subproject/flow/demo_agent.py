@@ -83,7 +83,12 @@ def operate(api: str, session_id: str, ticket_ids: set[str], desks: dict[str, st
     while time.monotonic() < deadline:
         pending = 0
         for ticket_id in sorted(ticket_ids):
-            item = _request_json(f"{api}/api/v1/tickets/{ticket_id}/turns/1")
+            try:
+                item = _request_json(f"{api}/api/v1/tickets/{ticket_id}/turns/1")
+            except RuntimeError as exc:
+                if "HTTP 404" in str(exc):  # injection of this ticket failed: nothing to operate
+                    continue
+                raise
             if item["status"] in TERMINAL_STATUSES or item["status"] == "error":
                 continue
             pending += 1
@@ -121,7 +126,7 @@ def main() -> int:
         allow_locked_split=False, submit=True,
     )
     if status:
-        return status
+        print("some injections failed; operating on the tickets that were accepted", file=sys.stderr)
     desks = reference_desks(args.limit, args.seed)
     return operate(api, session_id, set(desks), desks, args.cadence, args.timeout)
 
