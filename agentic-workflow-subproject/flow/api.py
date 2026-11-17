@@ -23,6 +23,7 @@ from fastapi import BackgroundTasks, FastAPI, Header, HTTPException, Query, Requ
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from langfuse import get_client, propagate_attributes
+from langfuse.langchain import CallbackHandler as LangfuseCallbackHandler
 from langgraph.types import Command
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -62,6 +63,11 @@ def _digest(value: Any) -> str:
 
 def _thread_config(thread_id: str) -> dict[str, Any]:
     return {"configurable": {"thread_id": thread_id}}
+
+
+def _run_config(thread_id: str) -> dict[str, Any]:
+    """Config for graph runs: the Langfuse handler lets Langfuse draw nodes, loops and pauses as a graph."""
+    return {**_thread_config(thread_id), "callbacks": [LangfuseCallbackHandler()]}
 
 
 def _allowed_actions(run: TicketRun) -> list[str]:
@@ -192,12 +198,12 @@ def _execute_job(app: FastAPI, flow_id: str, resume: dict[str, Any] | None = Non
             if _command_already_applied(current_graph_state, resume, row["updated_at"]):
                 state = current_graph_state
             else:
-                state = graph.invoke(Command(resume=resume), _thread_config(row["thread_id"]))
+                state = graph.invoke(Command(resume=resume), _run_config(row["thread_id"]))
         else:
             saved_graph = _get_graph_state(graph, row["thread_id"])
             if saved_graph.values:
                 state = (
-                    graph.invoke(None, _thread_config(row["thread_id"]))
+                    graph.invoke(None, _run_config(row["thread_id"]))
                     if saved_graph.next else dict(saved_graph.values)
                 )
             else:
@@ -207,7 +213,7 @@ def _execute_job(app: FastAPI, flow_id: str, resume: dict[str, Any] | None = Non
                     TicketRun.model_validate(prior) if prior else None,
                 )
                 initial["flow_id"] = row["flow_id"]
-                state = graph.invoke(initial, _thread_config(row["thread_id"]))
+                state = graph.invoke(initial, _run_config(row["thread_id"]))
         saved = _save_result(store, graph, row, state)
         logger.info("flow %s reached %s", flow_id, saved["status"])
     except Exception:
