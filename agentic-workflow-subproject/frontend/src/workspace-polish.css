@@ -1,0 +1,9 @@
+/* Workspace readability and conflict recovery. */
+.reply-conflict { display: grid; gap: 8px; margin: 10px 0; padding: 12px; border: 1px solid #e7bd80; border-radius: 8px; background: #fff8eb; color: #69471d; line-height: 1.5; }
+.reply-conflict .button { justify-self: start; }
+.context-card .draft-history b, .lifecycle li b { font-size: 12px; }
+.context-card .draft-history span, .context-card .draft-history small, .lifecycle li span, .lifecycle li small { font-size: 12px; color: #64758a; }
+.lifecycle summary, .action-required > div b, .action-required > div span { font-size: 12px; }
+.mailbox-heading { cursor: pointer; color: #304763; }
+.mailbox-heading .eyebrow, .mailbox-title { display: block; }
+.mailbox-title { margin: 0 0 10px; font-size: 13px; font-weight: 700; }
