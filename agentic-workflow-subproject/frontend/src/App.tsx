@@ -6,6 +6,7 @@ import {
 import { FlowGraph } from "./FlowGraph.tsx";
 import { DashboardFlow } from "./DashboardFlow.tsx";
 import { Mailbox } from "./Mailbox.tsx";
+import { DemoPanel } from "./DemoPanel.tsx";
 
 const VIEWS: { hash: string; label: string; icon: string }[] = [
   { hash: "#dashboard", label: "Dashboard", icon: "▦" },
@@ -123,12 +124,13 @@ function OverviewPage() {
   return <section className="page dashboard-page">
     <PageHeading eyebrow="OPERATIONS" title="Support flow" description="A live view of incoming work, agent queues and completed outcomes."
       action={<button className="button button-quiet" onClick={() => setRefresh((value) => value + 1)}>↻ <span>Refresh</span></button>} />
+    <DemoPanel onInjected={() => setRefresh((value) => value + 1)} />
     {error && <Notice>{data ? "Showing the last successful update. " : ""}Could not refresh live data: {error}</Notice>}
     {!data ? <Loading label={error ? "Waiting for the flow API" : "Loading live flow metrics…"} /> : <>
       <section className="metric-row" aria-label="Key flow metrics">
         <Metric label="Tickets received" value={data.total} note="All tickets in this run" tone="blue" />
         <Metric label="Waiting for an agent" value={(data.queues["re-router"] ?? 0) + (data.queues.validator ?? 0)} note="Across review queues" tone="amber" />
-        <Metric label="Oldest open ticket" value={duration(data.oldest_waiting_seconds)} note="Time since ticket creation" tone="purple" />
+        <Metric label="Oldest open ticket" value={(data.queues["re-router"] ?? 0) + (data.queues.validator ?? 0) ? duration(data.oldest_waiting_seconds) : "None"} note="Time since ticket creation" tone="purple" />
         <Metric label="Simulated sends" value={data.simulated_sends} note="Replies recorded as sent" tone="green" />
       </section>
 
@@ -380,5 +382,5 @@ function Notice({ children, role = "alert" }: { children: React.ReactNode; role?
 function Loading({ label }: { label: string }) { return <div className="loading card"><span className="spinner" />{label}</div>; }
 function currentDraft(ticket: TicketSnapshot) { return [...(ticket.drafts ?? [])].reverse().find((draft) => !draft.stale) ?? null; }
 function humanize(value: string) { return value.replaceAll("_", " ").replaceAll("-", " ").replace(/\b\w/g, (letter) => letter.toUpperCase()); }
-function duration(seconds: number) { if (seconds < 60) return `${Math.round(seconds)} sec`; if (seconds < 3600) return `${Math.round(seconds / 60)} min`; return `${Math.floor(seconds / 3600)} h ${Math.round((seconds % 3600) / 60)} min`; }
+function duration(seconds: number) { if (seconds < 60) return `${Math.round(seconds)} sec`; if (seconds < 3600) return `${Math.round(seconds / 60)} min`; if (seconds < 86400) return `${Math.floor(seconds / 3600)} h ${Math.round((seconds % 3600) / 60)} min`; return `${Math.floor(seconds / 86400)} d ${Math.floor((seconds % 86400) / 3600)} h`; }
 function formatDate(value: string) { const date = new Date(value); return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(date); }
