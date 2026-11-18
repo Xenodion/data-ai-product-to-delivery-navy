@@ -22,7 +22,7 @@ from dotenv import load_dotenv
 from fastapi import BackgroundTasks, FastAPI, Header, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from langfuse import get_client, propagate_attributes
+from langfuse import Langfuse, get_client, propagate_attributes
 from langfuse.langchain import CallbackHandler as LangfuseCallbackHandler
 from langgraph.types import Command
 from pydantic import BaseModel, ConfigDict, Field
@@ -63,6 +63,16 @@ def _digest(value: Any) -> str:
 
 def _thread_config(thread_id: str) -> dict[str, Any]:
     return {"configurable": {"thread_id": thread_id}}
+
+
+_TRACE_KEEP = {"langgraph_node", "langgraph_step", "langgraph_path"}
+
+
+def mask_trace_payload(data: Any, **_: Any) -> Any:
+    """Langfuse mask: graph runs keep node names and steps, never ticket or draft content."""
+    if isinstance(data, dict):
+        return {key: value for key, value in data.items() if key in _TRACE_KEEP} or "[masked]"
+    return data if isinstance(data, int | float | bool) or data is None else "[masked]"
 
 
 def _run_config(thread_id: str) -> dict[str, Any]:
@@ -314,6 +324,7 @@ def _command_already_applied(state: dict[str, Any], command: dict[str, Any], sub
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     load_dotenv(ROOT / ".env")
+    Langfuse(mask=mask_trace_payload)  # registers the singleton that get_client() and the callback handler reuse
     config = load_config()
     if config.api_worker_count != 1:
         raise RuntimeError("api.worker_count must remain 1 with the synchronous SQLite LangGraph checkpointer")
