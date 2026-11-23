@@ -28,4 +28,4 @@ jobs:
         run: uv sync --frozen --no-default-groups --group dev
       - name: Run the tests
         # scikit-learn (baselines) and pandas (confidence study) come from the ml group.
-        run: uv run --frozen --no-default-groups --group dev --with "scikit-learn>=1.9.1" --with "pandas>=3.0.6" pytest -q
+        run: uv run --frozen --no-default-groups --group dev --with "scikit-learn>=1.9.1" --with "pandas>=3.0.6" python -m pytest -q

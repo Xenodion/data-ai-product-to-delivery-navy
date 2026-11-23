@@ -9,8 +9,11 @@ machine with the local Qualifier.
 
 import json
 import sys
+from pathlib import Path
 
-from ml.qualifier.src.regression_eval import (
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+
+from ml.qualifier.src.regression_eval import (  # noqa: E402
     expected_fingerprint,
     load_predictions,
     load_thresholds,
