@@ -1,9 +1,9 @@
-# 03 — Product brief · Keelpay Support Copilot · v2
+# 03 — Product brief · Keelpay Support Copilot · v3 (final)
 
-> Session 3. v1 framed in class; v2 completed after user research and usability testing.
+> Session 3. v1 framed in class; v2 completed after user research and usability testing; v3 (final, 23 November 2026) adds the measured result against the criterion (§7) and the rollback plan (§8). Sections 1–6 and 9–10 are unchanged from v2.
 > Built on `01_problem_statement.md`, `02_sizing.xlsx`, `02_investment_memo.md`, and `03_user_research.md`.
 
-**Team:** NAVY · **Starting point:** P2 (Agent-assist copilot, B2B fintech) · **Version:** v2 — 3 November 2026
+**Team:** NAVY · **Starting point:** P2 (Agent-assist copilot, B2B fintech) · **Version:** v3 (final) — 23 November 2026
 
 ---
 
@@ -87,7 +87,7 @@ Handling time baseline ≈ 10 min/ticket. Minutes per step derived from scenario
 ## 6. Where it lives (integration surface)
 
 - **Surface:** A 3-column side panel embedded in the existing helpdesk workspace (inbox queue on the left, active ticket in the center, copilot assistance card on the right).
-- **Speed needed:** Inference must execute while the ticket waits in queue (sub-5s target), so context and draft are ready the instant an agent opens the ticket.
+- **Speed needed:** Inference must execute while the ticket waits in queue (sub-5s target), so context and draft are ready the instant an agent opens the ticket. *(v3)* Measured: the Qualifier takes a median 6.8 s on CPU (`evals/report_v0.md`), above the target but invisible while the ticket waits in queue; the target is kept for the hosted endpoint.
 - **Format:** Extracted JSON fields with source highlights, merchant case card, candidate transaction list, and cited draft.
 - **Fallback:** If classification fails or returns `UNDEFINED`, the ticket drops seamlessly into standard manual triage.
 - **Who sees the log:** Support agents see per-ticket traces; Support Lead reviews weekly QA samples; Compliance has full audit access.
@@ -98,6 +98,8 @@ Handling time baseline ≈ 10 min/ticket. Minutes per step derived from scenario
 
 > By Session 4 prototype evaluation, on our 20-case eval-set (and scaling to ≥ 200 tickets), the copilot is on track for our **13.32 % net time-saved flip point**: routing at least **50 % of tickets automatically** with misrouting significantly below the 14 % manual baseline, while **0 urgent tickets** are auto-routed to the wrong desk.
 
+*(v3)* **Result: met** on 50 hand-written tickets (13 November 2026): 74 % routed automatically, 2.7 % misrouted (p = 0.024 against 1 in 7), 0 urgent misroutes (`evals/report_v0.md`). The 13.32 % flip point itself is measured only by the pilot A/B (`06_ab_protocol.md`).
+
 ---
 
 ## 8. Risks and rollback trigger
@@ -106,7 +108,8 @@ Handling time baseline ≈ 10 min/ticket. Minutes per step derived from scenario
   1. An urgent chargeback misrouted silently, missing its regulatory defense deadline.
   2. Automation bias: an agent validating a draft grounded in the wrong transaction without reading.
   3. Net handling time saved falling short of the 13.32 % economic flip point due to triage overhead.
-- **Rollback trigger (one line):** Instantly revert to manual routing if weekly QA finds to urgent tickets auto-routed to the wrong desk.
+- **Rollback trigger (one line):** Any urgent ticket auto-routed to the wrong desk is an incident reviewed within 24 h; a second one within four weeks reverts urgent tickets to manual routing.
+- *(v3)* **Rollback plan:** prompt, model and copilot level roll back separately; `copilot_mode` has four levels (Judge off, drafting off, routing off, copilot off) and any one criterion is enough. Criteria and owners: `spec.md` §11 and `07_operations.md` §4.
 
 ---
 
