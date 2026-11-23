@@ -22,8 +22,8 @@ Issue #22, requirement of the shared LLMOps project brief. Checked on 23 Novembe
 | Hand-written eval-set, labelled before any run, with a grading guideline | Ready | `../evals/eval_set_v1.csv` (100 cases), `../evals/README.md` |
 | Two human graders and an LLM judge, agreement measured | Ready | 80 % human–human, 95.8 % human–judge (`../05_metrics.md` §5, `../evals/grading/`) |
 | Full flow measured end to end | Partial | last run 13 November, before the guardrails (`../evals/report_v0.md`); the runtime Qualifier now uses constrained decoding, not what the D-q4 benchmark measured (`../spec.md` §3 v3) |
-| ⛔ Eval-set replay of the current flow before the pilot | Missing | condition 1 of `../08_launch_memo.md` §3 (PR #88) |
-| Automated evaluation in CI on every prompt, handler or pipeline change, failing under a threshold | Partial | `qualifier-regression` workflow and 100 eval-set triples with thresholds in config (PR #92); red until the Qualifier predictions are committed (needs the local model) |
+| ⛔ Eval-set replay of the current flow before the pilot | Partial | Qualifier replayed on the 100 cases (23 Nov, `data/runs/regression/`): 94 % valid against the contract, 80 % desk accuracy, 76 % auto-routed, 1 urgent ticket of 19 in a wrong desk, 12 % silent errors: **bars not met**; drafts not re-measured (needs the Drafter key) |
+| Automated evaluation in CI on every prompt, handler or pipeline change, failing under a threshold | Ready | `qualifier-regression` workflow on the 100 eval-set triples, thresholds in `ml/qualifier/src/regression_thresholds.toml` (PR #92); it fails today because the model misses four bars, which is its job |
 | Unit tests of the flow and the scorer | Ready | `llmops-tests` workflow: 432 passed on CI (PR #92), 438 with the metrics report (PR #93) |
 
 ## 2 · Monitoring
