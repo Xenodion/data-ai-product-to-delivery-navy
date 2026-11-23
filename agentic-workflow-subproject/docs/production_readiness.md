@@ -23,8 +23,8 @@ Issue #22, requirement of the shared LLMOps project brief. Checked on 23 Novembe
 | Two human graders and an LLM judge, agreement measured | Ready | 80 % human–human, 95.8 % human–judge (`../05_metrics.md` §5, `../evals/grading/`) |
 | Full flow measured end to end | Partial | last run 13 November, before the guardrails (`../evals/report_v0.md`); the runtime Qualifier now uses constrained decoding, not what the D-q4 benchmark measured (`../spec.md` §3 v3) |
 | ⛔ Eval-set replay of the current flow before the pilot | Missing | condition 1 of `../08_launch_memo.md` §3 (PR #88) |
-| Automated evaluation in CI on every prompt, handler or pipeline change, failing under a threshold | Missing | no CI workflow in the repository (`.github/` absent); issue #19 |
-| Unit tests of the flow and the scorer | Partial | 306 tests in `tests/` (239 flow, 61 qualifier, 4 confidence) and `tests/test_layout.py`; not run automatically (no CI) and not re-run for this checklist |
+| Automated evaluation in CI on every prompt, handler or pipeline change, failing under a threshold | Partial | `qualifier-regression` workflow and 100 eval-set triples with thresholds in config (PR #92); red until the Qualifier predictions are committed (needs the local model) |
+| Unit tests of the flow and the scorer | Ready | `llmops-tests` workflow: 432 passed on CI (PR #92), 438 with the metrics report (PR #93) |
 
 ## 2 · Monitoring
 
@@ -33,7 +33,7 @@ Issue #22, requirement of the shared LLMOps project brief. Checked on 23 Novembe
 | Per-node latency, outcomes and Drafter cost recorded | Ready | `flow/metrics_store.py` (SQLite events and aggregates); measures in `docs/design/flow-v2/measures-and-gates.md` |
 | Traces with prompt name, label and version | Partial | `@observe` spans in `flow/pipeline.py`, `flow/drafter.py`, `flow/human_actions.py`; prompt versions in `docs/design/flow-v2/prompt-management.md`; one trace per ticket from a deployed run not captured yet (#41) |
 | Thresholds for latency, drift and quality, with a reader and an action | Ready (on paper) | four layers in `../07_operations.md` §2, computed in `../evals/07_monitoring.ipynb` (PR #86): PSI bands, invalid ≤ 3.4 %, audit alarm ≥ 13 of 800, p95 ≤ 18 s |
-| Alerts that fire on those thresholds | Missing | no scheduler or alerting; #20, #41 |
+| Alerts that fire on those thresholds | Partial | `python -m flow.metrics_report` flags the layer-0 thresholds from the metrics store (PR #93); nothing runs it on a schedule or pages anyone (#41) |
 | ⛔ Weekly labelled audit sample running | Missing | process defined in `../07_operations.md` §2, not staffed |
 
 ## 3 · Rollback
@@ -96,4 +96,4 @@ Issue #22, requirement of the shared LLMOps project brief. Checked on 23 Novembe
 5. Legal basis and retention for real tickets (§5).
 6. Real tickets, models and traces inside Keelpay's cloud, not the demo's external services (`../spec.md` §7).
 
-Non-blocking but expected before a rollout: CI evaluation (#19), alerting (#20, #41), a spending cap, API authentication, a shared database.
+Non-blocking but expected before a rollout: the Qualifier predictions that turn the CI gate green (#19), scheduled alerting (#41), a spending cap, API authentication, a shared database.
