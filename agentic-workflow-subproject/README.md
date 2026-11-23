@@ -51,6 +51,7 @@ The plan, with its gates, is `docs/roadmap.md`; the day-by-day account is in `ml
 | `docs/data_science_masterclass.md` | metric choice, use-case error matrices, charts, model tagging, lineage, historical recovery, and experiment method |
 | `specs/004-routing-node/error-consequences.md` | pending review of the deterministic routing tree and business consequences; gates product-level error metrics |
 | `docs/llmops_recovery_tasks.md` | recovered unfinished LLM fine-tuning/MLflow work and completion checklist |
+| `docs/production_readiness.md` | production-readiness checklist (#22): evaluation, monitoring, rollback, cost caps, data handling, known limits, each item with its evidence |
 
 ## Setup
 
