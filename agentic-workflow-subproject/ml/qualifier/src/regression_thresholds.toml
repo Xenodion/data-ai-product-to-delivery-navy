@@ -1,0 +1,18 @@
+# Regression gate of the Qualifier (issue #19), read by ml/qualifier/src/regression_eval.py.
+# Paths are relative to agentic-workflow-subproject/. Change a threshold only with a dated reason
+# in the pull request; never loosen one to make a red build pass.
+
+[source]
+eval_set = "../evals/eval_set_v1.csv"                         # 100 hand-labelled cases, labels written before any run
+predictions = "data/runs/regression/qualifier_eval_set_v1.csv" # written by `python -m flow.regression_predict`
+manifest = "data/runs/regression/qualifier_eval_set_v1.manifest.json"
+flow_config = "flow/config.toml"                               # model checksum and decoding settings
+
+[min]
+valid_json_rate = 0.985   # scoring protocol bar for valid outputs (spec.md section 8)
+desk_accuracy = 0.90      # brief acceptance bar (docs/scoring_protocol.md section 8)
+auto_routed_rate = 0.50   # brief success criterion: at least half routed automatically (03_product_brief.md section 7)
+
+[max]
+urgent_wrong_desk = 0.0   # floor of the brief: no urgent ticket routed automatically to a wrong desk
+silent_error_rate = 0.07  # team choice: half the manual misroute rate of 1 in 7 (02_sizing.xlsx Flow!D26)

@@ -1,0 +1,31 @@
+# Unit tests of the LLMOps sub-project (issue #19). Base and dev dependencies only: the training
+# group (torch, transformers, Vertex SDK) is not needed by the tests and is not installed.
+name: llmops-tests
+
+on:
+  pull_request:
+    paths: ["agentic-workflow-subproject/**", "evals/**", ".github/workflows/llmops-tests.yml"]
+  push:
+    branches: [main]
+    paths: ["agentic-workflow-subproject/**", "evals/**", ".github/workflows/llmops-tests.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: agentic-workflow-subproject
+    env:
+      LANGFUSE_TRACING_ENABLED: "false"   # no keys in CI: the flow uses its marked local fallback
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Install base and dev dependencies from the lock
+        run: uv sync --frozen --no-default-groups --group dev
+      - name: Run the tests
+        # scikit-learn (baselines) and pandas (confidence study) come from the ml group.
+        run: uv run --frozen --no-default-groups --group dev --with "scikit-learn>=1.9.1" --with "pandas>=3.0.6" pytest -q
