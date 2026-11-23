@@ -104,10 +104,16 @@ def runtime_settings(config_path: Path) -> dict[str, object]:
     }
 
 
-def expected_fingerprint(eval_set: Path, config_path: Path) -> dict[str, object]:
-    """What the stored predictions must have been produced with to still be valid."""
+def expected_fingerprint(eval_set: Path, config_path: Path, qualifier_code: Path | None = None) -> dict[str, object]:
+    """What the stored predictions must have been produced with to still be valid.
+
+    The Qualifier call (`flow/qualifier.py`, with its decoding schema) is hashed as a file: `ml/` reads
+    it as data and never imports `flow/`.
+    """
+    qualifier_code = qualifier_code or SUBPROJECT / load_thresholds()["source"]["qualifier_code"]
     return {
         "eval_set_sha256": sha256_file(eval_set),
+        "qualifier_code_sha256": sha256_file(qualifier_code),
         "prompt_sha256": repository_prompt_sha(),
         "schema_sha256": schema_sha(),
         **runtime_settings(config_path),

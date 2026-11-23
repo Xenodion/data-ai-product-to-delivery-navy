@@ -19,12 +19,43 @@ from ml.qualifier.src.dataset_build.schema import (
     SUB_INTENTS,
     UNDEFINED,
     URGENCIES,
+    AMOUNT_PATTERN,
+    TRANSACTION_ID_PATTERN,
     TicketLabel,
 )
 from ml.qualifier.src.prompt import INSTRUCTION
 from ml.qualifier.src.scoring import parse_output
 
 logger = logging.getLogger(__name__)
+
+_REFERENCE_CHECKS = {
+    "transaction_id": TRANSACTION_ID_PATTERN.fullmatch,
+    "amount": AMOUNT_PATTERN.fullmatch,
+    "currency": lambda value: value in CURRENCIES,
+}
+
+
+def repair_references(raw: str) -> str:
+    """Turn a malformed reference into UNDEFINED instead of rejecting the whole answer (spec.md section 3, v2).
+
+    A transaction ID such as ``TX-712O44`` becomes ``UNDEFINED``: the desk is kept and the payment is
+    asked for, rather than guessed. Decoding is deliberately not constrained to the pattern: tried on
+    23 November 2026, it made the model invent a valid-looking ID (``TX-712044``), a silent error.
+    Other fields are left as they are; the contract still validates them.
+    """
+    try:
+        answer = json.loads(raw)
+    except (TypeError, ValueError):
+        return raw
+    if not isinstance(answer, dict):
+        return raw
+    repaired = False
+    for field, is_valid in _REFERENCE_CHECKS.items():
+        value = answer.get(field)
+        if isinstance(value, str) and value not in ("", UNDEFINED) and not is_valid(value):
+            answer[field] = UNDEFINED
+            repaired = True
+    return json.dumps(answer, ensure_ascii=False) if repaired else raw
 
 
 def qualifier_output_schema() -> dict[str, object]:
@@ -124,6 +155,7 @@ def qualify(
         raw = json.dumps(answer, ensure_ascii=False)
     else:
         raw = str(answer)
+    raw = repair_references(raw)
     label = parse_output(raw)
     return QualifierResult(
         status="valid" if label else "invalid",
