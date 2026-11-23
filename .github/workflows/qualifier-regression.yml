@@ -1,0 +1,39 @@
+# Regression gate of the Qualifier on the 100 hand-labelled eval-set cases (issue #19).
+# Runs when the prompt, the output contract, the model, the Qualifier call or the eval-set change.
+# It replays stored predictions: no model, no secret, no cost. It fails when they are stale or
+# when a metric crosses ml/qualifier/src/regression_thresholds.toml.
+name: qualifier-regression
+
+on:
+  pull_request:
+    paths:
+      - "agentic-workflow-subproject/ml/qualifier/src/prompt.py"
+      - "agentic-workflow-subproject/ml/qualifier/src/dataset_build/schema.py"
+      - "agentic-workflow-subproject/ml/qualifier/src/scoring.py"
+      - "agentic-workflow-subproject/ml/qualifier/src/handler.py"
+      - "agentic-workflow-subproject/ml/qualifier/src/pipeline_components/**"
+      - "agentic-workflow-subproject/ml/qualifier/src/regression_*"
+      - "agentic-workflow-subproject/ml/qualifier/scripts/regression_check.py"
+      - "agentic-workflow-subproject/flow/qualifier.py"
+      - "agentic-workflow-subproject/flow/config.toml"
+      - "agentic-workflow-subproject/data/runs/regression/**"
+      - "evals/eval_set_v1.csv"
+      - ".github/workflows/qualifier-regression.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: agentic-workflow-subproject
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --frozen --no-default-groups
+      - name: Replay the stored predictions against the thresholds
+        run: uv run --frozen --no-default-groups python ml/qualifier/scripts/regression_check.py

@@ -148,6 +148,21 @@ The API is a synthetic single-user local demo. It is not exposed on the network 
 
 Each run writes to `.local/runs/<run_id>.jsonl`. It sends nothing, and it reads the validation split only.
 
+## Evaluation in CI (issue #19)
+
+Two GitHub Actions workflows at the repository root (`.github/workflows/`):
+
+- `llmops-tests` runs `pytest` on every change to this sub-project, with the base and dev dependencies only (no training stack).
+- `qualifier-regression` is the regression gate. Its 100 test triples are the hand-labelled cases of `../evals/eval_set_v1.csv`: the ticket, its seven labelled fields, and the checks of `ml/qualifier/src/scoring.py` (valid contract, desk, urgent ticket in a wrong desk, silent error). It runs when the prompt, the output contract, the scorer, the Qualifier call, `flow/config.toml` or the eval-set change, and replays stored predictions: no model, no secret, no cost. It fails when the predictions are stale (prompt, schema, model checksum, decoding settings or eval-set changed since they were produced) or when a metric crosses `ml/qualifier/src/regression_thresholds.toml`. Thresholds live in that file, not in code.
+
+Refresh the stored predictions after such a change, on a machine with the local Qualifier (setup above), then commit the two files of `data/runs/regression/`:
+
+```bash
+docker compose -f flow/docker-compose.yml up -d
+uv run python -m flow.regression_predict          # the runtime Qualifier on the 100 cases, local and free
+uv run python ml/qualifier/scripts/regression_check.py
+```
+
 ## Training settings
 
 Starting point of the course (3 epochs, LoRA r=8 alpha=16 dropout 0.05, learning rate 3e-4, 4-bit base model), with three changes for our data: sequences of 1024 tokens (our chats have a median of 495 and a p99 of 813, so 512 cut the JSON answer off 41 % of the tickets), no packing, and a loss on the assistant answer only. The best checkpoint on validation loss is kept; `log_history.json` in the model artifact holds the loss curve. Run the `--smoke` pipeline first (time and memory per step, loss going down, valid JSON), then one full run, then read the curve before any sweep.
