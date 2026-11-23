@@ -78,3 +78,7 @@ Counter-metrics: repeat contact within 7 days; drafts on the wrong payment valid
 ## Session 6 — A/B protocol
 
 Pre-registered on 23 November 2026 (`06_ab_protocol.md`): staggered crossover of agents and conversations, primary read once after 6 weeks with a 6 % MDE, no early stop for success; the stopping rules of §6 are owned by the Head of Support (routing, drafting, sample ratio with NAVY) and the Head of Compliance (serious errors), and any change of model, prompt, rule or threshold voids the week.
+
+## Session 7 — Operations
+
+Monitoring in four layers, drift triggers and rollback criteria in `07_operations.md`: any one criterion is enough to roll back, the Head of Compliance decides on serious errors and the Head of Support on routing, quality and segments, NAVY executes and records the date, trigger and level here; the `copilot_mode` switch is required before the pilot and not yet built (#60).
