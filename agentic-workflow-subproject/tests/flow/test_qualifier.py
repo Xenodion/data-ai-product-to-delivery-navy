@@ -65,3 +65,25 @@ def test_qualify_marks_invalid_structured_payload_invalid() -> None:
 def test_qualify_marks_model_transport_error_unavailable() -> None:
     result, _ = _call(RuntimeError("connection failed"))
     assert result.status == "unavailable"
+
+
+
+def test_malformed_reference_becomes_undefined_and_keeps_the_desk() -> None:
+    result, _ = _call({**VALID, "transaction_id": "TX-712O44"})
+    assert result.status == "valid"
+    assert result.label.transaction_id == "UNDEFINED"
+    assert result.label.intent == VALID["intent"]
+
+
+def test_repair_touches_only_malformed_references() -> None:
+    import json
+
+    from flow.qualifier import repair_references
+
+    raw = json.dumps({**VALID, "transaction_id": "TX-7012345", "amount": "4,850.00", "currency": "EURO"})
+    repaired = json.loads(repair_references(raw))
+    assert (repaired["transaction_id"], repaired["amount"], repaired["currency"]) == ("UNDEFINED",) * 3
+    assert repaired["intent"] == VALID["intent"]
+    clean = json.dumps(VALID)
+    assert repair_references(clean) == clean
+    assert repair_references("not json") == "not json"

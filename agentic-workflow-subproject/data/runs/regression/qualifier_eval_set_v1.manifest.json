@@ -1,5 +1,6 @@
 {
   "eval_set_sha256": "edb9ba8f5c50aa229013bd4d01e583ca6b1d494a000085c158588cab51b347e9",
+  "qualifier_code_sha256": "5f67cc3d445c40111e184f70e228b3d6b8bc79c9d6b8f1ae98385ab8c0b9443f",
   "prompt_sha256": "9b4c7a6b0920ce9a927b93f1e168bb2c03e27fdf28863c094c9503451a24ae7c",
   "schema_sha256": "fdd581987fb43c671dfbea0b82cd8aa6c34e2f727bc13a13b486e1f661c23102",
   "model_md5": "b23b4f3092c9083c1c741551ec351dc8",
@@ -10,10 +11,10 @@
   "prompt_label": "production",
   "prompt_version": "local-fallback",
   "decoding": "structured output, JSON schema, strict (flow/qualifier.py)",
-  "created_at": "2026-11-23T10:22:31+00:00",
+  "created_at": "2026-11-23T14:02:35+00:00",
   "cases": 100,
   "statuses": {
-    "valid": 94,
-    "invalid": 6
+    "valid": 97,
+    "invalid": 3
   }
 }

@@ -7,6 +7,7 @@ eval_set = "../evals/eval_set_v1.csv"                         # 100 hand-labelle
 predictions = "data/runs/regression/qualifier_eval_set_v1.csv" # written by `python -m flow.regression_predict`
 manifest = "data/runs/regression/qualifier_eval_set_v1.manifest.json"
 flow_config = "flow/config.toml"                               # model checksum and decoding settings
+qualifier_code = "flow/qualifier.py"                           # the call and its decoding schema; any change makes predictions stale
 
 [min]
 valid_json_rate = 0.985   # scoring protocol bar for valid outputs (spec.md section 8)
