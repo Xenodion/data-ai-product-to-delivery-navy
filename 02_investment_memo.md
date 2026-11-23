@@ -29,6 +29,20 @@ The Low case loses €78,444 and misses the Base next-best hurdle. A one-variabl
 
 Weighted project EV exceeds weighted next-best by **€113.5k** and do-nothing by **€116.0k**. Moving the full 20-point optimistic probability weight to Base still leaves €112.5k EV versus the €100.2k Base next-best hurdle; a 22.41-point shift would be needed to cross it. Probabilities remain judgments. Demo external API/trace costs need a separate budget; no real ticket may go to an external service.
 
+## Which Qualifier? The efficiency front
+
+Infrastructure cost per 1,000 tickets against expected error cost per ticket, on `test_natural` (610 tickets). Error cost = model silent errors (`scoring_protocol.md` §8) × €252.5, the cost of one wrong answer weighted by category (`Inputs!D14:D16` × `Inputs!D30:D32`). Infrastructure = measured seconds per ticket × €0.00008 a second of serverless CPU, or a T4 endpoint on 24/7 at €255 a month spread over 36,000 tickets (`scoring_protocol.md` §6). Training is paid once (2 h 06 of T4 for D) and left out.
+
+| System | Infra per 1,000 tickets | Expected error cost per ticket | On the front? |
+|---|---:|---:|---|
+| B2 TF-IDF + logistic regression | ≈ €0.00 | €85.60 | yes: cheapest |
+| B3 base Qwen 3B, prompted (T4) | €7.08 | €26.51 | no: D-q4 is cheaper and better |
+| D Qwen 3B + LoRA, fp16 (T4) | €7.08 | €5.05 | no |
+| D-q8 (CPU) | €0.71 | €2.52 | no |
+| **D-q4 (CPU)** | **€0.59** | **€1.77** | **yes: chosen** |
+
+Only B2 and D-q4 are on the front; B0 and B1 cost the same as B2 and err more. Going from B2 to D-q4 adds €0.59 per 1,000 tickets (about €21 a month) and removes about €84 of expected error cost per ticket: the fine-tuned, quantised model is the choice under any plausible price. The error cost is an upper bound before human review (every silent error is assumed to reach a merchant) and the error costs are guesses; neither changes the ordering. A Vertex CPU endpoint billed 24/7 instead of serverless CPU moves D-q4 to the right; it stays on the front (lowest error of all) and stays the choice while its extra cost per ticket is below the €84 of error it removes.
+
 **Sources:** fictional scenario in [README](README.md); assumptions and sensitivities in [02_sizing.xlsx](02_sizing.xlsx); component evidence in the [LLMOps project](agentic-workflow-subproject/README.md); product gates in [spec](spec.md).
 
 **Build / buy / orchestrate:** Orchestrate an in-house, tenant-scoped workflow around the Qualifier Model, deterministic Routing Node, and human sending; consider a bought Drafter Model only if it runs within the fictional production cloud boundary and beats the validated build case.
