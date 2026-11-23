@@ -454,6 +454,8 @@ def build_ticket_graph(
                 "simulated_send_total": send_counts,
                 "send_disposition_total": disposition_counts,
                 "send_disposition": updated.send_disposition,
+                # model: the draft was sent unchanged; human: edited or written by a person (#58)
+                "send_author": (updated.final_author or "unknown") if send_outcome == "sent" else None,
                 "final_gate_outcome": gate,
                 "business_status": updated.status,
             },

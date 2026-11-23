@@ -58,3 +58,13 @@ def test_unavailable_qualifier_above_five_percent_raises_the_l1_alert(tmp_path: 
                           duration_ms=7000, metrics={"qualifier_latency_ms": 7000, "qualifier_status": status})
     text = render(load_report(db), "metrics.sqlite")
     assert "unavailable on 10.0% of calls" in text
+
+
+def test_send_author_gives_the_direct_send_share(tmp_path: Path) -> None:
+    db = tmp_path / "metrics.sqlite"
+    store = MetricsStore(db)
+    for i, author in enumerate(["model", "model", "model", "human"]):
+        store.record_node(event_id=f"s{i}", flow_id=f"T-{i}", node_id="simulated_send", outcome="sent",
+                          duration_ms=5, metrics={"send_author": author, "send_disposition": "leave_open"})
+    text = render(load_report(db), "metrics.sqlite")
+    assert "**send_author**: model 3/4 (75%), human 1/4 (25%)" in text

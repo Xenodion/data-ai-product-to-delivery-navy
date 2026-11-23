@@ -19,7 +19,11 @@ from pathlib import Path
 
 QUALIFIER_P95_SLO_S = 18.0      # 07_operations.md layer 0: 1.5 x the 11.8 s measured on CPU
 TIMEOUT_SHARE_ACT = 0.05        # 07_operations.md layer 0: timeouts above 5 % of the period
-QUALITY_FIELDS = ("qualifier_status", "evidence_mode", "policy_outcome", "final_gate_outcome", "human_action", "business_status")
+QUALITY_FIELDS = (
+    "qualifier_status", "evidence_mode", "policy_outcome", "final_gate_outcome",
+    "send_author",  # model = draft sent unchanged; human = edited or written by a person (direct send)
+    "human_action", "business_status",
+)
 
 
 @dataclass

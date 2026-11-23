@@ -27,6 +27,7 @@ _CATEGORICAL_METRICS = {
     "final_gate_outcome",
     "human_action",
     "send_disposition",
+    "send_author",
 }
 
 
