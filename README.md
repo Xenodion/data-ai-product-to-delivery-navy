@@ -54,5 +54,6 @@ The original V0 is the clickable static mock-up in [prototype/copilot_panel/inde
 - [Product specification](spec.md), [architecture reference](agentic-workflow-subproject/docs/design/architecture.md), [workflow and detailed UX](agentic-workflow-subproject/docs/design/copilot-workflow.md), [terminology](agentic-workflow-subproject/docs/design/terminology.md), [evaluation cases and grading guideline](evals/README.md).
 - [Delivery roadmap](agentic-workflow-subproject/specs/roadmap.md) and the future [Routing Node contract](agentic-workflow-subproject/specs/004-routing-node/spec.md).
 - Original course briefs and supplied materials are preserved under `docs/assignment*`, `docs/project` and `docs/_archive`.
+- [Metrics](05_metrics.md) and the pre-registered [A/B protocol](06_ab_protocol.md) with its [sample-size notebook](evals/06_ab_sample_size.ipynb).
 
-Deliverables 05 metrics, 06 A/B, 07 operations, 08 launch, and final synthesis remain to be produced from their course instructions. The course asks for at least four numbered files per member and a final v1.0 tag before the oral presentation.
+Deliverables 07 operations, 08 launch, and final synthesis remain to be produced from their course instructions. The course asks for at least four numbered files per member and a final v1.0 tag before the oral presentation.
