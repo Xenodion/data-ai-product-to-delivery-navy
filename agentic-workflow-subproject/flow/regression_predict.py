@@ -4,11 +4,15 @@
     uv run python -m flow.regression_predict
     uv run python ml/qualifier/scripts/regression_check.py
 
+After an infrastructure failure (container stopped, timeouts), `--retry-unavailable` reruns only the
+cases stored as `unavailable` and keeps the others, provided prompt, model and settings are unchanged.
+
 It calls the same code as the demo (`flow/qualifier.py`: production prompt, structured output), one
 ticket at a time, and writes the predictions and a manifest of what produced them. Local and free;
 it reads the hand-labelled eval-set only. Commit both files: CI replays them (issue #19).
 """
 
+import argparse
 import csv
 import json
 import sys
@@ -31,6 +35,10 @@ from ml.qualifier.src.regression_eval import (
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--retry-unavailable", action="store_true",
+                        help="rerun only the cases stored as unavailable; keep the others")
+    args = parser.parse_args()
     load_dotenv(Path(__file__).parent.parent / ".env")
     config = load_config()
     source = load_thresholds()["source"]
@@ -38,26 +46,41 @@ def main() -> int:
     triples = load_triples(eval_set)
     prompt = load_qualifier_prompt(config)
     model = build_qualifier_model(config)
+    predictions = resolve(source["predictions"])
+    fingerprint = expected_fingerprint(eval_set, resolve(source["flow_config"]))
+    # The prompt actually used, which may come from Langfuse: the gate compares it with the repository.
+    fingerprint["prompt_sha256"] = prompt_template_sha(str(prompt.compile(ticket=TICKET_PLACEHOLDER)))
+
+    kept: dict[str, dict[str, str]] = {}
+    if args.retry_unavailable:
+        manifest_path = resolve(source["manifest"])
+        previous = json.loads(manifest_path.read_text(encoding="utf-8"))
+        changed = [key for key, value in fingerprint.items() if previous.get(key) != value]
+        if changed:
+            print(f"refusing to mix runs: {', '.join(changed)} changed since the stored predictions")
+            return 1
+        with predictions.open(newline="", encoding="utf-8") as handle:
+            kept = {row["id"]: row for row in csv.DictReader(handle) if row["status"] != "unavailable"}
 
     rows, statuses = [], Counter()
     for i, triple in enumerate(triples, 1):
-        ticket = Ticket(ticket_id=triple.case_id, merchant_id=config.merchant_id,
-                        body=triple.ticket, created_at=datetime.now(UTC))
-        result = qualify(ticket, model=model, config=config, prompt=prompt)
-        statuses[result.status] += 1
-        rows.append({"id": triple.case_id, "status": result.status, "raw_output": result.raw or ""})
-        print(f"{i:>3}/{len(triples)} {triple.case_id} {result.status}", flush=True)
+        if triple.case_id in kept:
+            row = kept[triple.case_id]
+        else:
+            ticket = Ticket(ticket_id=triple.case_id, merchant_id=config.merchant_id,
+                            body=triple.ticket, created_at=datetime.now(UTC))
+            result = qualify(ticket, model=model, config=config, prompt=prompt)
+            row = {"id": triple.case_id, "status": result.status, "raw_output": result.raw or ""}
+            print(f"{i:>3}/{len(triples)} {triple.case_id} {result.status}", flush=True)
+        statuses[row["status"]] += 1
+        rows.append(row)
 
-    predictions = resolve(source["predictions"])
     predictions.parent.mkdir(parents=True, exist_ok=True)
     with predictions.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=["id", "status", "raw_output"])
         writer.writeheader()
         writer.writerows(rows)
 
-    fingerprint = expected_fingerprint(eval_set, resolve(source["flow_config"]))
-    # The prompt actually used, which may come from Langfuse: the gate compares it with the repository.
-    fingerprint["prompt_sha256"] = prompt_template_sha(str(prompt.compile(ticket=TICKET_PLACEHOLDER)))
     manifest = {
         **fingerprint,
         "prompt_name": prompt.name,
