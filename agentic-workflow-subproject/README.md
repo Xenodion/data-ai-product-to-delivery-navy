@@ -10,15 +10,15 @@ It is an isolated uv project (own `pyproject.toml`, Python 3.11.6, `uv.lock`, `.
 
 ![Keelpay target flow v2](docs/design/flow-v2/flow_v2.svg)
 
-Target flow validated on 6 November 2026; only the Qualifier Model exists today. A ticket is read by the Qualifier Model, the Routing Node picks a desk with Python rules, read-only tools fetch facts, and the Drafter Model writes only from that evidence. A policy check blocks forbidden content, a Support Agent approves in the Validator, and a final compliance gate checks the text before the simulated send. Tickets the flow cannot route go to the Re-router, where a person corrects them once, writes the reply, or closes them. Details: [node table](docs/design/flow-v2/node_table_v1.md); build order: [task list](specs/013-flow-v2/tasks.md).
+Target flow validated on 6 November 2026; on 23 November every node except the optional Judge and Redraft runs in the local demo (status below). A ticket is read by the Qualifier Model, the Routing Node picks a desk with Python rules, read-only tools fetch facts, and the Drafter Model writes only from that evidence. A policy check blocks forbidden content, a Support Agent approves in the Validator, and a final compliance gate checks the text before the simulated send. Tickets the flow cannot route go to the Re-router, where a person corrects them once, writes the reply, or closes them. Details: [node table](docs/design/flow-v2/node_table_v1.md); build order: [task list](specs/013-flow-v2/tasks.md).
 
 ## Contract with the rest of NAVY
 
-The Qualifier research and the future runtime belong to this sub-project. The runtime must preserve the JSON schema below at its inference boundary; the model endpoint and runtime are not yet deployed. The definitive shared-contract packaging remains to be selected before implementing the backend.
+The Qualifier research and the future runtime belong to this sub-project. The runtime preserves the JSON schema below at its inference boundary (`flow/qualifier.py`, Field check); it runs locally, and the hosted Vertex endpoint is in progress (#73).
 
 Keys: `intent`, `sub_intent`, `transaction_id`, `amount`, `currency`, `urgency`, `sentiment`. All values are strings: `"UNDEFINED"` when a field cannot be determined, `"OTHER"` when the request is understood but fits no listed class, `""` when `transaction_id`, `amount` or `currency` is absent. Contract in `ml/qualifier/src/dataset_build/schema.py`, definitions in `docs/label_definitions.md`. The future **Routing Node** lives in this subproject and blocks only the decision that depends on an unresolved field; an absent payment reference does not automatically block a known desk.
 
-## Status (2026-11-03)
+## Status (2026-11-23)
 
 The plan, with its gates, is `docs/roadmap.md`; the day-by-day account is in `ml/qualifier/notebooks/`.
 
@@ -31,7 +31,7 @@ The plan, with its gates, is `docs/roadmap.md`; the day-by-day account is in `ml
 | Compact variants (merged GGUF, smaller models) | D-q4 locked on val (0.3 silent errors per 100, 0 % urgent in a wrong desk, 6.4 s per ticket on CPU, about 20 euros a month); S-1.5B and S-0.5B cancelled (`docs/compact_variants.md`) |
 | Final reading of the test sets (Gate G7) | done in `ml/qualifier/notebooks/05_final_evaluation.ipynb`. Champion D-q4: 0.7 silent errors per 100 tickets against 33.9 for B2, 0.6 % of urgent tickets in a wrong desk (1 of 167) against 6.6 %. Desk accuracy and auto-routing bars of the brief met; urgent guardrail and silent-error trigger not met on the model alone (`docs/scoring_protocol.md` section 8) |
 | Qualifier Model registration in Vertex AI (Gate G8; historical registered name) | done: `keelpay-router-json` (ID 7308774847222382592, alias `qwen3b-lora-q4`, region europe-west2) |
-| Shared NAVY demo scope (confirmed orally by Vincent) | To build: deployed Python API on Cloud Run with CPU Qualifier Model, deterministic Routing Node, synthetic lookup/KB, external synthetic-only Drafter Model, three-tab functional front end, Python Demo Injector, Langfuse traces; no real ticket data |
+| Shared NAVY demo scope (confirmed orally by Vincent) | Runs locally (container demo, PR #72): FastAPI API with SQLite state and LangGraph checkpoints, CPU Qualifier Model, deterministic Routing Node, synthetic ledger and knowledge search, external synthetic-only Drafter Model, Policy check and Final compliance gate, Overview, Re-routing and Ticket review workspaces, dataset injector, Langfuse spans; no real ticket data. Remaining: hosted deployment (#40, #73, #74), Judge and Redraft (#59), `copilot_mode` switch (#60), full-flow re-evaluation since the guardrails |
 
 ## Documents
 
@@ -164,11 +164,11 @@ Before any billed command: say whether it is local (free) or on GCP (billed) and
 
 `ml/` builds and evaluates the models, `flow/` uses them and `frontend/` shows them. The rules are in [`LAYOUT.md`](LAYOUT.md), and `tests/test_layout.py` enforces them.
 
-The flow runs locally, and the Qualifier work is complete. The front end has the Overview page on sample numbers (`cd frontend && npm install && npm run dev`; `npm run check` verifies that the numbers reconcile). The API does not exist yet.
+The flow, the API and the front end run locally (see "Run the ticket flow locally"), and the Qualifier work is complete. The front end reads the API: Overview, Re-routing, Ticket review and Errors (`cd frontend && npm install && npm run dev`).
 
 ```
 flow/                      # ticket flow: Qualifier call, Routing Node, Drafter, runner
-frontend/                  # Overview on sample data; planned Re-router and Validator
+frontend/                  # Overview, Re-routing, Ticket review and Errors, on the API
 ml/qualifier/
   src/
     constants.py           # settings from environment variables

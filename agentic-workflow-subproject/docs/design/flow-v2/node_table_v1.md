@@ -1,6 +1,6 @@
 # Flow v2: node table (working document, v1)
 
-Status: target architecture validated on 6 November 2026; decisions clarified by [ADR 0001](../adr/0001-text-search-and-ticket-resolution.md) on 10 November. Working document, not a course deliverable. Integration is partial: the initial local path is split into checkpointable LangGraph steps through the Policy Check, with separate SQL and deterministic Text Search tools, human review and simulated-send gates. API/domain persistence, atomic human reroute, send disposition, Judge/Redraft and full-flow evaluation remain. Diagram: [flow_v2.svg](flow_v2.svg) (intentionally unchanged pending a dedicated diagram update). This table carries the project status. Build order: [task list](../../../specs/013-flow-v2/tasks.md).
+Status: target architecture validated on 6 November 2026; decisions clarified by [ADR 0001](../adr/0001-text-search-and-ticket-resolution.md) on 10 November. Working document, not a course deliverable. Status on `main`, 23 November 2026: every node except Judge and Redraft is wired in the LangGraph flow behind the FastAPI API (SQLite state, LangGraph checkpoints) and the React workspaces, with send disposition and idempotent simulated send. Remaining: Judge/Redraft (#59), the `copilot_mode` switch (#60), hosted deployment (#73, #74) and the full-flow re-evaluation since the guardrails. Diagram: [flow_v2.svg](flow_v2.svg) (intentionally unchanged pending a dedicated diagram update). This table carries the project status. Build order: [task list](../../../specs/013-flow-v2/tasks.md).
 
 This replaces two rules of the 3 November workflow: "the Drafter attempts every ticket" and "every reply passes through the Validator". The root `spec.md`, `governance.md` and `docs/design/copilot-workflow.md` still describe the old rules.
 
@@ -55,22 +55,22 @@ Level: L1 suggests, L2 drafts and a person approves every reply, L3 acts on a sc
 
 | # | Node | Type | Pattern | Level | Now | Input | Output | On failure |
 |---|---|---|---|---|---|---|---|---|
-| 1 | Intake | Rule | Validation | L4 | Partial | JSON envelope | Validated ticket | Error queue |
-| 2 | Qualifier | Local LLM, D-q4 | Routing, classifier step (rung 4) | L1 | Exists | Subject and body | 7 fields | Re-router, reason code |
-| 3 | Field check | Rule | Chaining gate | L4 | To build | Text, 7 fields | Each reference `verified` or `unverified` | Mark `unverified`, route anyway |
-| 4 | Routing | Rule | Routing | L3 | Partial | Fields, turn | Desk or triage, priority, reasons; later turns keep the desk | Re-router |
-| 5 | Context plan | Rule | Routing table | L4 | To build | Desk, sub-intent, verified references, earlier turns | Tools to call, or none | Empty plan, node 8 decides |
-| 6 | Ledger lookup | Tool, SQL | Tool of the augmented LLM | L1 | Partial | Merchant, transaction id | Record, `missing`, `ambiguous` or `unavailable` | `unavailable` |
-| 7 | Text Search | Tool, deterministic lexical search | Approved-document search | L1 | Partial | Ticket text plus desk/sub-intent/date filters | Bounded approved passages with source IDs/versions | `unavailable` |
-| 8 | Evidence gate | Rule | Chaining gate | L4 | To build | Plan, tool results | `factual`, `clarification` or `no_draft` | `no_draft` |
-| 9 | Desk Drafter | LLM | Routing, chaining | L2 | Partial | Ticket, desk prompt, evidence, mode | Draft with citations | Validator, no draft |
-| 10 | Policy check | Rule | Chaining gate | L4 | Partial | Draft, evidence | Pass, or block with reason | Treated as blocked |
-| 11 | Judge (optional) | LLM, other model | Evaluator-optimizer | L1 | To build | Ticket, evidence, draft | Closed rubric, recommendations | Skip; flag "not judged" |
-| 12 | Redraft | LLM, stronger model | Evaluator-optimizer, cascade | L2 | To build | Previous draft, reasons, same evidence | New draft version | Keep last draft, objections shown |
-| R | Re-router | Person | Checkpoint | Human | Backend only | Ticket, reasons | Correction, direct reply or closure | Stays in queue |
-| 13 | Validator | Person | Approval checkpoint | Human | Backend only | Draft, evidence, objections | Approve, edit, send back, write | Stays in queue |
-| 14 | Final compliance gate | Rule | Last gate | L4 | Partial | Final text, author, merchant | Pass, override, hard block | Treated as blocked |
-| 15 | Send and disposition | Rule, person trigger | Action | Human trigger | To build | Approved text plus explicit `leave_open` / `close` choice | Simulated send, once; resulting state is sent-open or sent-closed | Retry, never duplicate; disposition is idempotent and audited |
+| 1 | Intake | Rule | Validation | L4 | Built | JSON envelope | Validated ticket | Error queue |
+| 2 | Qualifier | Local LLM, D-q4 | Routing, classifier step (rung 4) | L1 | Built | Subject and body | 7 fields | Re-router, reason code |
+| 3 | Field check | Rule | Chaining gate | L4 | Built | Text, 7 fields | Each reference `verified` or `unverified` | Mark `unverified`, route anyway |
+| 4 | Routing | Rule | Routing | L3 | Built | Fields, turn | Desk or triage, priority, reasons; later turns keep the desk | Re-router |
+| 5 | Context plan | Rule | Routing table | L4 | Built | Desk, sub-intent, verified references, earlier turns | Tools to call, or none | Empty plan, node 8 decides |
+| 6 | Ledger lookup | Tool, SQL | Tool of the augmented LLM | L1 | Built (synthetic) | Merchant, transaction id | Record, `missing`, `ambiguous` or `unavailable` | `unavailable` |
+| 7 | Text Search | Tool, deterministic lexical search | Approved-document search | L1 | Built | Ticket text plus desk/sub-intent/date filters | Bounded approved passages with source IDs/versions | `unavailable` |
+| 8 | Evidence gate | Rule | Chaining gate | L4 | Built | Plan, tool results | `factual`, `clarification` or `no_draft` | `no_draft` |
+| 9 | Desk Drafter | LLM | Routing, chaining | L2 | Built | Ticket, desk prompt, evidence, mode | Draft with citations | Validator, no draft |
+| 10 | Policy check | Rule | Chaining gate | L4 | Built | Draft, evidence | Pass, or block with reason | Treated as blocked |
+| 11 | Judge (optional) | LLM, other model | Evaluator-optimizer | L1 | Not built (#59) | Ticket, evidence, draft | Closed rubric, recommendations | Skip; flag "not judged" |
+| 12 | Redraft | LLM, stronger model | Evaluator-optimizer, cascade | L2 | Not built (#59) | Previous draft, reasons, same evidence | New draft version | Keep last draft, objections shown |
+| R | Re-router | Person | Checkpoint | Human | Built | Ticket, reasons | Correction, direct reply or closure | Stays in queue |
+| 13 | Validator | Person | Approval checkpoint | Human | Built | Draft, evidence, objections | Approve, edit, send back, write | Stays in queue |
+| 14 | Final compliance gate | Rule | Last gate | L4 | Built | Final text, author, merchant | Pass, override, hard block | Treated as blocked |
+| 15 | Send and disposition | Rule, person trigger | Action | Human trigger | Built (simulated) | Approved text plus explicit `leave_open` / `close` choice | Simulated send, once; resulting state is sent-open or sent-closed | Retry, never duplicate; disposition is idempotent and audited |
 | 16 | Audit log | Rule | Trace | L4 | Partial | All nodes | Versions, actors, reasons | Raise an alert; do not lose the ticket |
 
 Blocked after the budget: the draft is shown with its reason and cannot be approved; the person writes the reply. LLM calls per ticket: 2 with the Judge off, 3 with one Judge call, 4 when a policy block triggers a redraft without the Judge, 7 in the worst case (Qualifier, Drafter, 3 Judge, 2 Redraft), 1 of them local.
