@@ -48,3 +48,6 @@ CLAUDE.md
 GEMINI.md
 
 mlflow.db
+
+# Team audit export: personal e-mail and IP addresses, never commit (#82)
+audit_logs*.csv

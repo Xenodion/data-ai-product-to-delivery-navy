@@ -17,27 +17,27 @@ A ticket comes in as a typed envelope. A merchant reply keeps the `ticket_id` an
 
 ## 3. Components, in order
 
-Trust levels: L1 suggests, L2 drafts and a person approves every reply, L3 acts on a defined scope with sampling, L4 acts alone under a threshold. "Today" compares with the code in `agentic-workflow-subproject/flow/`.
+Trust levels: L1 suggests, L2 drafts and a person approves every reply, L3 acts on a defined scope with sampling, L4 acts alone under a threshold. "Today" compares with the code in `agentic-workflow-subproject/flow/` on `main`, checked on 23 November 2026. "Built" means wired in the LangGraph flow and the local demo, not re-measured end to end: the last full-flow number is the 13 November run (`evals/report_v0.md`).
 
 | # | Component | Pattern | Level | Tool or model | Today | Main metric | Main risk |
 |---|---|---|---|---|---|---|---|
-| 1 | Intake | Rule-based | L4 | Rule | Partial | Share of tickets lost | A valid ticket refused |
-| 2 | Qualifier | Routing, classifier step (rung 4) | L1 | Local LLM, D-q4 | Exists | Silent errors per 100 tickets: 0.7 | An urgent ticket sent to the wrong desk |
-| 3 | Field check | Rule-based, chaining gate | L4 | Rule | To build | Wrong references caught | A valid format flagged as wrong |
-| 4 | Routing | Routing on a rule | L3 | Rule | Partial | Re-router correction rate | The desk kept wrongly on later turns |
-| 5 | Context plan | Rule-based routing | L4 | Rule | To build | Needed sources planned | A needed source not planned |
-| 6 | Ledger lookup | Tool of the augmented LLM | L1 | Read-only SQL tool | To build | Exact, missing and ambiguous cases correct | Another merchant's record returned |
-| 7 | Knowledge search | Tool of the augmented LLM | L1 | Retrieval tool | To build | Retrieval hit rate | A stale passage used |
-| 8 | Evidence gate | Rule-based, chaining gate | L4 | Rule | To build | `factual` decisions that had enough evidence | A factual reply without enough evidence |
-| 9 | Desk Drafter | Routing, prompt chaining | L2 | LLM | Partial | Drafts sendable as is | An unsupported claim or promise |
-| 10 | Policy check | Rule-based, chaining gate | L4 | Rule | To build | Seeded violations caught | A violation missed |
-| 11 | Judge (optional) | Evaluator-optimizer | L1 | Other LLM | To build | Sendable gain per revision | Good drafts rejected, extra cost |
-| 12 | Redraft | Evaluator-optimizer | L2 | Stronger LLM | To build | Revised drafts that become sendable | A revision worse than the draft |
-| R | Re-router | Human checkpoint | Human | Person | Backend only | Correction time | An urgent ticket waiting in the queue |
-| 13 | Validator | Human checkpoint | Human | Person | Backend only | Review time | Approval without reading |
-| 14 | Final compliance gate | Rule-based, last gate | L4 | Rule | To build | Real issues stopped on the final text | A violation in a human text missed |
-| 15 | Send | Rule-based action | Human trigger | Rule | To build | Duplicate sends: 0 | A reply sent twice |
-| 16 | Audit log | Rule-based | L4 | Rule | Partial | Tickets with a complete history | Personal data in logs |
+| 1 | Intake | Rule-based | L4 | Rule | Built | Share of tickets lost | A valid ticket refused |
+| 2 | Qualifier | Routing, classifier step (rung 4) | L1 | Local LLM, D-q4 | Built (CPU; Vertex endpoint in progress, #73) | Silent errors per 100 tickets: 0.7 | An urgent ticket sent to the wrong desk |
+| 3 | Field check | Rule-based, chaining gate | L4 | Rule | Built | Wrong references caught | A valid format flagged as wrong |
+| 4 | Routing | Routing on a rule | L3 | Rule | Built (later turns keep the desk) | Re-router correction rate | The desk kept wrongly on later turns |
+| 5 | Context plan | Rule-based routing | L4 | Rule | Built | Needed sources planned | A needed source not planned |
+| 6 | Ledger lookup | Tool of the augmented LLM | L1 | Read-only SQL tool | Built (synthetic ledger) | Exact, missing and ambiguous cases correct | Another merchant's record returned |
+| 7 | Knowledge search | Tool of the augmented LLM | L1 | Retrieval tool | Built (lexical search, approved sources) | Retrieval hit rate | A stale passage used |
+| 8 | Evidence gate | Rule-based, chaining gate | L4 | Rule | Built | `factual` decisions that had enough evidence | A factual reply without enough evidence |
+| 9 | Desk Drafter | Routing, prompt chaining | L2 | LLM | Built | Drafts sendable as is | An unsupported claim or promise |
+| 10 | Policy check | Rule-based, chaining gate | L4 | Rule | Built | Seeded violations caught | A violation missed |
+| 11 | Judge (optional) | Evaluator-optimizer | L1 | Other LLM | Not built (#59) | Sendable gain per revision | Good drafts rejected, extra cost |
+| 12 | Redraft | Evaluator-optimizer | L2 | Stronger LLM | Not built (#59) | Revised drafts that become sendable | A revision worse than the draft |
+| R | Re-router | Human checkpoint | Human | Person | Built (API and Re-routing workspace) | Correction time | An urgent ticket waiting in the queue |
+| 13 | Validator | Human checkpoint | Human | Person | Built (API and Ticket review workspace) | Review time | Approval without reading |
+| 14 | Final compliance gate | Rule-based, last gate | L4 | Rule | Built (before every send) | Real issues stopped on the final text | A violation in a human text missed |
+| 15 | Send | Rule-based action | Human trigger | Rule | Built (simulated, idempotent) | Duplicate sends: 0 | A reply sent twice |
+| 16 | Audit log | Rule-based | L4 | Rule | Partial (lifecycle events and Langfuse spans; retention open) | Tickets with a complete history | Personal data in logs |
 
 **For the whole system.** Metric: drafts sendable as is, with the quality-assurance (QA) score held constant. Main risk: a wrong payment fact approved without a real review.
 
