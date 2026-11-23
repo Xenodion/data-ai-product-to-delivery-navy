@@ -147,6 +147,8 @@ The API is a synthetic single-user local demo. It is not exposed on the network 
 
 Each run writes to `.local/runs/<run_id>.jsonl`. It sends nothing, and it reads the validation split only.
 
+Latency, cost and quality signals of the runs (issue #20): `uv run python -m flow.metrics_report` reads the local metrics store (`metrics_db_path` in `flow/config.toml`) and prints a Markdown report: Qualifier and Drafter latency p50/p95, Drafter cost per draft and per flow, node outcomes, and the shares of Qualifier status, evidence mode, policy and final-gate outcomes. It flags the layer-0 thresholds of `07_operations.md` (Qualifier p95 above 18 s, unavailable above 5 %). Aggregates only: no ticket ID or text.
+
 ## Evaluation in CI (issue #19)
 
 Two GitHub Actions workflows at the repository root (`.github/workflows/`):

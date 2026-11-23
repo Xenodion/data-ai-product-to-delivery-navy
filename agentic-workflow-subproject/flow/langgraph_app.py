@@ -163,6 +163,7 @@ def build_ticket_graph(
         node_metrics: dict[str, Any] = {}
         if node_id == "qualifier" and updated.qualifier and updated.qualifier.model_version != "not_run":
             node_metrics["qualifier_latency_ms"] = round(updated.qualifier.latency_seconds * 1000, 3)
+            node_metrics["qualifier_status"] = updated.qualifier.status
         elif node_id == "evidence_gate" and updated.evidence_decision:
             node_metrics["evidence_mode"] = updated.evidence_decision.mode
         elif node_id == "policy_check" and updated.policy_check:

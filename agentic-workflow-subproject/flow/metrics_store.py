@@ -21,6 +21,7 @@ _NUMERIC_METRICS = {
 }
 _CATEGORICAL_METRICS = {
     "business_status",
+    "qualifier_status",
     "evidence_mode",
     "policy_outcome",
     "final_gate_outcome",
