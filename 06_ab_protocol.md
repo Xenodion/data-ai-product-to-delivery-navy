@@ -66,7 +66,7 @@ Six crossover weeks cover the 4.9 weeks of the base case and keep the MDE under 
 Pre-registered segments, from `05_metrics.md` §3 and the S3 data audit: **language** (French · English · other) · **desk** (payments · disputes · technical / API · compliance · Re-router) · **ticket difficulty** (clean · hard) · **urgency** (`high` · other) · **agent seniority** (new · experienced).
 
 - Each segment effect is reported with its interval; **no segment decides the launch**, none is powered on its own, and none is searched for after the read.
-- Fairness, named in `05_metrics.md`: selection-rate parity (share of tickets that get a draft, by language) and equal error rates (Re-router correction and serious errors, by language).
+- Fairness, named and baselined offline in `05_metrics.md` §3 (`evals/05_segment_fairness.ipynb` §2): selection-rate parity (share of tickets that get a draft, by language — offline on `eval_set_v1.csv`: `72.5 %` in French vs `66.1 %` in English, Fisher `p = 0.656`; on `test_natural`: `71.2 %` vs `70.1 %`) and equal error rates (misrouting among auto-routed tickets `12.1 %` FR vs `11.9 %` EN on `eval_set_v1.csv`, whereas `payments` has `0 %` silent errors against `16.0 %` on `disputes`).
 - Checks reported with the primary: arm × period (learning and carry-over), first three weeks against last three (novelty).
 
 ## 6 · Stopping rules
@@ -75,11 +75,11 @@ Pre-registered segments, from `05_metrics.md` §3 and the S3 data audit: **langu
 
 | Trigger | Action | Owner |
 |---|---|---|
-| One urgent ticket routed automatically to the wrong desk | review that ticket within 24 h; second case → routing off for urgent tickets (`copilot_mode` routing off) | Head of Support |
-| One uncaught serious error caused by the copilot reaches a merchant | immediate review; affected desk to L1 (no draft) until explained | Head of Compliance |
-| Serious errors above the pessimistic value of a category (`Flow!C19:C21`) | **stop the test**: copilot off | Head of Compliance |
-| Harm threshold of `governance.md` Session 5 (repeat contact higher in copilot-on weeks two weeks in a row, or Re-router corrections above 1 in 7) | drafting off on that segment | Head of Support |
-| QA score of copilot replies below the margin two weeks in a row | drafting off; test paused | Head of Support |
+| One urgent ticket routed automatically to the wrong desk | review that ticket within 24 h; second case → routing off for urgent tickets (`copilot_mode = l2_routing_off`, #60) | Head of Support |
+| One uncaught serious error caused by the copilot reaches a merchant | immediate review; affected desk to L1 (`copilot_mode = l1_drafting_off`, no draft) until explained | Head of Compliance |
+| Serious errors above the pessimistic value of a category (`Flow!C19:C21`) | **stop the test**: copilot off (`copilot_mode = l3_copilot_off`) | Head of Compliance |
+| Harm threshold of `governance.md` Session 5 (repeat contact higher in copilot-on weeks two weeks in a row, or Re-router corrections above 1 in 7) | drafting off on that segment (`l1_drafting_off`) | Head of Support |
+| QA score of copilot replies below the margin two weeks in a row | drafting off (`l1_drafting_off`); test paused | Head of Support |
 | Sample-ratio mismatch on the stream split (χ², p < 0.001) | pause the analysis; fix the assignment; affected week discarded | NAVY |
 | Copilot unavailable for more than 10 % of a week's copilot-stream tickets, or a model, prompt, rule or threshold changes | the week does not count; it is replaced at the end | NAVY |
 

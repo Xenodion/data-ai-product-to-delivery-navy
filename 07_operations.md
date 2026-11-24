@@ -13,7 +13,7 @@ What the copilot can do wrong, who it hurts, and what catches it. Ordered by har
 | 3 | **Data of another merchant in a draft** | the other merchant (privacy) | final gate block count; audit log | hard block on foreign `M-####` identifiers, cannot be overridden (`policy-check.md`); ledger scoped by `merchant_id` from the envelope |
 | 4 | **Automation bias**: agents approve drafts unread to go faster | merchants, then quality | counter-metric "drafts on the wrong payment validated unread" (`05_metrics.md` §3); seeded wrong drafts | unchanged draft needs an explicit confirmation (`governance.md` Session 4) |
 | 5 | **Promise or legal statement** (refund, fee quote, legal advice) | Keelpay (liability) | Policy check block rate; QA sample | Policy check on the draft (node 10) and on the final text (node 14) |
-| 6 | **Unequal quality by language or desk**: English or Belgian formal letters get fewer drafts or more errors | merchants of that segment | selection-rate parity and error rates by segment (`05_metrics.md` §3) | harm threshold of `governance.md` Session 5: drafting off on that segment |
+| 6 | **Unequal quality by language or desk**: English or Belgian formal letters get fewer drafts or more errors | merchants of that segment | selection-rate parity and error rates by segment (`05_metrics.md` §3; offline baseline in `evals/05_segment_fairness.ipynb` §2: `72.5 %` FR vs `66.1 %` EN draft-eligible on `eval_set_v1.csv`, all 4 silent errors of `test_natural` in FR, `0 %` silent errors on `payments` vs `16.0 %` on `disputes`) | harm threshold of `governance.md` Session 5: drafting off on that segment |
 | 7 | **Silent drift**: new product, new fraud wording, new language; the Qualifier keeps answering, wrongly | everyone, slowly | PSI and invalid / `UNDEFINED` shares (§2, layer 1); audit sample (layer 2) | invalid or `UNDEFINED` intent goes to the Re-router with no draft |
 | 8 | **Re-router overload**: abstentions grow, people wait | merchants (delay), agents | Re-router queue age, `UNDEFINED` share | FIFO and waiting time visible (`spec.md` §6) |
 | 9 | **Deskilling**: new agents never learn to route or write | Keelpay, long term | A/B arm × period and seniority segment (`06_ab_protocol.md` §5); manual-week QA | copilot-off still usable (§4, L3); periodic manual weeks for new agents |
@@ -65,16 +65,16 @@ A trigger starts a **re-evaluation**, not a retraining. Retraining is the last o
 |---|---|---|---|
 | **Prompt** (Qualifier or Drafter) | move the Langfuse `production` label back to the previous immutable version (`prompt-management.md`) | minutes | yes |
 | **Qualifier model** | point `qualifier_model_uri` / `qualifier_model_version` (and its MD5) in `flow/config.toml`, or the Registry alias, to the previous version; restart | under an hour | yes, by configuration; no one-click |
-| **Copilot level** | `copilot_mode` switch with four positions (`governance.md` Session 4) | must be one action | **not built: issue #60.** Today only `ledger_enabled` / `knowledge_enabled` exist in `flow/config.toml` |
+| **Copilot level** | `copilot_mode` switch (`flow/config.toml` or `NAVY_COPILOT_MODE`) with four fallback positions (`governance.md` Session 4, #60) | immediate on env/config reload | **yes (#60):** `flow/pipeline_steps.py`, verified by `uv run python -m flow.rollback_check` alongside `ledger_enabled` / `knowledge_enabled` |
 
-**The four levels of `copilot_mode`**, from least to most:
+**The four levels of `copilot_mode`** (`full` is nominal), from least to most:
 
-| Level | What stays | What stops |
+| Level (`copilot_mode`) | What stays | What stops |
 |---|---|---|
-| Judge off | everything else | the optional Judge / Redraft (nodes 11–12) |
-| **L1 · drafting off** | qualified fields, desk, context, human writing | every model draft |
-| L2 · routing off | qualified fields as hints | automatic desk: every ticket to manual routing |
-| **L3 · copilot off** | the manual queue (FIFO, waiting time) | the whole copilot |
+| `judge_off` | everything else | the optional Judge / Redraft (nodes 11–12) |
+| **`l1_drafting_off` (L1 · drafting off)** | qualified fields, desk, context, human writing | every model draft (`DRAFTING_OFF`) |
+| `l2_routing_off` (L2 · routing off) | qualified fields as hints | automatic desk (`ROUTING_OFF`): every ticket to manual routing |
+| **`l3_copilot_off` (L3 · copilot off)** | the manual queue (FIFO, waiting time) | the whole copilot (`COPILOT_OFF`, `0` model or tool calls) |
 
 **Rollback criteria — any one is enough, no vote needed:**
 
@@ -89,7 +89,7 @@ A trigger starts a **re-evaluation**, not a retraining. Retraining is the last o
 
 **Procedure.** The decider triggers, NAVY executes and writes the line in `governance.md` (date, trigger, level, owner). Tickets in flight are never lost: a ticket already drafted keeps its draft for human review, new tickets follow the new level, receipt time and total age are preserved (`governance.md` Session 4). **Return** to the previous level only after the cause is named, the fix passes the eval-set replay, and the decider signs it off.
 
-**Tested before every demo and every release:** run the eval-set at L1 and check that no draft is produced; run at L3 and check that the manual queue works (#60). A rollback that was never tested is not a rollback.
+**Tested before every demo and every release** (`uv run python -m flow.rollback_check`, `tests/flow/test_copilot_mode_eval_replay.py`, #60): replayed on all 100 cases of `evals/eval_set_v1.csv` (24 November 2026) — `l1_drafting_off` produces **0 model drafts** (`79` routed with `69` tool runs, `21` to Re-router); `l2_routing_off` routes `100/100` to manual triage with **0 drafts**; `l3_copilot_off` makes **0 Qualifier, tool or Drafter calls**, preserves FIFO order on `100/100` tickets, and completes human reply/send end to end. A rollback that was never tested is not a rollback.
 
 ## 5 · What this plan does not cover
 
