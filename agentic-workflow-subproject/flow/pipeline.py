@@ -210,14 +210,15 @@ def reroute(
         else unavailable_stubs(plan)
     )
     evidence = decide_evidence(plan, tool_results)
-    if evidence.mode == "no_draft":
+    if evidence.mode == "no_draft" or config.copilot_mode not in {"full", "judge_off"}:
+        extra = ("DRAFTING_OFF",) if evidence.mode != "no_draft" else ()
         return run.model_copy(
             update={
                 "desk": desk,
                 "status": "awaiting_validation",
                 "drafts": stale,
                 "reroute_count": run.reroute_count + 1,
-                "reason_codes": (*run.reason_codes, "FIRST_REROUTE_RECOMPUTE", *evidence.reason_codes),
+                "reason_codes": (*run.reason_codes, "FIRST_REROUTE_RECOMPUTE", *evidence.reason_codes, *extra),
                 "draft_error": None,
                 "context_plan": plan,
                 "evidence_decision": evidence,

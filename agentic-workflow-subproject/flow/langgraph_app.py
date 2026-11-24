@@ -27,6 +27,7 @@ from flow.metrics_store import MetricsStore
 from flow.pipeline_steps import (
     context_plan_step,
     drafter_step,
+    drafting_enabled,
     evidence_gate_step,
     field_check_step,
     finalize_step,
@@ -229,7 +230,9 @@ def build_ticket_graph(
 
     def route_after_evidence(state: FlowState) -> Literal["finalize_ticket", "drafter"]:
         work = PipelineWork.model_validate(state["pipeline_work"])
-        return "finalize_ticket" if work.evidence_decision and work.evidence_decision.mode == "no_draft" else "drafter"
+        if not drafting_enabled(config) or (work.evidence_decision and work.evidence_decision.mode == "no_draft"):
+            return "finalize_ticket"
+        return "drafter"
 
     def route_after_finalize(state: FlowState) -> Literal["prepare_human_wait", "__end__"]:
         if _run(state).status in {"awaiting_validation", "awaiting_reroute", "manual_handling"}:
@@ -259,7 +262,7 @@ def build_ticket_graph(
         if run.status == "awaiting_reroute":
             return ["reroute", "write"]
         if run.status == "manual_handling":
-            return ["close"]
+            return ["write", "close"]
         return []
 
     def request_human_action(state: FlowState) -> dict[str, Any]:

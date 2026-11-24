@@ -15,10 +15,14 @@ from ml.qualifier.src.dataset_build.schema import TicketLabel
 CONFIG_PATH = Path(__file__).parent / "config.toml"
 WORLD_DATABASE_ENV = "NAVY_WORLD_DB"
 QUALIFIER_URL_ENV = "NAVY_QUALIFIER_URL"
+COPILOT_MODE_ENV = "NAVY_COPILOT_MODE"
 FROZEN = ConfigDict(extra="forbid", frozen=True)
 
 Desk = Literal["payments", "disputes", "technical_api", "compliance"]
 Route = Literal["payments", "disputes", "technical_api", "compliance", "triage"]
+CopilotMode = Literal[
+    "full", "judge_off", "l1_drafting_off", "l2_routing_off", "l3_copilot_off",
+]
 Priority = Literal["high", "medium", "low", "unknown"]
 Status = Literal[
     "awaiting_validation", "awaiting_reroute", "manual_handling",
@@ -44,7 +48,9 @@ PolicyFindingCode = Literal[
     "POLICY_CHECK_ERROR",
 ]
 ReasonCode = Literal[
+    "COPILOT_OFF",
     "DESK_FROM_SUPPORTED_INTENT",
+    "DRAFTING_OFF",
     "DRAFTER_UNAVAILABLE",
     "DRAFT_REJECTED",
     "HUMAN_ONLY_TOPIC",
@@ -67,6 +73,7 @@ ReasonCode = Literal[
     "QUALIFIER_INVALID",
     "QUALIFIER_UNAVAILABLE",
     "RETRIEVAL_UNAVAILABLE",
+    "ROUTING_OFF",
     "SECOND_REROUTE_MANUAL",
     "SENTIMENT_NEUTRAL_FALLBACK",
     "SOURCE_MISSING",
@@ -108,6 +115,7 @@ class FlowConfig(BaseModel):
     merchant_id: str
     max_automated_turns: int
     max_reroutes: int
+    copilot_mode: CopilotMode = "full"
     ledger_enabled: bool
     knowledge_enabled: bool
     tool_timeout_seconds: float
@@ -492,6 +500,9 @@ def load_config(path: Path = CONFIG_PATH) -> FlowConfig:
         api_worker_count=api.get("worker_count", 0),
         api_cors_origins=tuple(api.get("cors_origins", ())),
     )
+    copilot_mode = os.environ.get(COPILOT_MODE_ENV)
+    if copilot_mode:  # override the copilot level without editing the committed config (#60)
+        raw["copilot_mode"] = copilot_mode
     world = os.environ.get(WORLD_DATABASE_ENV)
     if world:  # run the flow on a world database without editing the committed config
         raw["world_database_path"] = world

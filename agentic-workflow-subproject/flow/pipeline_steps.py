@@ -1,7 +1,16 @@
 """Reusable, checkpointable business steps for the initial ticket pipeline."""
 
 from flow.context import plan_context
-from flow.contracts import FlowDeps, PipelineWork, QualifierResult, RoutingDecision, Ticket, TicketRun, load_config
+from flow.contracts import (
+    FlowConfig,
+    FlowDeps,
+    PipelineWork,
+    QualifierResult,
+    RoutingDecision,
+    Ticket,
+    TicketRun,
+    load_config,
+)
 from flow.evidence import decide_evidence, unavailable_stubs
 from flow.field_check import check_fields
 from flow.pipeline import (
@@ -17,12 +26,41 @@ from flow.turns import is_within_automated_turn_limit
 from ml.qualifier.src.dataset_build.schema import OTHER, UNDEFINED
 
 
+def drafting_enabled(config: FlowConfig) -> bool:
+    """Whether model drafting is active under the current ``copilot_mode`` (#60)."""
+    return config.copilot_mode in {"full", "judge_off"}
+
+
 def intake_step(ticket: Ticket, deps: FlowDeps, previous_run: TicketRun | None) -> PipelineWork:
-    """Validate conversation continuity and enforce the configured turn cap."""
+    """Validate conversation continuity and enforce ``copilot_mode`` / turn caps."""
     from flow.pipeline import _require_next_turn
 
     _require_next_turn(ticket, previous_run)
     config = deps.flow_config or load_config()
+    if config.copilot_mode == "l3_copilot_off":
+        qualifier = QualifierResult(
+            status="unavailable", label=None, raw=None, model_version="not_run",
+            latency_seconds=0.0, error="copilot off",
+        )
+        desk = previous_run.desk if previous_run is not None else "triage"
+        decision = RoutingDecision(
+            decision_version=config.routing_version,
+            policy_version=deps.policy_version,
+            desk=desk,
+            priority=previous_run.decision.priority if previous_run is not None else "unknown",
+            reason_codes=("COPILOT_OFF",),
+        )
+        old_drafts = previous_run.drafts if previous_run is not None else ()
+        early = TicketRun(
+            ticket=ticket, qualifier=qualifier, decision=decision, desk=desk,
+            status="awaiting_reroute",
+            drafts=tuple(item.model_copy(update={"stale": True}) for item in old_drafts),
+            reroute_count=previous_run.reroute_count if previous_run is not None else 0,
+            reason_codes=("COPILOT_OFF",),
+            foreign_identifiers=previous_run.foreign_identifiers if previous_run else (),
+            **_carry_history(previous_run),
+        )
+        return PipelineWork(ticket=ticket, previous_run=previous_run, early_run=early)
     if is_within_automated_turn_limit(ticket.turn, config.max_automated_turns):
         return PipelineWork(ticket=ticket, previous_run=previous_run)
     qualifier = QualifierResult(
@@ -78,6 +116,9 @@ def routing_step(work: PipelineWork, deps: FlowDeps) -> PipelineWork:
         decision = decision.model_copy(update={"desk": desk})
     elif previous is not None and previous.desk == "triage":
         decision = decision.model_copy(update={"desk": previous.desk})
+    if config.copilot_mode == "l2_routing_off":
+        codes = (*decision.reason_codes, "ROUTING_OFF") if "ROUTING_OFF" not in decision.reason_codes else decision.reason_codes
+        decision = decision.model_copy(update={"desk": "triage", "reason_codes": codes})
     return work.model_copy(update={"decision": decision})
 
 
@@ -86,7 +127,8 @@ def needs_human_routing(work: PipelineWork) -> bool:
         return True
     previous = work.previous_run
     return (
-        work.qualifier.status != "valid" or work.qualifier.label is None
+        work.decision.desk == "triage"
+        or work.qualifier.status != "valid" or work.qualifier.label is None
         or work.qualifier.label.intent in {OTHER, UNDEFINED}
         or (previous is not None and previous.desk == "triage")
     )
@@ -124,7 +166,8 @@ def evidence_gate_step(work: PipelineWork) -> PipelineWork:
 
 
 def drafter_step(work: PipelineWork, deps: FlowDeps) -> PipelineWork:
-    if work.evidence_decision is None or work.evidence_decision.mode == "no_draft":
+    config = deps.flow_config or load_config()
+    if not drafting_enabled(config) or work.evidence_decision is None or work.evidence_decision.mode == "no_draft":
         return work
     assert work.qualifier is not None and work.decision is not None
     old_drafts = work.previous_run.drafts if work.previous_run else ()
@@ -177,14 +220,16 @@ def finalize_step(work: PipelineWork, deps: FlowDeps) -> TicketRun:
     tool_results = work.tool_results
     if plan is None or evidence is None or tool_results is None:
         raise ValueError("pipeline stopped before context/evidence completion")
+    config = deps.flow_config or load_config()
     old_drafts = previous.drafts if previous else ()
     stale = tuple(item.model_copy(update={"stale": True}) for item in old_drafts)
-    if evidence.mode == "no_draft":
+    if evidence.mode == "no_draft" or not drafting_enabled(config):
+        extra = ("DRAFTING_OFF",) if evidence.mode != "no_draft" else ()
         return TicketRun(
             ticket=work.ticket, qualifier=qualifier, decision=decision, desk=decision.desk,
             status="awaiting_validation", drafts=stale,
             reroute_count=previous.reroute_count if previous else 0,
-            reason_codes=(*decision.reason_codes, *evidence.reason_codes),
+            reason_codes=(*decision.reason_codes, *evidence.reason_codes, *extra),
             field_check=work.field_check, context_plan=plan, evidence_decision=evidence,
             foreign_identifiers=tool_results.ledger.foreign_identifiers,
             final_text=None, final_author=None, **_carry_history(previous),
