@@ -10,6 +10,9 @@ The eval-set is the judge of the prototype (S4), the source of the metrics (S5) 
 | `eval_set_v0.csv` | the first 50 rows of `eval_set_v1.csv`, same labels | Assignment 4 |
 | `report_v0.md` | the S4 run on the 50 cases: the number against the criterion, three misses and their component | Assignment 4 |
 | `judge_prompt.txt` | the LLM judge, written from the guideline below | Assignment 5 |
+| `05_segment_fairness.ipynb` | 100-case runtime Qualifier, Flow v2 escalation floor, FR/EN fairness & desk segments, `copilot_mode` replay | Session 5–8 |
+| `06_ab_sample_size.ipynb` | cluster crossover power, MDE and sample-size computation | Session 6 |
+| `07_monitoring.ipynb` | layer-0/1/2 latency, PSI drift and rolling audit thresholds | Session 7 |
 
 ## Origin
 - **Inputs:** drafted with an AI assistant (Claude) on 2 and 13 November 2026, from coverage plans that fill what the generated training data lacks: phone one-liners, reply-all and forwarded threads, Belgian formal letters, instructions hidden in a log or a ticket, languages outside French and English, odd references and amounts, spam and auto-replies, requests that only a person should handle. Disputes with a close deadline are oversampled: they are the costly case of the product. The generated training data was written by other models (DeepSeek, Xiaomi MiMo). Fictional merchants and people; no real data. The origin is written in every row.
