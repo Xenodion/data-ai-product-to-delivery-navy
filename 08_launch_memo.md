@@ -7,7 +7,7 @@
 | Scope | Decision | Why, in one line |
 |---|---|---|
 | Course demo (synthetic tickets, simulated send) | **GO — delivered** | The full flow runs end to end in a local container demo with a human on every send (PR #72); the Qualifier is the measured champion D-q4. |
-| Keelpay pilot (real tickets, 46 agents) | **CONDITIONAL GO** | The routing criterion of the brief is met, but value is sized, not measured, and four pre-pilot conditions (§3) are open. |
+| Keelpay pilot (real tickets, 46 agents) | **CONDITIONAL GO** | The routing criterion of the brief is met, `copilot_mode` (#60) is verified, and three pre-pilot conditions (§3) remain open while value awaits A/B measurement. |
 | Production rollout | **NO-GO today** | Decided only by the pre-registered A/B (`06_ab_protocol.md` §7), never before. |
 
 Same decision as the investment memo of Session 2 (`02_investment_memo.md`); what changed since is the evidence behind it.
@@ -22,6 +22,7 @@ Same decision as the investment memo of Session 2 (`02_investment_memo.md`); wha
 | Workflow | 50 hand-written tickets: 74 % routed automatically, 2.7 % misrouted (p = 0.024 against 1 in 7), 0 urgent misroute: **the success criterion of the brief is met** (`evals/report_v0.md`) | moderate: 50 cases, interval up to 13.8 % |
 | Drafts | 2 of 30 sendable for both graders before grounding; grounded drafts, Evidence gate and Policy check built since, **not yet re-measured** | weak: the open question |
 | Judge | human–judge agreement 95.8 %, human–human 80 % (κ 0.33) (`05_metrics.md` §5) | moderate |
+| Segments & fairness | `eval_set_v1.csv` (100 cases): FR vs EN draft-eligible 72.5 % vs 66.1 % (p = 0.656), misrouting 12.1 % vs 11.9 %; `payments` has 0 % silent errors (0/25) vs 16.0 % on `disputes` (`evals/05_segment_fairness.ipynb` §2) | moderate: supports starting Stage 2 on `payments` and disputes last |
 | Value | +€194k base, +€214k expected net in year 1; beats the next-best project only if total time saved ≥ 13.32 % (`02_sizing.xlsx` `Decision!D57`) | **assumption**: measured only by the A/B |
 | Rare serious errors | not certifiable at this sample size (`governance.md` Session 2) | controlled by stopping and rollback rules, not by evidence |
 
@@ -29,12 +30,12 @@ The stage-2 gate of the investment memo is **not met** on the eval-set (78 % rig
 
 ## 3 · Launch plan
 
-**Stage 0 — before the pilot (conditions of the CONDITIONAL GO).** Each has an owner and a closing proof; the pilot does not start with one open.
+**Stage 0 — before the pilot (conditions of the CONDITIONAL GO).** Each has an owner and a closing proof; three remain open (#60 closed on 24 November 2026), and the pilot does not start with one open.
 
 | # | Condition | Proof | Owner |
 |---|---|---|---|
 | 1 | Draft quality re-measured with grounding: eval-set v1 replay, two graders + judge | sendable share and zero drafts on tickets that belong to a person | NAVY |
-| 2 | `copilot_mode` switch built and tested at L1 and L3 (#60) | eval-set at L1 produces no draft; manual queue works at L3 | NAVY |
+| 2 | `copilot_mode` switch built and tested at L1 and L3 (#60) | **Closed (24 Nov):** 100-case eval-set at `l1_drafting_off` produces 0 drafts; FIFO manual queue verified at `l3_copilot_off` (`flow/rollback_check.py`) | NAVY |
 | 3 | Merchant isolation, idempotent send, persistence across restart tested in the backend (#31) | tests in the sub-project | Tech lead |
 | 4 | Legal basis, retention and provider terms for real tickets; models and traces inside Keelpay cloud | DPO decision in `governance.md` | DPO / Legal |
 
@@ -63,13 +64,13 @@ From the Git history of `main` and open pull requests on 23 November 2026, and f
 | Vincent Lamy | Vincent-20-100 | Case redefinition and sizing (00–03, PR #3, #4); LLMOps sub-project: dataset, scoring and baselines, fine-tuning and compact variants of the Qualifier, Vertex registration; flow v2 design and build, API, front end, container demo (PR #18, #23, #28, #29, #46, #69, #70, #72); presentation storyline; Vertex endpoint and demo agent (in progress) |
 | Alexandre Waerniers | Xenodion | First pitch, sizing and investment memo (PR #1, #2); course deliverables: problem statement, product brief, lean canvas, prototype, spec v2, governance (Sessions 3–5), `05_metrics.md`, eval-set v0/v1, eval report v0, judge prompt and grading (PR #26, #27, #71) |
 | Yoni Mahieddine | InoyDev | Grader in the two-grader agreement (`05_metrics.md` §5); `06_ab_protocol.md` and its sample-size notebook (PR #85); `07_operations.md` and its monitoring notebook (PR #86); efficiency front in `02_investment_memo.md` (PR #87); this memo |
-| Nahel Bachiri | nahelbachiri-oss | Grader in the two-grader agreement (`05_metrics.md` §5); *to be completed by Nahel* |
+| Nahel Bachiri | nbachiri-oss | Grader in the two-grader agreement (`05_metrics.md` §5, `evals/grading/`); `copilot_mode` rollback switch and 100-case L1/L2/L3 verification (`flow/rollback_check.py`, #60); FR/EN fairness and desk segment audit (`evals/05_segment_fairness.ipynb`, `05_metrics.md` §3); rollback and segment alignment across `03`, `04`, `06`, `07` and this memo |
 
 The course rule — commits in at least four numbered files per member, from the member's own account — is checked on `main` before the tag (#65).
 
 ## 6 · Before the tag `v1.0`
 
 - [ ] Pull requests of the S6–S8 deliverables merged; READMEs match the code (#82).
-- [ ] `spec.md` and `03_product_brief.md` final, with the rollback plan of `07_operations.md`.
+- [x] `spec.md` and `03_product_brief.md` final, with the rollback plan of `07_operations.md`.
 - [ ] Section 5 confirmed by all four members.
 - [ ] Tag `v1.0` on `main` by the team, before the first oral of the cohort (human sign-off; not automated).

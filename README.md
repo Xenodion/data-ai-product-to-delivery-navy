@@ -6,7 +6,7 @@
 |---|---|
 | Alexandre Waerniers | Xenodion |
 | Vincent Lamy | Vincent-20-100 |
-| Nahel Bachiri | nahelbachiri-oss |
+| Nahel Bachiri | nbachiri-oss |
 | Yoni Mahieddine | InoyDev |
 
 ## Product and decision
@@ -27,7 +27,7 @@ The canonical names are **Qualifier Model** (seven-field extractor), **Routing N
 
 ![Keelpay target flow v2: ticket in, rules and tools, two language models, then people who approve or write the reply](agentic-workflow-subproject/docs/design/flow-v2/flow_v2.svg)
 
-Target flow validated on 6 November 2026. **Status on `main`, 23 November 2026:** the flow runs end to end in a local container demo (`agentic-workflow-subproject/flow/deploy/`): Intake, Qualifier Model (D-q4 on CPU), Field check, Routing Node, Context plan, synthetic ledger and approved knowledge search, Evidence gate, desk Drafter, Policy check, the Re-router and Validator actions, Final compliance gate and an idempotent simulated send, behind a FastAPI API with SQLite state and LangGraph checkpoints, and a React front end (Overview, Re-routing, Ticket review, Errors). Not built: the optional Judge and Redraft (#59), the `copilot_mode` switch (#60), hosted deployment (#40, #73, #74). The full flow has not been re-measured since the guardrails were added: the last end-to-end number is the 13 November run of `evals/report_v0.md`. It is a workflow, not an agent: the path is drawn in advance and no model chooses a tool. Details: [node table](agentic-workflow-subproject/docs/design/flow-v2/node_table_v1.md), [tool contracts](agentic-workflow-subproject/docs/design/flow-v2/tools.md) and [build order](agentic-workflow-subproject/specs/013-flow-v2/tasks.md).
+Target flow validated on 6 November 2026. **Status on `main`, 23 November 2026:** the flow runs end to end in a local container demo (`agentic-workflow-subproject/flow/deploy/`): Intake, Qualifier Model (D-q4 on CPU), Field check, Routing Node, Context plan, synthetic ledger and approved knowledge search, Evidence gate, desk Drafter, Policy check, the Re-router and Validator actions, Final compliance gate and an idempotent simulated send, behind a FastAPI API with SQLite state and LangGraph checkpoints, and a React front end (Overview, Re-routing, Ticket review, Errors). Built and verified (#60): the `copilot_mode` rollback switch (`flow/rollback_check.py`). Not built: the optional Judge and Redraft (#59), hosted deployment (#40, #73, #74). The full flow has not been re-measured since the guardrails were added: the last end-to-end number is the 13 November run of `evals/report_v0.md`. It is a workflow, not an agent: the path is drawn in advance and no model chooses a tool. Details: [node table](agentic-workflow-subproject/docs/design/flow-v2/node_table_v1.md), [tool contracts](agentic-workflow-subproject/docs/design/flow-v2/tools.md) and [build order](agentic-workflow-subproject/specs/013-flow-v2/tasks.md).
 
 Three target tabs: **Overview**, **Re-router**, and **Validator**. Clicking a human node opens an eligible task. Waiting time and oldest-first are MUST for the demo; advanced urgency and multi-agent are SHOULD. Overview reflects backend events; Langfuse observes processing but does not store operational queues.
 
@@ -54,7 +54,7 @@ The original V0 is the clickable static mock-up in [prototype/copilot_panel/inde
 - [Product specification](spec.md), [architecture reference](agentic-workflow-subproject/docs/design/architecture.md), [workflow and detailed UX](agentic-workflow-subproject/docs/design/copilot-workflow.md), [terminology](agentic-workflow-subproject/docs/design/terminology.md), [evaluation cases and grading guideline](evals/README.md).
 - [Delivery roadmap](agentic-workflow-subproject/specs/roadmap.md) and the future [Routing Node contract](agentic-workflow-subproject/specs/004-routing-node/spec.md).
 - Original course briefs and supplied materials are preserved under `docs/assignment*`, `docs/project` and `docs/_archive`.
-- [Metrics](05_metrics.md) and the pre-registered [A/B protocol](06_ab_protocol.md) with its [sample-size notebook](evals/06_ab_sample_size.ipynb), and [operations](07_operations.md) with its [monitoring notebook](evals/07_monitoring.ipynb).
+- [Metrics](05_metrics.md) with its [segment and fairness audit](evals/05_segment_fairness.ipynb), the pre-registered [A/B protocol](06_ab_protocol.md) with its [sample-size notebook](evals/06_ab_sample_size.ipynb), and [operations](07_operations.md) with its [monitoring notebook](evals/07_monitoring.ipynb).
 - [Launch memo](08_launch_memo.md) (draft, sign-off before the v1.0 tag).
 
 The final synthesis remains to be produced from its course instructions. The course asks for at least four numbered files per member and a final v1.0 tag before the oral presentation.
