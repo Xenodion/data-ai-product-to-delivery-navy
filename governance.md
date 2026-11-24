@@ -81,4 +81,4 @@ Pre-registered on 23 November 2026 (`06_ab_protocol.md`): staggered crossover of
 
 ## Session 7 — Operations
 
-Monitoring in four layers, drift triggers and rollback criteria in `07_operations.md`: any one criterion is enough to roll back, the Head of Compliance decides on serious errors and the Head of Support on routing, quality and segments, NAVY executes and records the date, trigger and level here; the `copilot_mode` switch is required before the pilot and not yet built (#60).
+Monitoring in four layers, drift triggers and rollback criteria in `07_operations.md`: any one criterion is enough to roll back, the Head of Compliance decides on serious errors and the Head of Support on routing, quality and segments, NAVY executes and records the date, trigger and level here; the `copilot_mode` switch (#60) is built in `flow/config.toml` (`NAVY_COPILOT_MODE`) and verified on the 100-case `eval_set_v1.csv` (`flow/rollback_check.py`).

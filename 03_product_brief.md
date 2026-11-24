@@ -109,7 +109,7 @@ Handling time baseline ≈ 10 min/ticket. Minutes per step derived from scenario
   2. Automation bias: an agent validating a draft grounded in the wrong transaction without reading.
   3. Net handling time saved falling short of the 13.32 % economic flip point due to triage overhead.
 - **Rollback trigger (one line):** Any urgent ticket auto-routed to the wrong desk is an incident reviewed within 24 h; a second one within four weeks reverts urgent tickets to manual routing.
-- *(v3)* **Rollback plan:** prompt, model and copilot level roll back separately; `copilot_mode` has four levels (Judge off, drafting off, routing off, copilot off) and any one criterion is enough. Criteria and owners: `spec.md` §11 and `07_operations.md` §4.
+- *(v3)* **Rollback plan:** prompt, model and copilot level roll back separately; `copilot_mode` (`flow/config.toml` / `NAVY_COPILOT_MODE`, #60) has four fallback levels (`judge_off`, `l1_drafting_off`, `l2_routing_off`, `l3_copilot_off`), verified on the 100-case `eval_set_v1.csv` (`0` model drafts at `L1`/`L2`, `0` model/tool calls and working FIFO manual queue at `L3`), and any one criterion is enough. Criteria and owners: `spec.md` §11 and `07_operations.md` §4.
 
 ---
 

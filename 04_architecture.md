@@ -66,18 +66,18 @@ A person can take any ticket back at any time. Nothing is sent without a person,
 
 ## 6. Override switch
 
-**The switch** is one flag, `copilot_mode`, owned by the Head of Support, with a named backup (the deputy head of support). Its positions run from light to total:
+**The switch** is one flag, `copilot_mode` (`flow/config.toml` or `NAVY_COPILOT_MODE`), owned by the Head of Support, with a named backup (the deputy head of support). Built and tested in `flow/pipeline_steps.py` and `flow/rollback_check.py` (#60). Its positions run from light to total (`full` is the default):
 
-| Position | Effect |
+| Position (`copilot_mode`) | Effect |
 |---|---|
-| Judge off | The optional revision loop stops; policy blocks still apply |
-| **L1: drafting off** | No draft is prepared; qualification and context stay as suggestions, a person writes, nothing is sent by the copilot |
-| Routing off | Tickets are routed by hand; the Qualifier output is only a suggestion |
-| Copilot off | Every ticket goes to a manual queue that works without the copilot |
+| `judge_off` | The optional revision loop stops; policy blocks still apply |
+| **`l1_drafting_off` (L1: drafting off)** | No draft is prepared (`DRAFTING_OFF`); qualification and context stay as suggestions, a person writes, nothing is sent by the copilot |
+| `l2_routing_off` (Routing off) | Tickets are routed by hand (`ROUTING_OFF`); the Qualifier output is only a suggestion |
+| `l3_copilot_off` (Copilot off) | Every ticket goes straight to a FIFO manual queue (`COPILOT_OFF`) that works without the copilot (`0` model or tool calls) |
 
 **When to pull it:** one serious error sent to a merchant, an urgent ticket found in a wrong desk by the weekly QA sample, or a policy rule failing in production. The Head of Support triggers it, the NAVY team executes it within the service level of the Re-router, and Compliance joins sensitive incidents.
 
-**Test before any demo or launch:** run the evaluation set with the flag at L1 and check that no draft is produced and nothing is sent; record the result. "Unplug the bot" is not a switch.
+**Tested before any demo or launch** (`uv run python -m flow.rollback_check`, `tests/flow/test_copilot_mode_eval_replay.py`): replayed on all 100 cases of `evals/eval_set_v1.csv` (24 November 2026) — `l1_drafting_off` routes 79 tickets with 69 read-only tool runs, sends 21 to the Re-router, and produces **0 model drafts and 0 auto-sends**; `l2_routing_off` keeps Qualifier hints and sends 100/100 to manual routing with **0 drafts**; `l3_copilot_off` runs **0 Qualifier, tool or Drafter calls**, preserves FIFO queue order on 100/100 tickets, and completes human reply/send end to end. "Unplug the bot" is not a switch.
 
 ## 7. Limits that bound the system
 
@@ -89,4 +89,4 @@ A person can take any ticket back at any time. Nothing is sent without a person,
 
 ## 8. Built today and target
 
-Built: the Qualifier (D-q4, measured), the routing rule, a mode-aware desk-specific Drafter, and part of the audit log. Initial ticket envelope, in-memory turn sequence checks, non-blocking field checks, context plan, Evidence gate, shared Policy check, final-text gate, local synthetic SQL ledger and approved KB retrieval are now in code. The Policy check runs after drafts; final-text enforcement awaits the send action. Persistent intake/idempotency and an error queue await the API/storage lot. Synthetic factual drafting is reachable for matching fixture references, but end-to-end evaluation remains outstanding. Next: human actions and Send, API and screens, then optional Judge and switch. No endpoint is deployed. The confidence study found that token probabilities do not usefully separate right from wrong desk or urgency labels on validation; no probability threshold is part of the flow. The frozen test-split analysis remains pending; see issue #45 and `agentic-workflow-subproject/ml/confidence/README.md`.
+Built: the Qualifier (D-q4, measured), the routing rule, a mode-aware desk-specific Drafter, and part of the audit log. Initial ticket envelope, in-memory turn sequence checks, non-blocking field checks, context plan, Evidence gate, shared Policy check, final-text gate, local synthetic SQL ledger and approved KB retrieval are now in code. The Policy check runs after drafts; final-text enforcement awaits the send action. Persistent intake/idempotency and an error queue await the API/storage lot. Synthetic factual drafting is reachable for matching fixture references, but end-to-end evaluation remains outstanding. Next: optional Judge (#59) and hosted cloud endpoint (#73, #74); the `copilot_mode` override switch (#60) is now built and verified on the 100-case eval-set (`flow/rollback_check.py`). No cloud endpoint is kept live outside demo runs. The confidence study found that token probabilities do not usefully separate right from wrong desk or urgency labels on validation; no probability threshold is part of the flow. The frozen test-split analysis remains pending; see issue #45 and `agentic-workflow-subproject/ml/confidence/README.md`.

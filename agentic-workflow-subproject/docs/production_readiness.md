@@ -9,7 +9,7 @@ Issue #22, requirement of the shared LLMOps project brief. Checked on 23 Novembe
 | Scope | Ready? |
 |---|---|
 | Synthetic course demo, run locally | **Yes**, with the demo limits of the last section |
-| Keelpay pilot on real tickets | **No.** 6 blocking items, listed at the end (⛔ in the tables) |
+|Keelpay pilot on real tickets | **No.** 4 blocking items, listed at the end (⛔ in the tables) |
 | Production rollout | **No.** Decided by the pilot A/B only (`../06_ab_protocol.md` §7) |
 
 ## 1 · Evaluation
@@ -42,9 +42,9 @@ Issue #22, requirement of the shared LLMOps project brief. Checked on 23 Novembe
 |---|---|---|
 | Prompt rollback | Ready | move the Langfuse `production` label to the previous immutable version (`docs/design/flow-v2/prompt-management.md`) |
 | Model rollback | Partial | previous version by `qualifier_model_uri`, `qualifier_model_version` and MD5 in `flow/config.toml`, or the Registry alias (`docs/scoring_protocol.md` §8); manual, not rehearsed |
-| ⛔ One switch for the copilot level (Judge off, drafting off, routing off, copilot off) | Missing | `copilot_mode` specified in `../governance.md` Session 4 and `../07_operations.md` §4; not built (#60); only `ledger_enabled` and `knowledge_enabled` exist in `flow/config.toml` |
+| One switch for the copilot level (Judge off, drafting off, routing off, copilot off) | Ready | `copilot_mode` (`full`, `judge_off`, `l1_drafting_off`, `l2_routing_off`, `l3_copilot_off`) in `flow/config.toml` and `NAVY_COPILOT_MODE` (`flow/pipeline_steps.py`, `tests/flow/test_copilot_mode.py`, #60) |
 | Rollback criteria with owners | Ready | `../07_operations.md` §4, `../spec.md` §11 (PR #90) |
-| ⛔ Rollback tested before a demo or release | Missing | test defined (eval-set at L1 produces no draft, manual queue at L3), never run (#60) |
+| Rollback tested before a demo or release | Ready | `uv run python -m flow.rollback_check` and `tests/flow/test_copilot_mode_eval_replay.py` on the 100 cases of `../evals/eval_set_v1.csv`: `0` drafts at `L1`/`L2`, `0` model/tool calls and FIFO manual queue verified at `L3` (#60) |
 | Model unavailable does not lose the ticket | Ready | timeout 120 s then Re-router with status `unavailable` (`flow/config.toml`, README "Run the ticket flow locally") |
 
 ## 4 · Cost caps
@@ -90,10 +90,9 @@ Issue #22, requirement of the shared LLMOps project brief. Checked on 23 Novembe
 
 ## ⛔ Blocking before a pilot
 
-1. Eval-set replay of the current flow (§1).
+1. Eval-set replay of the full grounded drafting flow (§1).
 2. Weekly labelled audit staffed (§2).
-3. `copilot_mode` built (#60) and 4. rollback tested at L1 and L3 (§3).
-5. Legal basis and retention for real tickets (§5).
-6. Real tickets, models and traces inside Keelpay's cloud, not the demo's external services (`../spec.md` §7).
+3. Legal basis and retention for real tickets (§5).
+4. Real tickets, models and traces inside Keelpay's cloud, not the demo's external services (`../spec.md` §7).
 
 Non-blocking but expected before a rollout: the Qualifier predictions that turn the CI gate green (#19), scheduled alerting (#41), a spending cap, API authentication, a shared database.
