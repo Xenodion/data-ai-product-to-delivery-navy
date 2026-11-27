@@ -25,5 +25,12 @@ def test_choose_action_edits_latest_fresh_draft() -> None:
     assert (payload["action"], payload["text"], payload["draft_version"]) == ("edit_draft", "new", 2)
 
 
+def test_choose_action_uses_writer_for_human_reply_and_blocked_draft() -> None:
+    writer = lambda item, draft: f"human:{draft}"
+    assert choose_action(_item(["write_reply", "handoff_to_rerouter"]), {}, writer)[1]["text"] == "human:None"
+    drafts = [{"version": 2, "text": "blocked", "stale": False}]
+    assert choose_action(_item(["write_reply", "edit_draft"], drafts=drafts), {}, writer)[1]["text"] == "human:blocked"
+
+
 def test_choose_action_waits_when_nothing_is_allowed() -> None:
     assert choose_action(_item([]), {}) is None

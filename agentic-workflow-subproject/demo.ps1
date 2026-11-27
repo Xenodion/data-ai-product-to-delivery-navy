@@ -6,9 +6,11 @@ human reviewers (the demo-agent), so the dashboards and Langfuse show complete t
   .\demo.ps1                          start only
   .\demo.ps1 -Reset -Prefill 80       back up and clear local state, then process 80 tickets
   .\demo.ps1 -Prefill 30 -Seed 8      add a fresh batch of 30 tickets
+  .\demo.ps1 -Local -Prefill 30       Qualifier in local Docker (CPU, free) instead of Vertex
 
-The Vertex endpoint must be deployed first (billed per hour; undeploy afterwards, see
-docs/vertex_dq4_endpoint.md). Press Ctrl+C to stop the API, the front end and the reviewers.
+The fake reviewers use an LLM (OpenRouter, Drafter model) to write the human replies.
+Without -Local, the Vertex endpoint must be deployed first (billed per hour; undeploy afterwards,
+see docs/vertex_dq4_endpoint.md). Press Ctrl+C to stop the API, the front end and the reviewers.
 #>
 [CmdletBinding()]
 param(
@@ -17,6 +19,7 @@ param(
     [int] $Seed = 7,
     [switch] $Reset,
     [switch] $NoBrowser,
+    [switch] $Local,
     [string] $EndpointId = "7728645352521203712",
     [string] $WorldDb = ".local\world\world.sqlite"
 )
@@ -25,9 +28,11 @@ $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot
 
 $env:NAVY_DEMO_MODE = "1"
-$env:NAVY_QUALIFIER_PROVIDER = "vertex_raw_predict"
-$env:NAVY_QUALIFIER_VERTEX_ENDPOINT_ID = $EndpointId
-$env:GCP_PROJECT_ID = "agentics-workflows-2"
+if (-not $Local) {
+    $env:NAVY_QUALIFIER_PROVIDER = "vertex_raw_predict"
+    $env:NAVY_QUALIFIER_VERTEX_ENDPOINT_ID = $EndpointId
+    $env:GCP_PROJECT_ID = "agentics-workflows-2"
+}
 
 if ($Reset) {
     $backup = ".local\backup-flow-state-" + (Get-Date -Format "yyyyMMdd-HHmmss")
@@ -48,13 +53,13 @@ if ($Prefill -gt 0) {
             Start-Sleep -Seconds 3
         }
         $env:PYTHONUNBUFFERED = "1"
-        uv run python -m flow.demo_agent --limit $count --seed $seed --world $world --workers $workers --timeout 5400 *> ".local\runs\demo-prefill.out"
+        uv run python -m flow.demo_agent --limit $count --seed $seed --world $world --workers $workers --timeout 5400 --llm *> ".local\runs\demo-prefill.out"
     }
     Write-Host "Fake reviewers will process $Prefill tickets once the API is ready (log: .local\runs\demo-prefill.out)" -ForegroundColor Cyan
 }
 
 try {
-    $options = @{ SkipQualifier = $true; SkipDependencyInstall = $true; WorldDb = $WorldDb }
+    $options = @{ SkipQualifier = (-not $Local); SkipDependencyInstall = $true; WorldDb = $WorldDb }
     if ($NoBrowser) { $options.NoBrowser = $true }
     & .\run-local.ps1 @options
 } finally {

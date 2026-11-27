@@ -1,25 +1,55 @@
-"""Deterministic demo operator: inject seeded `val` tickets, then play the support human until done.
+"""Demo operator: inject seeded `val` tickets, then play the support human until done.
 
 It uses only the public API, exactly like the UI, with the actor `demo-agent`, so the dashboard and
 Langfuse fill with complete synthetic histories before a presentation. The re-routing choice uses
 the ticket's reference desk from `val.csv`, standing in for the human's own judgement; it is sent as
-a human action and never reaches the Qualifier. Every model call costs (Vertex time, OpenRouter).
+a human action and never reaches the Qualifier. With `--llm`, an LLM plays the human where a person
+must write: replies to tickets with no usable draft (human-only topics) and fixes of blocked drafts.
+Every model call costs (Vertex time, OpenRouter).
 
-    uv run python -m flow.demo_agent --limit 10 --seed 1
+    uv run python -m flow.demo_agent --limit 10 --seed 1 --llm
 """
 
 import argparse
 import csv
 import hashlib
+import logging
+import os
 import sys
 import time
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from threading import Lock
 from typing import Any
 
-from flow.inject_dataset import ROOT, SPLITS, TERMINAL_STATUSES, _request_json, inject, select_rows
+import httpx
+from dotenv import load_dotenv
+
+from flow.contracts import load_config
+from flow.inject_dataset import (
+    ROOT,
+    SPLITS,
+    TERMINAL_STATUSES,
+    _request_json,
+    inject,
+    select_rows,
+)
 from flow.router import _CONTRACT_DESK
 from ml.qualifier.src.scoring import desk_of, parse_output
+
+logger = logging.getLogger(__name__)
+
+# (item, draft text or None) -> reply text written as the human
+Writer = Callable[[dict[str, Any], str | None], str]
+
+HUMAN_PROMPT = (
+    "You are an experienced Keelpay support agent (B2B payments) answering a merchant by email. "
+    "Write the reply yourself, in the same language as the merchant's message. Be short, polite and "
+    "concrete: acknowledge the issue, say what you checked or what the specialist team will do, and ask "
+    "for any missing reference. Never promise a refund, an unfreeze, a fee waiver or a deadline, never "
+    "quote an amount or a date, never give legal advice. Sign as 'Keelpay Support'. Return only the email body: no subject line, no Markdown."
+)
 
 ACTOR = "demo-agent"
 QUEUES = ("validator", "re-router")
@@ -53,7 +83,48 @@ def reference_desks(limit: int, seed: int, world: Path | None = None) -> dict[st
     return desks_for(select_rows("val", limit, seed, world))
 
 
-def choose_action(item: dict[str, Any], desks: dict[str, str]) -> tuple[str, dict[str, Any]] | None:
+def llm_writer() -> Writer | None:
+    """LLM playing the human writer (Drafter model on OpenRouter); None without an API key.
+
+    One LLM text per ticket and turn: if the final gate refuses it, later attempts fall back to the
+    fixed reply, so a refused text never loops on paid calls.
+    """
+    load_dotenv(ROOT / ".env")
+    key = os.environ.get("OPENROUTER_API_KEY")
+    if not key:
+        return None
+    cfg = load_config()
+    written: set[tuple[str, int]] = set()
+    lock = Lock()
+
+    def write(item: dict[str, Any], draft: str | None) -> str:
+        slot = (item["ticket_id"], item["turn"])
+        with lock:
+            if slot in written:
+                return draft or FALLBACK_REPLY
+            written.add(slot)
+        ticket = item.get("ticket") or {}
+        user = f"Desk: {item.get('desk') or 'unknown'}\nSubject: {ticket.get('subject') or ''}\n\nMerchant message:\n{ticket.get('body', '')}"
+        if draft:
+            user += f"\n\nA colleague's draft, blocked by our policy check. Rewrite it safely:\n{draft}"
+        try:
+            response = httpx.post(
+                cfg.drafter_url, headers={"Authorization": f"Bearer {key}"}, timeout=60,
+                json={"model": cfg.drafter_model, "temperature": 0.4,
+                      "messages": [{"role": "system", "content": HUMAN_PROMPT}, {"role": "user", "content": user}]},
+            )
+            response.raise_for_status()
+            text = response.json()["choices"][0]["message"]["content"].strip()
+            return text or draft or FALLBACK_REPLY
+        except (httpx.HTTPError, KeyError, IndexError) as exc:
+            logger.error("LLM human writer failed for %s: %s; using the fixed reply", item["ticket_id"], exc)
+            return draft or FALLBACK_REPLY
+
+    return write
+
+
+def choose_action(item: dict[str, Any], desks: dict[str, str],
+                  writer: Writer | None = None) -> tuple[str, dict[str, Any]] | None:
     """Pick the human action for one queue item; None when there is nothing to do yet."""
     allowed = item.get("allowed_actions") or []
     if "send" in allowed:
@@ -69,14 +140,17 @@ def choose_action(item: dict[str, Any], desks: dict[str, str]) -> tuple[str, dic
         return "actions", {"action": "close_manual", "actor": ACTOR, "reason": "demo-agent handled manually"}
     if "edit_draft" in allowed:
         draft = next(d for d in reversed(item["drafts"]) if not d["stale"])
-        return "actions", {"action": "edit_draft", "actor": ACTOR, "text": draft["text"], "draft_version": draft["version"]}
+        text = writer(item, draft["text"]) if writer else draft["text"]
+        return "actions", {"action": "edit_draft", "actor": ACTOR, "text": text, "draft_version": draft["version"]}
     if "write_reply" in allowed:
-        return "actions", {"action": "write_reply", "actor": ACTOR, "text": FALLBACK_REPLY}
+        text = writer(item, None) if writer else FALLBACK_REPLY
+        return "actions", {"action": "write_reply", "actor": ACTOR, "text": text}
     return None
 
 
-def act(api: str, session_id: str, item: dict[str, Any], desks: dict[str, str]) -> str | None:
-    choice = choose_action(item, desks)
+def act(api: str, session_id: str, item: dict[str, Any], desks: dict[str, str],
+        writer: Writer | None = None) -> str | None:
+    choice = choose_action(item, desks, writer)
     if choice is None:
         return None
     route, payload = choice
@@ -90,7 +164,7 @@ def act(api: str, session_id: str, item: dict[str, Any], desks: dict[str, str]) 
 
 
 def operate(api: str, session_id: str, ticket_ids: set[str], desks: dict[str, str],
-            cadence: float, timeout: float) -> int:
+            cadence: float, timeout: float, writer: Writer | None = None) -> int:
     """Poll the queues and act until every injected ticket is terminal (or in error)."""
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
@@ -106,7 +180,7 @@ def operate(api: str, session_id: str, ticket_ids: set[str], desks: dict[str, st
                 continue
             pending += 1
             try:
-                done = act(api, session_id, item, desks)
+                done = act(api, session_id, item, desks, writer)
             except RuntimeError as exc:  # stale version or busy flow: retry on the next poll
                 print(f"  {ticket_id}: retry later ({exc})", file=sys.stderr)
                 continue
@@ -130,7 +204,9 @@ def main() -> int:
     parser.add_argument("--api", default="http://127.0.0.1:8000")
     parser.add_argument("--cadence", type=float, default=3.0, help="seconds between human actions")
     parser.add_argument("--timeout", type=float, default=3600, help="give up after this many seconds")
+    parser.add_argument("--llm", action="store_true", help="an LLM writes the human replies (needs OPENROUTER_API_KEY)")
     args = parser.parse_args()
+    logging.basicConfig(level=logging.INFO)
     if args.limit < 1 or args.workers < 1:
         parser.error("--limit and --workers must be positive")
     api = args.api.rstrip("/")
@@ -142,11 +218,14 @@ def main() -> int:
     )
     if status:
         print("some injections failed; operating on the tickets that were accepted", file=sys.stderr)
+    writer = llm_writer() if args.llm else None
+    if args.llm and writer is None:
+        parser.error("--llm needs OPENROUTER_API_KEY in .env")
     desks = reference_desks(args.limit, args.seed, args.world)
     ids = sorted(desks)
     slices = [set(ids[index::args.workers]) for index in range(args.workers)]
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
-        results = pool.map(lambda part: operate(api, session_id, part, desks, args.cadence, args.timeout), slices)
+        results = pool.map(lambda part: operate(api, session_id, part, desks, args.cadence, args.timeout, writer), slices)
         return max(results)
 
 
