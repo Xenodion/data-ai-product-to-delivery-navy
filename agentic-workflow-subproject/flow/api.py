@@ -7,7 +7,10 @@ import hashlib
 import json
 import logging
 import os
-from concurrent.futures import ThreadPoolExecutor
+import queue
+import random
+import threading
+import itertools
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 from pathlib import Path
@@ -16,10 +19,11 @@ from uuid import uuid4
 
 import httpx
 from dotenv import load_dotenv
-from fastapi import FastAPI, Header, HTTPException, Query, Request, Response
+from fastapi import BackgroundTasks, FastAPI, Header, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from langfuse import get_client
+from langfuse import Langfuse, get_client, propagate_attributes
+from langfuse.langchain import CallbackHandler as LangfuseCallbackHandler
 from langgraph.types import Command
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -59,6 +63,21 @@ def _digest(value: Any) -> str:
 
 def _thread_config(thread_id: str) -> dict[str, Any]:
     return {"configurable": {"thread_id": thread_id}}
+
+
+_TRACE_KEEP = {"langgraph_node", "langgraph_step", "langgraph_path"}
+
+
+def mask_trace_payload(data: Any, **_: Any) -> Any:
+    """Langfuse mask: graph runs keep node names and steps, never ticket or draft content."""
+    if isinstance(data, dict):
+        return {key: value for key, value in data.items() if key in _TRACE_KEEP} or "[masked]"
+    return data if isinstance(data, int | float | bool) or data is None else "[masked]"
+
+
+def _run_config(thread_id: str) -> dict[str, Any]:
+    """Config for graph runs: the Langfuse handler lets Langfuse draw nodes, loops and pauses as a graph."""
+    return {**_thread_config(thread_id), "callbacks": [LangfuseCallbackHandler()]}
 
 
 def _allowed_actions(run: TicketRun) -> list[str]:
@@ -189,12 +208,12 @@ def _execute_job(app: FastAPI, flow_id: str, resume: dict[str, Any] | None = Non
             if _command_already_applied(current_graph_state, resume, row["updated_at"]):
                 state = current_graph_state
             else:
-                state = graph.invoke(Command(resume=resume), _thread_config(row["thread_id"]))
+                state = graph.invoke(Command(resume=resume), _run_config(row["thread_id"]))
         else:
             saved_graph = _get_graph_state(graph, row["thread_id"])
             if saved_graph.values:
                 state = (
-                    graph.invoke(None, _thread_config(row["thread_id"]))
+                    graph.invoke(None, _run_config(row["thread_id"]))
                     if saved_graph.next else dict(saved_graph.values)
                 )
             else:
@@ -204,7 +223,7 @@ def _execute_job(app: FastAPI, flow_id: str, resume: dict[str, Any] | None = Non
                     TicketRun.model_validate(prior) if prior else None,
                 )
                 initial["flow_id"] = row["flow_id"]
-                state = graph.invoke(initial, _thread_config(row["thread_id"]))
+                state = graph.invoke(initial, _run_config(row["thread_id"]))
         saved = _save_result(store, graph, row, state)
         logger.info("flow %s reached %s", flow_id, saved["status"])
     except Exception:
@@ -221,8 +240,50 @@ def _execute_job(app: FastAPI, flow_id: str, resume: dict[str, Any] | None = Non
         store.mark_job(flow_id, "error")
 
 
+class _PriorityExecutor:
+    """One worker thread (the SQLite checkpointer needs serialized runs); lower priority runs first."""
+
+    def __init__(self, name: str) -> None:
+        self._jobs: queue.PriorityQueue[tuple[int, int, Any]] = queue.PriorityQueue()
+        self._order = itertools.count()
+        self._thread = threading.Thread(target=self._run, name=name, daemon=False)
+        self._thread.start()
+
+    def submit(self, priority: int, function: Any, *args: Any) -> None:
+        self._jobs.put((priority, next(self._order), (function, args)))
+
+    def _run(self) -> None:
+        while True:
+            _, _, job = self._jobs.get()
+            if job is None:
+                return
+            function, args = job
+            try:
+                function(*args)
+            except Exception:  # a job reports its own failure; never kill the worker
+                logger.exception("flow job crashed")
+
+    def shutdown(self, wait: bool = True, cancel_futures: bool = False) -> None:
+        self._jobs.put((10**9, next(self._order), None))  # after every queued job
+        if wait:
+            self._thread.join()
+
+
+def _execute_traced(app: FastAPI, flow_id: str, resume: dict[str, Any] | None) -> None:
+    """Run a job with the ticket as the Langfuse session, so every turn and human action of one
+    ticket is one end-to-end view (Langfuse > Sessions), and the merchant is the trace user."""
+    row = app.state.store.ticket_by_flow(flow_id)
+    if row is None:
+        return
+    with propagate_attributes(
+        session_id=row["ticket_id"], user_id=row["ticket"]["merchant_id"], tags=["navy-flow"],
+    ):
+        _execute_job(app, flow_id, resume)
+
+
 def _queue_job(app: FastAPI, flow_id: str, resume: dict[str, Any] | None = None) -> None:
-    app.state.executor.submit(_execute_job, app, flow_id, resume)
+    # human actions (resume) jump ahead of queued Qualifier/Drafter runs; the worker stays single
+    app.state.executor.submit(0 if resume is not None else 1, _execute_traced, app, flow_id, resume)
 
 
 def _command_already_applied(state: dict[str, Any], command: dict[str, Any], submitted_at: str) -> bool:
@@ -263,6 +324,7 @@ def _command_already_applied(state: dict[str, Any], command: dict[str, Any], sub
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     load_dotenv(ROOT / ".env")
+    Langfuse(mask=mask_trace_payload)  # registers the singleton that get_client() and the callback handler reuse
     config = load_config()
     if config.api_worker_count != 1:
         raise RuntimeError("api.worker_count must remain 1 with the synchronous SQLite LangGraph checkpointer")
@@ -292,7 +354,7 @@ async def lifespan(app: FastAPI):
     app.state.store = store
     app.state.graph = build_ticket_graph(deps, checkpointer=checkpointer)
     # Sync SqliteSaver is intended for lightweight serialized graph execution.
-    app.state.executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="flow-api")
+    app.state.executor = _PriorityExecutor("flow-api")
     app.state.dependencies = deps
     app.state.metrics = MetricsStore((ROOT / config.metrics_db_path).resolve()) if config.metrics_enabled else None
     # Requeue only once at process startup, then atomically claim each queued job.
@@ -420,9 +482,12 @@ def get_queue(
     return {"items": [_snapshot(store, row, request.app.state.graph) for row in visible], "count": len(visible), "next_cursor": next_cursor}
 
 
+# API action names -> flow command names (the flow resumes with the short names)
+_COMMAND_NAMES = {"edit_draft": "edit", "write_reply": "write", "handoff_to_rerouter": "handoff", "close_manual": "close"}
+
+
 def _human_command(action: ActionRequest) -> dict[str, Any]:
-    mapping = {"edit_draft": "edit", "write_reply": "write", "handoff_to_rerouter": "handoff", "close_manual": "close"}
-    command: dict[str, Any] = {"action": mapping.get(action.action, action.action), "actor": action.actor}
+    command: dict[str, Any] = {"action": _COMMAND_NAMES.get(action.action, action.action), "actor": action.actor}
     if action.text is not None:
         command["text"] = action.text
     if action.reason is not None:
@@ -469,7 +534,7 @@ def _mutate(
             return replay
         raise HTTPException(409, detail={"code": "STALE_TICKET_VERSION", "current_version": row["version"]})
     run = TicketRun.model_validate(row["run"]) if row.get("run") else None
-    if run is None or command["action"] not in _allowed_actions(run):
+    if run is None or command["action"] not in {_COMMAND_NAMES.get(name, name) for name in _allowed_actions(run)}:
         raise HTTPException(409, detail={"code": "ACTION_NOT_ALLOWED"})
     if command["action"] == "edit" and payload.model_dump().get("draft_version") != next(
         (draft.version for draft in reversed(run.drafts) if not draft.stale), None
@@ -597,6 +662,61 @@ def get_overview(request: Request) -> dict[str, Any]:
         "oldest_waiting_seconds": round(oldest_seconds, 1),
         "ratios": {"human_review_rate": {"numerator": len(waiting), "denominator": len(rows)}},
     }
+
+
+DEMO_MAX_COUNT = 20
+
+
+class DemoInjectRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    count: int = Field(ge=1, le=DEMO_MAX_COUNT)
+    auto_handle: bool = False
+
+
+def _demo_enabled() -> bool:
+    return os.environ.get("NAVY_DEMO_MODE") == "1"
+
+
+@app.get("/api/v1/demo")
+def demo_status() -> dict[str, Any]:
+    return {"enabled": _demo_enabled(), "max_count": DEMO_MAX_COUNT}
+
+
+@app.post("/api/v1/demo/inject", status_code=202)
+def demo_inject(body: DemoInjectRequest, request: Request, background: BackgroundTasks) -> dict[str, Any]:
+    """Demo only: submit fresh `val` tickets (never the locked test splits); optionally play the human."""
+    if not _demo_enabled():
+        raise HTTPException(404, detail={"code": "DEMO_MODE_OFF"})
+    import csv
+
+    from flow import demo_agent
+    from flow.inject_dataset import SPLITS, _merchant_id, build_envelope, read_world_rows
+
+    store: ApiStore = request.app.state.store
+    world = os.environ.get("NAVY_WORLD_DB")  # set by run-local.ps1 -WorldDb: tickets with their own merchants
+    if world:
+        candidates = read_world_rows(Path(world), "val")
+    else:
+        with SPLITS["val"].open(encoding="utf-8", newline="") as handle:
+            candidates = list(csv.DictReader(handle))
+    fresh = [row for row in candidates if store.ticket(demo_agent.ticket_id_of(row), 1) is None]
+    if len(fresh) < body.count:
+        raise HTTPException(409, detail={"code": "DEMO_TICKETS_EXHAUSTED", "remaining": len(fresh)})
+    # seeded by what is already injected: deterministic for a given state, different on each click
+    rows = random.Random(len(store.list_tickets())).sample(fresh, body.count)
+    now = datetime.now(UTC)
+    merchant_id = _merchant_id()
+    ids = []
+    for row in rows:
+        ticket = Ticket.model_validate(build_envelope(row, "val", merchant_id, 1, now))
+        submit_ticket(ticket, request, Response(), f"demo-{ticket.ticket_id}")
+        ids.append(ticket.ticket_id)
+    if body.auto_handle:
+        background.add_task(
+            demo_agent.operate, os.environ.get("NAVY_INTERNAL_API", "http://127.0.0.1:8000").rstrip("/"), f"demo-ui-{uuid4().hex[:8]}",
+            set(ids), demo_agent.desks_for(rows), 3.0, 1800.0, demo_agent.llm_writer(),
+        )
+    return {"injected": ids, "auto_handle": body.auto_handle}
 
 
 # Container image: serve the built front end from the same origin. Mounted last so that it never

@@ -3,11 +3,15 @@
 import json
 import logging
 import time
+from typing import Any
 
-from langchain_core.runnables import Runnable
+from langchain_core.messages import AIMessage
+from langchain_core.runnables import Runnable, RunnableLambda
 from langchain_openai import ChatOpenAI
 from langfuse import observe
 from openai import APIConnectionError, APITimeoutError, InternalServerError, RateLimitError
+from requests.exceptions import ConnectionError as RequestsConnectionError
+from requests.exceptions import HTTPError, Timeout as RequestsTimeout
 from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
 
 from flow.contracts import FlowConfig, QualifierResult, Ticket
@@ -74,7 +78,14 @@ def qualifier_output_schema() -> dict[str, object]:
 
 
 def build_qualifier_model(config: FlowConfig) -> Runnable:
-    """Build LangChain's structured-output runnable over llama.cpp's OpenAI-compatible API."""
+    """Build the local llama.cpp or Vertex endpoint Qualifier runnable."""
+    if config.qualifier_provider == "vertex_raw_predict":
+        if not config.qualifier_vertex_endpoint_id:
+            raise ValueError("NAVY_QUALIFIER_VERTEX_ENDPOINT_ID is required for Vertex inference")
+        if not config.qualifier_vertex_project_id:
+            raise ValueError("GCP_PROJECT_ID is required for Vertex inference")
+        return RunnableLambda(lambda prompt: _vertex_raw_predict(prompt, config))
+
     model = ChatOpenAI(
         base_url=config.qualifier_url,
         api_key="local-llama-cpp",
@@ -87,6 +98,45 @@ def build_qualifier_model(config: FlowConfig) -> Runnable:
     return model.with_structured_output(
         qualifier_output_schema(), method="json_schema", strict=True, include_raw=True
     )
+
+
+def _vertex_raw_predict(prompt: Any, config: FlowConfig) -> dict[str, Any]:
+    """Call the Vertex endpoint (ml/qualifier/src/dq4_handler.py): greedy decoding, as evaluated."""
+    import google.auth
+    from google.auth.transport.requests import AuthorizedSession
+
+    credentials, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
+    session = AuthorizedSession(credentials)
+    url = (
+        f"https://{config.qualifier_vertex_region}-aiplatform.googleapis.com/v1/"
+        f"projects/{config.qualifier_vertex_project_id}/locations/{config.qualifier_vertex_region}/"
+        f"endpoints/{config.qualifier_vertex_endpoint_id}:predict"
+    )
+    body = {
+        "instances": [{"prompt": str(prompt)}],
+        "parameters": {"max_tokens": config.qualifier_max_tokens},
+    }
+    response = session.post(
+        url,
+        data=json.dumps(body, ensure_ascii=False).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        timeout=config.qualifier_timeout_seconds,
+    )
+    response.raise_for_status()
+    content = response.json()["predictions"][0]["response"]
+    try:
+        parsed = json.loads(content)
+        if not isinstance(parsed, dict):
+            raise ValueError("Qualifier response must be a JSON object")
+        parsing_error = None
+    except (TypeError, ValueError, json.JSONDecodeError) as exc:
+        parsed = None
+        parsing_error = str(exc)
+    return {
+        "parsed": parsed,
+        "raw": AIMessage(content=content),
+        "parsing_error": parsing_error,
+    }
 
 
 def load_qualifier_prompt(config: FlowConfig) -> PromptRelease:
@@ -110,9 +160,15 @@ def qualify(
     record_prompt_release(prompt)
     try:
         def is_transient(exc: BaseException) -> bool:
-            return isinstance(
-                exc, (APIConnectionError, APITimeoutError, RateLimitError, InternalServerError)
-            )
+            if isinstance(
+                exc,
+                (APIConnectionError, APITimeoutError, RateLimitError, InternalServerError,
+                 RequestsConnectionError, RequestsTimeout),
+            ):
+                return True
+            if isinstance(exc, HTTPError) and exc.response is not None:
+                return exc.response.status_code == 429 or exc.response.status_code >= 500
+            return False
 
         @retry(
             retry=retry_if_exception(is_transient),

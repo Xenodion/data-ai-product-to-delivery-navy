@@ -6,6 +6,9 @@ import {
 import { FlowGraph } from "./FlowGraph.tsx";
 import { DashboardFlow } from "./DashboardFlow.tsx";
 import { Mailbox } from "./Mailbox.tsx";
+import { DemoPanel } from "./DemoPanel.tsx";
+import { reconcileReply } from "./replyEditor.ts";
+import "./workspace-polish.css";
 
 const VIEWS: { hash: string; label: string; icon: string }[] = [
   { hash: "#dashboard", label: "Dashboard", icon: "▦" },
@@ -128,7 +131,7 @@ function OverviewPage() {
       <section className="metric-row" aria-label="Key flow metrics">
         <Metric label="Tickets received" value={data.total} note="All tickets in this run" tone="blue" />
         <Metric label="Waiting for an agent" value={(data.queues["re-router"] ?? 0) + (data.queues.validator ?? 0)} note="Across review queues" tone="amber" />
-        <Metric label="Oldest open ticket" value={duration(data.oldest_waiting_seconds)} note="Time since ticket creation" tone="purple" />
+        <Metric label="Oldest open ticket" value={(data.queues["re-router"] ?? 0) + (data.queues.validator ?? 0) ? duration(data.oldest_waiting_seconds) : "None"} note="Time since ticket creation" tone="purple" />
         <Metric label="Simulated sends" value={data.simulated_sends} note="Replies recorded as sent" tone="green" />
       </section>
 
@@ -165,6 +168,7 @@ function OverviewPage() {
       </section>
       </details>
     </>}
+    <DemoPanel onInjected={() => setRefresh((value) => value + 1)} />
   </section>;
 }
 
@@ -222,7 +226,7 @@ function QueueWorkspace({ name, title }: { name: QueueName; title: string }) {
     <div className="workbench">
       <aside className="inbox card" aria-label={`${title} tickets`}>
         <div className="inbox-heading"><div><h2>Waiting tickets</h2><span>{visibleItems.length}{visibleItems.length !== items.length ? ` of ${items.length}` : ""}</span></div><span className="auto-refresh" title="Updates automatically">●</span></div>
-        <label className="search-box"><span className="sr-only">Search tickets</span><span aria-hidden="true">⌕</span><input type="search" placeholder="Search ID, subject, desk…" value={query} onChange={(event) => setQuery(event.target.value)} /></label>
+        <label className="search-box"><span className="sr-only">Search loaded tickets</span><span aria-hidden="true">⌕</span><input type="search" placeholder="Search loaded tickets…" value={query} onChange={(event) => setQuery(event.target.value)} /></label>
         <div className="inbox-items">
           {visibleItems.map((item) => {
             const key = `${item.ticket_id}:${item.turn}`;
@@ -245,7 +249,8 @@ function QueueWorkspace({ name, title }: { name: QueueName; title: string }) {
 
 function TicketWorkbench({ ticket, onChanged }: { ticket: TicketSnapshot; onChanged: () => void }) {
   const [actor, setActor] = useState("local-reviewer");
-  const [text, setText] = useState(ticket.final_text ?? currentDraft(ticket)?.text ?? "");
+  const [editor, setEditor] = useState(() => { const reply = ticket.final_text ?? currentDraft(ticket)?.text ?? ""; return { text: reply, base: reply, conflict: false }; });
+  const text = editor.text;
   const [reason, setReason] = useState("");
   const [desk, setDesk] = useState(ticket.desk ?? "payments");
   const [message, setMessage] = useState("");
@@ -255,7 +260,9 @@ function TicketWorkbench({ ticket, onChanged }: { ticket: TicketSnapshot; onChan
   const draft = currentDraft(ticket);
   const canWrite = actions.includes("edit_draft") || actions.includes("write_reply");
   const originalReply = ticket.final_text ?? draft?.text ?? "";
-  const hasUnsavedEdit = canWrite && text !== originalReply;
+  useEffect(() => { setEditor((previous) => reconcileReply(previous, originalReply)); }, [originalReply]);
+  const hasUnsavedEdit = text !== originalReply;
+  const replyConflict = editor.conflict && text !== originalReply;
   const runAction = async (action: Record<string, unknown>) => {
     setBusy(true); setMessage("");
     try { const result = await submitAction(ticket, { ...action, actor: actor.trim() }); setMessage(`Action accepted · ${STATUS_LABEL[result.status] ?? humanize(result.status)}`); onChanged(); }
@@ -273,18 +280,9 @@ function TicketWorkbench({ ticket, onChanged }: { ticket: TicketSnapshot; onChan
   return <div className="ticket-columns">
     <article className="ticket-main card">
       <div className="ticket-heading"><div><div className="ticket-kicker">TICKET <span>·</span> TURN {ticket.turn}</div><h2>{ticket.ticket.subject || "Incoming support request"}</h2></div><StatusBadge status={ticket.status} /></div>
-      {actions.length > 0 && <div className="action-required"><span className="action-required-icon" aria-hidden="true">!</span><div><b>Human action required</b><span>{ticket.status === "awaiting_validation" ? "Review the draft and choose how to proceed." : ticket.status === "awaiting_reroute" ? "Confirm the right desk or write a direct reply." : ticket.status === "ready_to_send" ? "The reply is approved. Confirm the simulated send." : "Review the case and choose an allowed next step."}</span></div><span className="human-owner">AGENT</span></div>}
-      <Mailbox merchantId={ticket.ticket.merchant_id} currentTicketId={ticket.ticket_id} />
-      <div className="message-block"><div className="message-byline"><b>{ticket.ticket.merchant_id}</b><span>{humanize(ticket.ticket.channel)}</span><time>{formatDate(ticket.ticket.created_at)}</time></div><p>{ticket.ticket.body}</p></div>
       {ticket.error_code && <Notice>Flow stopped: <b>{humanize(ticket.error_code)}</b></Notice>}
-      <div className="draft-section">
-        <div className="draft-heading"><div><p className="eyebrow">REPLY DRAFT</p><h3>{draft ? `Draft v${draft.version}` : ticket.final_text ? "Final reply" : "Write a reply"}</h3></div>
-          {draft && <span className={`policy-pill ${draft.blocked ? "blocked" : "clear"}`}>{draft.blocked ? "Needs attention" : "Draft ready"}</span>}
-        </div>
-        {draft?.blocked && <Notice>This draft is blocked by a policy check. Review the findings in the ticket context before proceeding.</Notice>}
-        {hasUnsavedEdit && actions.includes("approve") && <p className="unsaved-note">You have unsaved edits. Save them before approving this reply.</p>}
-        <textarea aria-label="Reply draft" className="reply-editor" value={text} onChange={(event) => setText(event.target.value)} disabled={busy || !canWrite} placeholder={canWrite ? "Write a clear, helpful reply…" : "No reply is available for this ticket."} />
-        {!canWrite && <p className="helper">The current status does not allow editing this reply.</p>}
+      {actions.length > 0 && <div className="action-required"><span className="action-required-icon" aria-hidden="true">!</span><div><b>Human action required</b><span>{ticket.status === "awaiting_validation" ? "Review the draft and choose how to proceed." : ticket.status === "awaiting_reroute" ? "Confirm the right desk or write a direct reply." : ticket.status === "ready_to_send" ? "The reply is approved. Confirm the simulated send." : "Review the case and choose an allowed next step."}</span></div><span className="human-owner">AGENT</span></div>}
+      <section className="action-panel" aria-label="Actions">
         <div className="action-fields">
           {actions.includes("reroute") && <label>Assign to desk<select value={desk} onChange={(event) => setDesk(event.target.value)}><option value="payments">Payments</option><option value="disputes">Disputes</option><option value="technical_api">Technical API</option><option value="compliance">Compliance</option></select></label>}
           {(actions.includes("handoff_to_rerouter") || actions.includes("reroute") || actions.includes("close_manual")) && <label>Reason for action<input value={reason} onChange={(event) => setReason(event.target.value)} placeholder="Add a short reason…" /></label>}
@@ -296,17 +294,32 @@ function TicketWorkbench({ ticket, onChanged }: { ticket: TicketSnapshot; onChan
           <label className={sendDisposition === "close" ? "is-selected" : ""}><input type="radio" name={`send-disposition-${ticket.ticket_id}-${ticket.turn}`} value="close" checked={sendDisposition === "close"} disabled={busy} onChange={() => setSendDisposition("close")} /><span><b>Close</b><small>Mark this ticket resolved after sending.</small></span></label>
         </fieldset>}
         <div className="action-buttons">
-          {actions.includes("approve") && <button className="button button-approve" disabled={busy || !actor.trim() || hasUnsavedEdit} onClick={() => void runAction({ action: "approve" })}>Approve reply</button>}
-          {actions.includes("edit_draft") && <button className="button button-primary" disabled={busy || !text.trim() || !draft || !actor.trim()} onClick={() => void runAction({ action: "edit_draft", text, draft_version: draft?.version })}>Save changes</button>}
-          {actions.includes("write_reply") && <button className="button button-primary" disabled={busy || !text.trim() || !actor.trim()} onClick={() => void runAction({ action: "write_reply", text })}>Save reply</button>}
+          {actions.includes("approve") && <button className="button button-approve" disabled={busy || !actor.trim() || hasUnsavedEdit || replyConflict} onClick={() => void runAction({ action: "approve" })}>Approve reply</button>}
+          {actions.includes("edit_draft") && <button className="button button-primary" disabled={busy || !text.trim() || !draft || !actor.trim() || replyConflict} onClick={() => void runAction({ action: "edit_draft", text, draft_version: draft?.version })}>Save changes</button>}
+          {actions.includes("write_reply") && <button className="button button-primary" disabled={busy || !text.trim() || !actor.trim() || replyConflict} onClick={() => void runAction({ action: "write_reply", text })}>Save reply</button>}
           {actions.includes("handoff_to_rerouter") && <button className="button button-human" disabled={busy || !reason.trim() || !actor.trim()} onClick={() => void runAction({ action: "handoff_to_rerouter", reason })}>Send to re-routing</button>}
           {actions.includes("reroute") && <button className="button button-human" disabled={busy || !reason.trim() || !actor.trim()} onClick={() => void runAction({ action: "reroute", desk, reason })}>Assign ticket</button>}
           {actions.includes("close_manual") && <button className="button button-quiet" disabled={busy || !reason.trim() || !actor.trim()} onClick={() => void runAction({ action: "close_manual", reason })}>Close manually</button>}
-          {actions.includes("send") && <button className="button button-approve" disabled={busy || !actor.trim() || !sendDisposition} onClick={() => void send()}>{sendDisposition === "close" ? "Send & close" : sendDisposition === "leave_open" ? "Send & leave open" : "Choose ticket outcome"}</button>}
+          {actions.includes("send") && <button className="button button-approve" disabled={busy || !actor.trim() || !sendDisposition || replyConflict || hasUnsavedEdit} onClick={() => void send()}>{sendDisposition === "close" ? "Send & close" : sendDisposition === "leave_open" ? "Send & leave open" : "Choose ticket outcome"}</button>}
         </div>
         {message && <Notice role="status">{message}</Notice>}
         {!actions.length && !ticket.error_code && <p className="helper">There are no agent actions available for this ticket right now.</p>}
+      </section>
+      <div className="draft-section">
+        <div className="draft-heading"><div><p className="eyebrow">REPLY DRAFT</p><h3>{draft ? `Draft v${draft.version}` : ticket.final_text ? "Final reply" : "Write a reply"}</h3></div>
+          {draft && <span className={`policy-pill ${draft.blocked ? "blocked" : "clear"}`}>{draft.blocked ? "Needs attention" : "Draft ready"}</span>}
+        </div>
+        {draft?.blocked && <Notice>This draft is blocked by a policy check. Review the findings in the ticket context before proceeding.</Notice>}
+        {replyConflict && <div className="reply-conflict" role="status"><b>A newer reply is available.</b> Your edits are preserved. Copy them if needed, then load the latest reply before continuing.<button type="button" className="button button-quiet" onClick={() => setEditor({ text: originalReply, base: originalReply, conflict: false })}>Discard my edits &amp; load latest</button></div>}
+        {hasUnsavedEdit && !replyConflict && actions.includes("approve") && <p className="unsaved-note">You have unsaved edits. Save them before approving this reply.</p>}
+        <textarea aria-label="Reply draft" className="reply-editor" value={text} onChange={(event) => setEditor((previous) => ({ ...previous, text: event.target.value }))} disabled={busy} readOnly={!canWrite} placeholder={canWrite ? "Write a clear, helpful reply…" : "No reply is available for this ticket."} />
+        {!canWrite && <p className="helper">The current status does not allow editing this reply.</p>}
       </div>
+      <section className="history-stack" aria-label="History, newest first">
+        <p className="eyebrow">HISTORY · NEWEST FIRST</p>
+      <div className="message-block"><div className="message-byline"><b>{ticket.ticket.merchant_id}</b><span>{humanize(ticket.ticket.channel)}</span><time>{formatDate(ticket.ticket.created_at)}</time></div><p>{ticket.ticket.body}</p></div>
+      <Mailbox merchantId={ticket.ticket.merchant_id} currentTicketId={ticket.ticket_id} />
+      </section>
     </article>
     <TicketContext ticket={ticket} />
   </div>;
@@ -329,10 +342,10 @@ function TicketContext({ ticket }: { ticket: TicketSnapshot }) {
     {ticket.prior_turns?.length ? <section className="card context-card"><div className="section-heading"><div><p className="eyebrow">CONVERSATION</p><h2>Previous turns</h2></div></div>
       <ol className="draft-history">{[...ticket.prior_turns].reverse().map((turn) => <li key={turn.turn}><span className="timeline-dot" /><div><b>Turn {turn.turn} · {humanize(turn.status)}</b><span>{turn.ticket.subject || turn.ticket.body.slice(0, 110)}</span>{turn.run?.final_text && <small>Reply: {turn.run.final_text.slice(0, 160)}{turn.run.final_text.length > 160 ? "…" : ""}</small>}</div></li>)}</ol>
     </section> : null}
-    <section className="card context-card"><div className="section-heading"><div><p className="eyebrow">ACTIVITY</p><h2>Drafts & flow history</h2></div></div>
+    <section className="card context-card"><div className="section-heading"><div><p className="eyebrow">ACTIVITY</p><h2>Recent activity</h2></div></div>
+      {ticket.human_actions?.length ? <><h3 className="activity-subheading">Human decisions · newest first</h3><ol className="draft-history">{[...ticket.human_actions].reverse().map((event, index) => <li key={`${event.action}:${event.created_at}:${index}`}><span className="timeline-dot" /><div><b>{event.action === "send" ? event.send_disposition === "close" ? "Sent · closed" : "Sent · left open" : (event.action === "close" || event.action === "close_manual") ? "Closed without reply" : humanize(event.action)}</b><span>{event.actor} · {formatDate(event.created_at)}</span>{event.reason && <small>{event.reason}</small>}</div></li>)}</ol></> : null}
       {ticket.drafts?.length ? <ol className="draft-history">{[...ticket.drafts].reverse().map((draft) => <li key={draft.version}><span className="timeline-dot" /><div><b>Draft v{draft.version}</b><span>{draft.stale ? "Replaced" : "Current"}{draft.blocked ? " · blocked" : ""} · {humanize(draft.desk)}</span><small>{draft.source_ids.length ? `${draft.source_ids.length} evidence source${draft.source_ids.length === 1 ? "" : "s"}` : "No evidence source"}</small></div></li>)}</ol> : <p className="helper">No draft has been created yet.</p>}
-      {ticket.human_actions?.length ? <><h3 className="activity-subheading">Human decisions</h3><ol className="draft-history">{[...ticket.human_actions].reverse().map((event, index) => <li key={`${event.action}:${event.created_at}:${index}`}><span className="timeline-dot" /><div><b>{event.action === "send" ? event.send_disposition === "close" ? "Sent · closed" : "Sent · left open" : event.action === "close" ? "Closed without reply" : humanize(event.action)}</b><span>{event.actor} · {formatDate(event.created_at)}</span>{event.reason && <small>{event.reason}</small>}</div></li>)}</ol></> : null}
-      <details className="lifecycle"><summary>Node history <span>{ticket.events.length}</span></summary><ol>{ticket.events.map((event, index) => <li key={`${event.node_id}:${index}`}><b>{humanize(event.node_id)}</b><span>{humanize(event.status)}{event.duration_ms != null ? ` · ${event.duration_ms} ms` : ""}</span>{event.safe_error_code && <small>{humanize(event.safe_error_code)}</small>}</li>)}</ol></details>
+      <details className="lifecycle"><summary>Node history <span>{ticket.events.length}</span></summary><ol>{[...ticket.events].reverse().map((event, index) => <li key={`${event.node_id}:${index}`}><b>{humanize(event.node_id)}</b><span>{humanize(event.status)}{event.duration_ms != null ? ` · ${event.duration_ms} ms` : ""}</span>{event.safe_error_code && <small>{humanize(event.safe_error_code)}</small>}</li>)}</ol></details>
     </section>
   </aside>;
 }
@@ -380,5 +393,5 @@ function Notice({ children, role = "alert" }: { children: React.ReactNode; role?
 function Loading({ label }: { label: string }) { return <div className="loading card"><span className="spinner" />{label}</div>; }
 function currentDraft(ticket: TicketSnapshot) { return [...(ticket.drafts ?? [])].reverse().find((draft) => !draft.stale) ?? null; }
 function humanize(value: string) { return value.replaceAll("_", " ").replaceAll("-", " ").replace(/\b\w/g, (letter) => letter.toUpperCase()); }
-function duration(seconds: number) { if (seconds < 60) return `${Math.round(seconds)} sec`; if (seconds < 3600) return `${Math.round(seconds / 60)} min`; return `${Math.floor(seconds / 3600)} h ${Math.round((seconds % 3600) / 60)} min`; }
+function duration(seconds: number) { if (seconds < 60) return `${Math.round(seconds)} sec`; if (seconds < 3600) return `${Math.round(seconds / 60)} min`; if (seconds < 86400) return `${Math.floor(seconds / 3600)} h ${Math.round((seconds % 3600) / 60)} min`; return `${Math.floor(seconds / 86400)} d ${Math.floor((seconds % 86400) / 3600)} h`; }
 function formatDate(value: string) { const date = new Date(value); return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(date); }

@@ -16,6 +16,10 @@ CONFIG_PATH = Path(__file__).parent / "config.toml"
 WORLD_DATABASE_ENV = "NAVY_WORLD_DB"
 QUALIFIER_URL_ENV = "NAVY_QUALIFIER_URL"
 COPILOT_MODE_ENV = "NAVY_COPILOT_MODE"
+QUALIFIER_PROVIDER_ENV = "NAVY_QUALIFIER_PROVIDER"
+QUALIFIER_VERTEX_ENDPOINT_ENV = "NAVY_QUALIFIER_VERTEX_ENDPOINT_ID"
+QUALIFIER_VERTEX_PROJECT_ENV = "NAVY_QUALIFIER_VERTEX_PROJECT_ID"
+QUALIFIER_VERTEX_REGION_ENV = "NAVY_QUALIFIER_VERTEX_REGION"
 FROZEN = ConfigDict(extra="forbid", frozen=True)
 
 Desk = Literal["payments", "disputes", "technical_api", "compliance"]
@@ -90,6 +94,10 @@ class FlowConfig(BaseModel):
     qualifier_model_uri: str
     qualifier_model_md5: str
     qualifier_url: str
+    qualifier_provider: Literal["openai_compatible", "vertex_raw_predict"] = "openai_compatible"
+    qualifier_vertex_endpoint_id: str = ""
+    qualifier_vertex_project_id: str = ""
+    qualifier_vertex_region: str = "europe-west2"
     qualifier_model_version: str
     qualifier_max_tokens: int
     qualifier_timeout_seconds: float
@@ -509,4 +517,18 @@ def load_config(path: Path = CONFIG_PATH) -> FlowConfig:
     qualifier = os.environ.get(QUALIFIER_URL_ENV)
     if qualifier:  # containers reach the Qualifier by service name, not by 127.0.0.1
         raw["qualifier_url"] = qualifier
+    raw["qualifier_provider"] = os.environ.get(
+        QUALIFIER_PROVIDER_ENV, raw.get("qualifier_provider", "openai_compatible")
+    )
+    raw["qualifier_vertex_endpoint_id"] = os.environ.get(
+        QUALIFIER_VERTEX_ENDPOINT_ENV, raw.get("qualifier_vertex_endpoint_id", "")
+    )
+    raw["qualifier_vertex_project_id"] = os.environ.get(
+        QUALIFIER_VERTEX_PROJECT_ENV,
+        os.environ.get("GCP_PROJECT_ID", raw.get("qualifier_vertex_project_id", "")),
+    )
+    raw["qualifier_vertex_region"] = os.environ.get(
+        QUALIFIER_VERTEX_REGION_ENV,
+        os.environ.get("GCP_REGION", raw.get("qualifier_vertex_region", "europe-west2")),
+    )
     return FlowConfig.model_validate(raw)
