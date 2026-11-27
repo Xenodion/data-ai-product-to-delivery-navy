@@ -22,7 +22,7 @@ Trust levels: L1 suggests, L2 drafts and a person approves every reply, L3 acts 
 | # | Component | Pattern | Level | Tool or model | Today | Main metric | Main risk |
 |---|---|---|---|---|---|---|---|
 | 1 | Intake | Rule-based | L4 | Rule | Built | Share of tickets lost | A valid ticket refused |
-| 2 | Qualifier | Routing, classifier step (rung 4) | L1 | Local LLM, D-q4 | Built (CPU; Vertex endpoint in progress, #73) | Silent errors per 100 tickets: 0.7 | An urgent ticket sent to the wrong desk |
+| 2 | Qualifier | Routing, classifier step (rung 4) | L1 | Local LLM, D-q4 | Built (CPU locally, or a Vertex AI endpoint for the demo) | Silent errors per 100 tickets: 0.7 | An urgent ticket sent to the wrong desk |
 | 3 | Field check | Rule-based, chaining gate | L4 | Rule | Built | Wrong references caught | A valid format flagged as wrong |
 | 4 | Routing | Routing on a rule | L3 | Rule | Built (later turns keep the desk) | Re-router correction rate | The desk kept wrongly on later turns |
 | 5 | Context plan | Rule-based routing | L4 | Rule | Built | Needed sources planned | A needed source not planned |
@@ -31,8 +31,8 @@ Trust levels: L1 suggests, L2 drafts and a person approves every reply, L3 acts 
 | 8 | Evidence gate | Rule-based, chaining gate | L4 | Rule | Built | `factual` decisions that had enough evidence | A factual reply without enough evidence |
 | 9 | Desk Drafter | Routing, prompt chaining | L2 | LLM | Built | Drafts sendable as is | An unsupported claim or promise |
 | 10 | Policy check | Rule-based, chaining gate | L4 | Rule | Built | Seeded violations caught | A violation missed |
-| 11 | Judge (optional) | Evaluator-optimizer | L1 | Other LLM | Not built (#59) | Sendable gain per revision | Good drafts rejected, extra cost |
-| 12 | Redraft | Evaluator-optimizer | L2 | Stronger LLM | Not built (#59) | Revised drafts that become sendable | A revision worse than the draft |
+| 11 | Judge (optional) | Evaluator-optimizer | L1 | Other LLM | Not built | Sendable gain per revision | Good drafts rejected, extra cost |
+| 12 | Redraft | Evaluator-optimizer | L2 | Stronger LLM | Not built | Revised drafts that become sendable | A revision worse than the draft |
 | R | Re-router | Human checkpoint | Human | Person | Built (API and Re-routing workspace) | Correction time | An urgent ticket waiting in the queue |
 | 13 | Validator | Human checkpoint | Human | Person | Built (API and Ticket review workspace) | Review time | Approval without reading |
 | 14 | Final compliance gate | Rule-based, last gate | L4 | Rule | Built (before every send) | Real issues stopped on the final text | A violation in a human text missed |
@@ -66,7 +66,7 @@ A person can take any ticket back at any time. Nothing is sent without a person,
 
 ## 6. Override switch
 
-**The switch** is one flag, `copilot_mode` (`flow/config.toml` or `NAVY_COPILOT_MODE`), owned by the Head of Support, with a named backup (the deputy head of support). Built and tested in `flow/pipeline_steps.py` and `flow/rollback_check.py` (#60). Its positions run from light to total (`full` is the default):
+**The switch** is one flag, `copilot_mode`, owned by the Head of Support, with a named backup (the deputy head of support). Built, and tested on the 100-case eval-set on 24 November 2026. Its positions run from light to total (`full` is the default):
 
 | Position (`copilot_mode`) | Effect |
 |---|---|
@@ -89,4 +89,4 @@ A person can take any ticket back at any time. Nothing is sent without a person,
 
 ## 8. Built today and target
 
-Built: the Qualifier (D-q4, measured), the routing rule, a mode-aware desk-specific Drafter, and part of the audit log. Initial ticket envelope, in-memory turn sequence checks, non-blocking field checks, context plan, Evidence gate, shared Policy check, final-text gate, local synthetic SQL ledger and approved KB retrieval are now in code. The Policy check runs after drafts; final-text enforcement awaits the send action. Persistent intake/idempotency and an error queue await the API/storage lot. Synthetic factual drafting is reachable for matching fixture references, but end-to-end evaluation remains outstanding. Next: optional Judge (#59) and hosted cloud endpoint (#73, #74); the `copilot_mode` override switch (#60) is now built and verified on the 100-case eval-set (`flow/rollback_check.py`). No cloud endpoint is kept live outside demo runs. The confidence study found that token probabilities do not usefully separate right from wrong desk or urgency labels on validation; no probability threshold is part of the flow. The frozen test-split analysis remains pending; see issue #45 and `agentic-workflow-subproject/ml/confidence/README.md`.
+Built (27 November 2026): the whole flow runs end to end on our laptop in a local container, on synthetic tickets: intake, Qualifier (D-q4, measured), field check, routing rule, context plan, synthetic ledger and approved help-content search, Evidence gate, desk-specific Drafter, Policy check, the Re-router and Validator workspaces, final compliance gate and a simulated send that cannot be sent twice, with persistent state and a front end. The `copilot_mode` switch is built and verified on the 100-case eval-set. Not built: the optional Judge and Redraft, and a hosted deployment; no cloud endpoint is kept live outside demo runs. The full flow has not been re-measured since the guardrails were added: the last end-to-end number is the 13 November run of `evals/report_v0.md`. The confidence study found that token probabilities do not usefully separate right from wrong desk or urgency labels on validation; no probability threshold is part of the flow.

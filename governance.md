@@ -1,6 +1,6 @@
 # Keelpay Governance
 
-Reference: 3 November 2026. Responsibilities and rules describe the target product. Controls not yet implemented are requirements, not certified compliance.
+Reference: 3 November 2026, last updated 27 November 2026. Responsibilities and rules describe the target product. Controls not yet implemented are requirements, not certified compliance.
 
 ## Session 1 — Six questions
 
@@ -57,7 +57,7 @@ An absent/ambiguous payment reference blocks claims about that payment, not a kn
 
 **Separate rollback:** one flag, `copilot_mode`, with positions Judge off, L1 (drafting off, keep context and human writing), routing off (manual routing), copilot off (manual queue). Head of Support triggers, with a named backup; NAVY executes; Compliance joins sensitive incidents. Tested before any demo by running the evaluation set at L1 and checking that no draft is produced. A serious incident triggers immediate review and tailored restriction, not just waiting for a weekly sample.
 
-## Open settings and S5–S7
+## Open settings
 
 | Setting / evidence | Owner and closure criterion |
 |---|---|
@@ -67,7 +67,7 @@ An absent/ambiguous payment reference blocks claims about that payment, not a kn
 | Retention/legal basis | DPO/Legal; decision by purpose and data category |
 | Isolation and durable recovery | Tech lead; cross-merchant, reconnect, idempotency, and failure tests |
 
-The demo requires FIFO and visible waiting time. Advanced urgency and multi-agent are SHOULD for demo implementation; this neither validates nor waives pilot safety requirements. Metrics, A/B, and operations deliverables will use available course instructions and observations actually collected.
+The demo requires FIFO and visible waiting time. Advanced urgency and multi-agent are SHOULD for demo implementation; this neither validates nor waives pilot safety requirements.
 
 ## Session 5 — Counter-metrics, segments and the harm threshold
 
@@ -81,4 +81,17 @@ Pre-registered on 23 November 2026 (`06_ab_protocol.md`): staggered crossover of
 
 ## Session 7 — Operations
 
-Monitoring in four layers, drift triggers and rollback criteria in `07_operations.md`: any one criterion is enough to roll back, the Head of Compliance decides on serious errors and the Head of Support on routing, quality and segments, NAVY executes and records the date, trigger and level here; the `copilot_mode` switch (#60) is built in `flow/config.toml` (`NAVY_COPILOT_MODE`) and verified on the 100-case `eval_set_v1.csv` (`flow/rollback_check.py`).
+Monitoring in four layers, drift triggers and rollback criteria in `07_operations.md`: any one criterion is enough to roll back; the Head of Compliance decides on serious errors and the Head of Support on routing, quality and segments; NAVY executes and records here the date, trigger and position. The four-position switch is built and was verified on the 100 cases of `evals/eval_set_v1.csv` on 24 November 2026.
+
+### Sessions 6 + 7 — the three lines
+
+- **Experiments on real users.** Any experiment on real Keelpay merchants or agents is signed by the Head of Support and the Head of Compliance and read by the DPO before it starts; the decision rule and the harm threshold are written before the first unit (`06_ab_protocol.md` §6–§7, pre-registered on 23 November 2026).
+- **The switch.** The Head of Support, or a named backup, can move the copilot to drafting off, routing off or off by day; NAVY on call by night. Last tested 24 November 2026; next test before the oral demo of 27 November 2026, then before every release and before the first pilot week.
+- **The trace.** One trace per ticket and one span per step, without ticket or draft text, kept 90 days (proposal awaiting the DPO) in Langfuse inside Keelpay's cloud for the pilot (Langfuse cloud on synthetic data for the demo); the Tech lead keeps it, the Head of Compliance answers a merchant or a regulator from it, with the DPO for any data request.
+- **Accountability.** Keelpay answers for what the copilot says to a merchant, as a company answers for its chatbot (Moffatt v. Air Canada, 2024 BCCRT 149); a person sending the reply does not move that responsibility to the agent (Session 1).
+
+## Session 8 — who signs the launch
+
+- This launch (Stage 1: the pilot as the A/B test of `06_ab_protocol.md`, 46 agents, half the conversations, from the first week after the open pre-pilot conditions of `08_launch_memo.md` §3 close) is signed by the Head of Support and the Head of Compliance of Keelpay; the DPO / Legal has read the protocol.
+- Telling people they talk to an AI (EU AI Act art. 50): not applicable: a person sends every answer.
+- The rollback plan (`07_operations.md` §7) was last tested on 24 November 2026 by Nahel Bachiri; next test: before the oral demo of 27 November 2026, then before the first pilot week.

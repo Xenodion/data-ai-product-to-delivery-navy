@@ -1,6 +1,6 @@
 # Target Architecture: Keelpay Demo
 
-**Status: target validated 6 November 2026; implementation partial, updated 10 November 2026.** The flow, nodes and measures are in [flow-v2/node_table_v1.md](flow-v2/node_table_v1.md); the current diagram is [flow_v2.svg](flow_v2.svg); the build order is in [specs/013-flow-v2/tasks.md](../../specs/013-flow-v2/tasks.md). Names: [terminology](terminology.md). Screens: [workflow and UX](copilot-workflow.md). This page keeps what the node table does not cover: runtime, state, failures and deployment.
+**Status: target validated 6 November 2026; implementation partial, updated 10 November 2026.** The flow, nodes and measures are in [flow-v2/node_table_v1.md](flow-v2/node_table_v1.md); the current diagram is [flow_v2.svg](flow-v2/flow_v2.svg); the build order is in [specs/013-flow-v2/tasks.md](../../specs/013-flow-v2/tasks.md). Names: [terminology](terminology.md). Screens: [workflow and UX](copilot-workflow.md). This page keeps what the node table does not cover: runtime, state, failures and deployment.
 
 ![Flow v2 target](flow-v2/flow_v2.svg)
 

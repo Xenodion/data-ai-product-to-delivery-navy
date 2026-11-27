@@ -57,7 +57,7 @@ Each ticket shows age since receipt and time in its current step. Rerouting does
 | Environment | Allowed | Not allowed / status |
 |---|---|---|
 | Benchmark | Versioned synthetic corpus and reproducible evaluation | Does not prove the full product or UX |
-| Course demo | *(v3)* API and front end in local containers (`flow/deploy/compose.demo.yml`), Qualifier on CPU locally or on a Vertex AI endpoint for the demo only (#73), synthetic ledger/KB, external `Drafter Model` API and Langfuse Cloud for non-critical synthetic data only; simulated sending. No hosted API: Cloud Run is not available on the school project (#74, 16 November 2026) | No real tickets, browser-held service secrets, or financial action |
+| Course demo | *(v3)* API and front end in local containers (`flow/deploy/compose.demo.yml`), Qualifier on CPU locally or on a Vertex AI endpoint for the demo only, synthetic ledger/KB, external `Drafter Model` API and Langfuse Cloud for non-critical synthetic data only; simulated sending. No hosted API: Cloud Run is not available on the school project (16 November 2026) | No real tickets, browser-held service secrets, or financial action |
 | Fictional production | Data, models, and traces confined to Keelpay cloud under the scenario's internal policy | Not built or approved; no external API with real tickets |
 
 ## 8. Acceptance criteria
@@ -70,7 +70,7 @@ Each ticket shows age since receipt and time in its current step. Rerouting does
 - Merchant isolation, injection/send idempotency, persistence across reconnect, errors, and recovery are verifiable. — **built** locally (merchant-scoped tools, API idempotency keys, SQLite state and LangGraph checkpoints); a multi-replica store is out of the demo scope.
 - Views use the same backend state; arrivals, queues, times, and order reflect persisted tickets. — **built**: Overview, Re-routing and Ticket review read the API.
 - No send without a human action and no unsupported fact; ticket history covers qualification, routing, drafts, and actions. — **built**: Evidence gate, Policy check, Final compliance gate before every simulated send, lifecycle events.
-- Correlated Langfuse traces include available versions, latency, and errors; no real data reaches demo observability. — **built** in code (spans, prompt versions); one trace per ticket from the deployed run not yet captured (#41).
+- Correlated Langfuse traces include available versions, latency, and errors; no real data reaches demo observability. — **built** in code (spans, prompt versions); one trace per ticket from the deployed run not yet captured.
 - Measure product outcomes at constant QA and compare against a baseline; do not infer rare-risk or UX outcomes from 20 fixtures. — **open by design**: measured only in the pilot, by the pre-registered A/B (`06_ab_protocol.md`).
 
 ## 9. Evidence limits and deliverables
@@ -93,7 +93,7 @@ Each miss of the S4 eval (`evals/report_v0.md` §2) is a line of this spec:
 - **Monitoring:** four layers with thresholds — service latency, drift without labels (PSI of the Qualifier outputs and language, invalid and `UNDEFINED` shares), a labelled audit of 200 tickets a week read over four weeks, business metrics monthly (`07_operations.md` §2, `evals/07_monitoring.ipynb`). No ticket or draft text in monitoring.
 - **Rollback plan.** Three things roll back separately: the prompt (Langfuse `production` label to the previous version, minutes), the Qualifier model (previous version in `flow/config.toml` or the Registry alias, under an hour), and the copilot level with `copilot_mode`: Judge off, L1 drafting off, L2 routing off, L3 copilot off (manual queue).
 - **Rollback criteria, any one is enough:** one uncaught serious error reaching a merchant → L1 on that desk (Head of Compliance); serious errors above the pessimistic value of a category → L3 (Head of Compliance); a second urgent ticket in a wrong desk within four weeks → L2 for urgent tickets (Head of Support); a confirmed layer-2 alarm → previous model or prompt (Head of Support); the harm threshold of `governance.md` Session 5 → L1 on that segment (Head of Support); timeouts above 5 % of an hour → L1 for new tickets (NAVY). Tickets in flight keep their state and total age; return only after the cause is named and the fix passes the eval-set replay (`07_operations.md` §4).
-- **Verified (#60, 24 November 2026):** `copilot_mode` (`full`, `judge_off`, `l1_drafting_off`, `l2_routing_off`, `l3_copilot_off` in `flow/config.toml` or `NAVY_COPILOT_MODE`) is built and replayed in CI on the 100 cases of `evals/eval_set_v1.csv` (`flow/rollback_check.py`): `0` model drafts at `L1` (79 routed with context, 21 to Re-router), `100/100` to manual routing at `L2`, and `0` model/tool calls with a working FIFO manual queue at `L3`.
+- **Verified (24 November 2026):** `copilot_mode` (`full`, `judge_off`, `l1_drafting_off`, `l2_routing_off`, `l3_copilot_off` in `flow/config.toml` or `NAVY_COPILOT_MODE`) is built and replayed in CI on the 100 cases of `evals/eval_set_v1.csv` (`flow/rollback_check.py`): `0` model drafts at `L1` (79 routed with context, 21 to Re-router), `100/100` to manual routing at `L2`, and `0` model/tool calls with a working FIFO manual queue at `L3`.
 
 ## 12. Changes in v3 (23 November 2026)
 

@@ -75,7 +75,7 @@ Pre-registered segments, from `05_metrics.md` §3 and the S3 data audit: **langu
 
 | Trigger | Action | Owner |
 |---|---|---|
-| One urgent ticket routed automatically to the wrong desk | review that ticket within 24 h; second case → routing off for urgent tickets (`copilot_mode = l2_routing_off`, #60) | Head of Support |
+| One urgent ticket routed automatically to the wrong desk | review that ticket within 24 h; second case → routing off for urgent tickets (`copilot_mode = l2_routing_off`) | Head of Support |
 | One uncaught serious error caused by the copilot reaches a merchant | immediate review; affected desk to L1 (`copilot_mode = l1_drafting_off`, no draft) until explained | Head of Compliance |
 | Serious errors above the pessimistic value of a category (`Flow!C19:C21`) | **stop the test**: copilot off (`copilot_mode = l3_copilot_off`) | Head of Compliance |
 | Harm threshold of `governance.md` Session 5 (repeat contact higher in copilot-on weeks two weeks in a row, or Re-router corrections above 1 in 7) | drafting off on that segment (`l1_drafting_off`) | Head of Support |
