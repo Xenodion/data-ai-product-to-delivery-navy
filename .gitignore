@@ -51,3 +51,16 @@ mlflow.db
 
 # Team audit export: personal e-mail and IP addresses, never commit (#82)
 audit_logs*.csv
+
+# Local only: course briefs and templates supplied by the teachers, oral preparation,
+# AI-assistant tooling, scratch notes. Kept on disk, never part of the deliverable.
+/docs/
+agentic-workflow-subproject/docs/presentation/
+agentic-workflow-subproject/.specify/
+agentic-workflow-subproject/docs/design/flow-v2/world-build-action-plan.md
+/.local/
+/.specify/
+*.pptx
+~$*
+/tmp_*.txt
+/agentic-workflow-subproject/*.txt

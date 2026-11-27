@@ -2,7 +2,7 @@
 
 **Status:** design proposal, 9 November 2026. This plan must guide changes to tier-2 data, ticket state, persistence and staging evaluation. It does not claim the current fixtures are production-like or that end-to-end quality has been measured.
 
-Related references: [dataset generation plan](synthetic-dataset-generation-plan.md), [flow task order](../../../specs/013-flow-v2/tasks.md), [runtime contract](../../../specs/005-010-demo-delivery/runtime-contract.md), [scoring protocol](../../scoring_protocol.md), [tool contracts](tools.md), [node table](node_table_v1.md), and the [Sessions 6–7 experiments and operations course](../../../../docs/project/S6_7_Experiments_Operation91126.pptx.pdf).
+Related references: [dataset generation plan](synthetic-dataset-generation-plan.md), [flow task order](../../../specs/013-flow-v2/tasks.md), [runtime contract](../../../specs/005-010-demo-delivery/runtime-contract.md), [scoring protocol](../../scoring_protocol.md), [tool contracts](tools.md), [node table](node_table_v1.md), and the Sessions 6–7 experiments and operations course.
 
 ## 1. Decisions
 

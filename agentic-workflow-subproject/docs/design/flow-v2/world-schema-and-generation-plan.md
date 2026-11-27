@@ -1,6 +1,6 @@
 # Flow v2: merchant world, schema and generation plan
 
-**Status:** design proposal, simplified 13 November 2026. The goal is a realistic test world, not an adversarial one: the flow should meet merchants, histories and tickets the way a real support desk would, without traps built for it. Nothing here is implemented beyond the phase 1 schema and the phase 2 audit tooling. The ordered work is in the [action plan](world-build-action-plan.md). It refines the tier-2 data parts of the [synthetic context and end-to-end evaluation plan](synthetic-context-and-e2e-evaluation-plan.md) and replaces `build_synthetic_ledger.py`.
+**Status:** design proposal, simplified 13 November 2026. The goal is a realistic test world, not an adversarial one: the flow should meet merchants, histories and tickets the way a real support desk would, without traps built for it. Nothing here is implemented beyond the phase 1 schema and the phase 2 audit tooling. It refines the tier-2 data parts of the [synthetic context and end-to-end evaluation plan](synthetic-context-and-e2e-evaluation-plan.md) and replaces `build_synthetic_ledger.py`.
 
 ## 1. Purpose and decisions
 
